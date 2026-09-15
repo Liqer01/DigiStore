@@ -4,6 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>DigiStore — Dijitalin en yalın hali.</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta property="og:image" content="logo.png">
+<meta name="twitter:image" content="logo.png">
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
 <script src="kvkk.js"></script>
@@ -525,10 +531,8 @@
     </button>
 
     <div style="text-align:center;margin-bottom:22px;">
-      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(145deg, #1c1c1e 0%, #0d0d0f 100%);border:1px solid rgba(255,255,255,0.18);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(10,132,255,0.3);margin-bottom:12px;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#38bdf8"/>
-        </svg>
+      <div style="width:52px;height:52px;border-radius:15px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(168,85,247,0.35);margin-bottom:12px;overflow:hidden;">
+        <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <h3 style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.4px;" id="authModalTitle">DigiStore'a Giriş Yap</h3>
       <p style="font-size:13px;color:#86868b;margin-top:4px;" id="authModalSubtitle">Tüm dijital siparişleriniz ve lisanslarınız tek bir yerde.</p>
@@ -641,26 +645,13 @@
   <div style="max-width:1240px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
 
     <!-- Apple Ultra Premium Brand Logo -->
-    <a href="index.html" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.querySelector('.logo-icon-box').style.transform='scale(1.05)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 25px rgba(10,132,255,0.45)';" onmouseout="this.querySelector('.logo-icon-box').style.transform='scale(1)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 16px rgba(10,132,255,0.25)';">
-      <div class="logo-icon-box" style="position:relative;width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg, #1c1c1e 0%, #0d0d0f 100%);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(10,132,255,0.25), inset 0 1px 1px rgba(255,255,255,0.25);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);overflow:hidden;">
-        <div style="position:absolute;inset:0;background:radial-gradient(circle at 35% 25%, rgba(10,132,255,0.45) 0%, rgba(168,85,247,0.2) 65%, transparent 100%);pointer-events:none;"></div>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="position:relative;z-index:1;">
-          <defs>
-            <linearGradient id="appleLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="50%" stop-color="#38bdf8"/>
-              <stop offset="100%" stop-color="#818cf8"/>
-            </linearGradient>
-            <filter id="logoGlow">
-              <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#38bdf8" flood-opacity="0.6"/>
-            </filter>
-          </defs>
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#appleLogoGrad)" filter="url(#logoGlow)"/>
-        </svg>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.querySelector('.logo-icon-box').style.transform='scale(1.05)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 25px rgba(168,85,247,0.5)';" onmouseout="this.querySelector('.logo-icon-box').style.transform='scale(1)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 16px rgba(168,85,247,0.3)';">
+      <div class="logo-icon-box" style="position:relative;width:38px;height:38px;border-radius:11px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(168,85,247,0.3), inset 0 1px 1px rgba(255,255,255,0.25);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);overflow:hidden;">
+        <img src="logo-icon.png" alt="DigiStore Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:19px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif;">Digi<span style="background:linear-gradient(135deg,#38bdf8 0%,#818cf8 50%,#c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span></span>
-        <span style="font-size:10px;font-weight:800;letter-spacing:0.06em;color:#38bdf8;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);padding:1px 6px;border-radius:6px;text-transform:uppercase;">PRO</span>
+        <span style="font-size:19px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif;">Digi<span style="background:linear-gradient(135deg,#a855f7 0%,#818cf8 50%,#38bdf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span></span>
+        <span style="font-size:10px;font-weight:800;letter-spacing:0.06em;color:#a855f7;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);padding:1px 6px;border-radius:6px;text-transform:uppercase;">PRO</span>
       </div>
     </a>
 
@@ -1236,12 +1227,10 @@
       <!-- Brand & Company Legal Info -->
       <div style="max-width:380px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#1c1c1e,#0d0d0f);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#38bdf8"/>
-            </svg>
+          <div style="width:34px;height:34px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.25);overflow:hidden;">
+            <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;display:block;">
           </div>
-          <span style="font-size:18px;font-weight:800;color:#fff;">DigiStore <span style="font-size:11px;color:#38bdf8;font-weight:900;">PRO</span></span>
+          <span style="font-size:18px;font-weight:800;color:#fff;">DigiStore <span style="font-size:11px;color:#a855f7;font-weight:900;">PRO</span></span>
         </div>
         <p style="font-size:12.5px;color:#86868b;line-height:1.6;margin-bottom:12px;">
           DigiStore Bilişim ve Teknoloji Ticaret A.Ş. — Orijinal dijital lisanslar, otomasyon yazılımları ve geliştirici araçları için resmi satış platformu.
