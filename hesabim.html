@@ -686,7 +686,36 @@
   </div>
 </div>
 
-
+<!-- E-POSTA CANLI GORUNTULEME MODALI -->
+<div id="emailViewBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111116;border:1px solid rgba(255,255,255,0.14);border-radius:20px;max-width:850px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,0.8);overflow:hidden;">
+    <!-- Header -->
+    <div style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.3);display:flex;align-items:center;justify-content:center;color:#34c759;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div>
+          <div id="emailModalSubject" style="font-size:15px;font-weight:700;color:#fff;">Siparis Teslimat E-postasi</div>
+          <div id="emailModalMeta" style="font-size:12px;color:#86868b;margin-top:2px;">Alici: -</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a id="emailModalGmailLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;font-size:12px;padding:7px 14px;">
+          <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
+          <span>Gmail'de Ara</span>
+        </a>
+        <button onclick="closeEmailModal()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:50%;color:#fff;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,69,58,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Body / iframe container -->
+    <div style="flex:1;overflow-y:auto;background:#0d0d12;padding:16px;">
+      <iframe id="emailModalIframe" style="width:100%;height:540px;border:none;border-radius:12px;background:#ffffff;" sandbox="allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
 
 <!-- TOP NAV -->
 <nav style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
@@ -1656,9 +1685,14 @@ function renderUserEmails() {
 
       <!-- Action Buttons -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="${e.gmailUrl || 'https://mail.google.com/mail/u/0/#inbox'}" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;">
+        <button onclick="viewEmailDetail('${e.id}')" class="btn-action-primary" style="cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span>E-postayı Canlı Oku</span>
+        </button>
+
+        <a href="${e.gmailUrl || ('https://mail.google.com/mail/u/0/#search/' + encodeURIComponent(e.orderId || ''))}" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;">
           <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
-          <span>Gmail Gelen Kutumda Aç</span>
+          <span>Gmail'de Aç & Ara</span>
         </a>
 
         <a href="${e.mailtoUrl || ('mailto:' + e.to)}" class="btn-action-glass" style="text-decoration:none;">
@@ -1674,6 +1708,44 @@ function renderUserEmails() {
 
     </div>
   `).join('');
+}
+
+function viewEmailDetail(id) {
+  const mail = (typeof DigiStoreDB !== 'undefined' && DigiStoreDB.getEmailById)
+    ? DigiStoreDB.getEmailById(id)
+    : null;
+  if (!mail) return;
+
+  if (typeof DigiStoreDB !== 'undefined' && DigiStoreDB.markEmailAsRead) {
+    DigiStoreDB.markEmailAsRead(id);
+    renderUserEmails();
+  }
+
+  const backdrop = document.getElementById('emailViewBackdrop');
+  const subjEl = document.getElementById('emailModalSubject');
+  const metaEl = document.getElementById('emailModalMeta');
+  const iframe = document.getElementById('emailModalIframe');
+  const gmailLink = document.getElementById('emailModalGmailLink');
+
+  if (subjEl) subjEl.textContent = mail.subject || 'Sipariş Teslimat E-postası';
+  if (metaEl) metaEl.textContent = 'Alıcı: ' + (mail.to || '') + ' · ' + (mail.date || '');
+  if (gmailLink) {
+    gmailLink.href = mail.gmailUrl || ('https://mail.google.com/mail/u/0/#search/' + encodeURIComponent(mail.orderId || ''));
+  }
+
+  if (iframe) {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(mail.html || ('<div style="font-family:sans-serif;padding:24px;color:#fff;background:#111;"><h3>' + (mail.subject || '') + '</h3><p>' + (mail.preview || '') + '</p></div>'));
+    doc.close();
+  }
+
+  if (backdrop) backdrop.style.display = 'flex';
+}
+
+function closeEmailModal() {
+  const backdrop = document.getElementById('emailViewBackdrop');
+  if (backdrop) backdrop.style.display = 'none';
 }
 
 function renderAllData() {

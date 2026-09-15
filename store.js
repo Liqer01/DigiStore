@@ -1154,7 +1154,18 @@
     getEmails() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_EMAILS);
-        return raw ? JSON.parse(raw) : [];
+        const emails = raw ? JSON.parse(raw) : [];
+        let updated = false;
+        emails.forEach(e => {
+          if (e.gmailUrl && e.gmailUrl.includes('view=cm')) {
+            e.gmailUrl = `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(e.orderId || '')}`;
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem(STORAGE_KEY_EMAILS, JSON.stringify(emails));
+        }
+        return emails;
       } catch (e) {
         return [];
       }
@@ -1367,8 +1378,8 @@ DigiStore Bilişim Ticaret A.Ş.`;
       const html = this.generateEmailHtml(orderData, to, customer);
       const plain = this.generateEmailPlainText(orderData, to, customer);
 
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
-      const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
+      const gmailUrl = `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(orderId)}`;
+      const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}`;
 
       const emailRecord = {
         id: 'EML-' + Math.floor(100000 + Math.random() * 900000),
