@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DigiStore — Yönetim Paneli</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta property="og:image" content="logo.png">
+<script>
+// Auto-Redirect: Eger bu dosya yanlislikla ana sayfada veya admin disinda acildiysa hemen magazaya don
+(function() {
+  try {
+    const currentPath = (window.location.pathname || '').toLowerCase();
+    if (!currentPath.includes('admin')) {
+      if (window.location.hostname.includes('closydev.site')) {
+        window.location.replace('/frontend/index.html');
+      } else {
+        window.location.replace('../index.html');
+      }
+      return;
+    }
+  } catch(e) {}
+})();
+(async function() {
+  const currentPath = (window.location.pathname || '').toLowerCase();
+  if (!currentPath.includes('admin')) return;
+  try {
+    const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? (window.location.port === '3001' ? '' : 'http://localhost:3001') : '';
+    const res = await fetch(apiBase + '/api/admin-auth');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      document.documentElement.innerHTML = `
+        <head><title>403 - Yetkisiz Erisim</title><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+        <body style="background:#000000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;box-sizing:border-box;text-align:center;">
+          <div style="background:rgba(18,18,24,0.9);border:1px solid rgba(255,69,58,0.35);border-radius:24px;padding:40px 32px;max-width:460px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,0.8);backdrop-filter:blur(20px);">
+            <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,69,58,0.12);border:1px solid rgba(255,69,58,0.25);display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px;color:#ff453a;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 8px;color:#fff;letter-spacing:-0.3px;">Yonetici Erisimi Engellendi</h2>
+            <p style="font-size:13.5px;color:#86868b;line-height:1.6;margin:0 0 20px;">Bu yonetim paneli guvenlik protokolleri geregince yalnizca yetkilendirilmis IP adresine tahsis edilmistir.</p>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:12px;font-size:12px;font-family:monospace;color:#a1a1a6;margin-bottom:24px;">
+              Tespit Edilen IP: <span style="color:#ff453a;font-weight:700;">${data.clientIp || 'Yetkisiz IP'}</span>
+            </div>
+            <a href="/frontend/index.html" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Magazaya Don</a>
+          </div>
+        </body>`;
+      window.stop();
+    }
+  } catch (e) {
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.warn('IP verification could not be completed.');
+    }
+  }
+})();
+</script>
+<script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="/store.js" onerror="this.onerror=null;this.src='../store.js';"></script>
+<script>
+// Admin Account Verification (Strictly requires admin@digistore.com login)
+(function() {
+  function verifyAdminAccess() {
+    const currentPath = (window.location.pathname || '').toLowerCase();
+    if (!currentPath.includes('admin')) return;
+    if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.isAdmin()) {
+      document.documentElement.innerHTML = `
+        <head><title>401 - Yetkisiz Erisim</title><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+        <body style="background:#000000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;box-sizing:border-box;text-align:center;">
+          <div style="background:rgba(18,18,24,0.9);border:1px solid rgba(255,69,58,0.35);border-radius:24px;padding:40px 32px;max-width:460px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,0.8);backdrop-filter:blur(20px);">
+            <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,69,58,0.12);border:1px solid rgba(255,69,58,0.25);display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px;color:#ff453a;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 8px;color:#fff;letter-spacing:-0.3px;">Yonetici Girisi Gerekli</h2>
+            <p style="font-size:13.5px;color:#86868b;line-height:1.6;margin:0 0 20px;">Bu panele erismek icin yonetici hesabiyla (admin@digistore.com) giris yapmis olmaniz gerekmektedir.</p>
+            <a href="/hesabim.html" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Yonetici Girisi Yap</a>
+          </div>
+        </body>`;
+      window.stop();
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', verifyAdminAccess);
+  } else {
+    verifyAdminAccess();
+  }
+})();
+</script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  :root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  html, body {
+    background: #000000;
+    color: #f5f5f7;
+    font-family: var(--font-sans) !important;
+    width: 100vw;
+    min-width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    overflow: hidden;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select, textarea, optgroup, label, table, th, td, h1, h2, h3, h4, h5, h6, p, span, a {
+    font-family: var(--font-sans) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code, pre, .font-mono {
+    font-family: var(--font-mono) !important;
+  }
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:#27272a;border-radius:99px;}
+
+  .apple-glass{
+    background:rgba(14,14,18,0.72);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .apple-card{
+    background:rgba(14,14,18,0.7);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px;
+    padding:22px;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    transition:border-color .2s ease;
+  }
+  .apple-card:hover{
+    border-color:rgba(255,255,255,0.15);
+  }
+
+  .sidebar{
+    width:246px;
+    background:#060609;
+    border-right:1px solid rgba(255,255,255,0.07);
+    display:flex;
+    flex-direction:column;
+    flex-shrink:0;
+    z-index:20;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 15px;
+    border-radius:9999px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:500;
+    color:#86868b;
+    transition:all .18s ease;
+    margin:2px 10px;
+  }
+  .nav-item:hover{
+    background:rgba(255,255,255,0.05);
+    color:#ffffff;
+  }
+  .nav-item.active{
+    background:#ffffff;
+    color:#000000;
+    font-weight:600;
+  }
+
+  .main-content{
+    flex:1 1 0%;
+    min-width:0;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:#000000;
+  }
+  .topbar{
+    height:64px;
+    border-bottom:1px solid rgba(255,255,255,0.07);
+    padding:0 36px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(8,8,12,0.72);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    flex-shrink:0;
+  }
+  .content-area{
+    flex:1;
+    overflow-y:auto;
+    padding:28px 36px 60px;
+    width:100%;
+  }
+
+  .btn-pill-white{
+    background:#ffffff;
+    color:#000000;
+    border-radius:9999px;
+    padding:8px 18px;
+    font-size:13px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:all .15s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:0 2px 8px rgba(255,255,255,0.12);
+  }
+  .btn-pill-white:hover{
+    background:#f4f4f5;
+    transform:translateY(-1px);
+    box-shadow:0 4px 14px rgba(255,255,255,0.22);
+  }
+  .btn-pill-white:active{
+    transform:scale(0.98);
+  }
+  .btn-pill-dark{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    color:#f4f4f5;
+    border-radius:9999px;
+    padding:7px 16px;
+    font-size:12.5px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all .15s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .btn-pill-dark:hover{
+    background:rgba(255,255,255,0.1);
+    border-color:rgba(255,255,255,0.2);
+    color:#ffffff;
+  }
+  .btn-pill-dark:active{
+    transform:scale(0.98);
+  }
+  .btn-pill-danger{
+    background:rgba(239,68,68,0.1);
+    border:1px solid rgba(239,68,68,0.22);
+    color:#f87171;
+    border-radius:9999px;
+    padding:6px 14px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn-pill-danger:hover{
+    background:rgba(239,68,68,0.22);
+  }
+
+  table{width:100%;border-collapse:collapse;text-align:left;}
+  th{
+    font-size:11px;
+    font-weight:600;
+    color:#71717a;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    padding:14px 20px;
+    border-bottom:1px solid rgba(255,255,255,0.07);
+    background:rgba(255,255,255,0.012);
+  }
+  td{
+    padding:15px 20px;
+    font-size:13px;
+    color:#e4e4e7;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  tr{transition:background .15s ease;}
+  tr:hover td{background:rgba(255,255,255,0.025);}
+
+  .status-pill{
+    padding:3px 10px;
+    border-radius:9999px;
+    font-size:11px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    letter-spacing:0.02em;
+  }
+  .status-ok{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25);}
+  .status-wait{background:rgba(234,179,8,0.12);color:#fbbf24;border:1px solid rgba(234,179,8,0.25);}
+  .status-fail{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);}
+
+  input, select, textarea {
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    color:#ffffff;
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:13px;
+    font-weight:400;
+    line-height:1.5;
+    letter-spacing:-0.01em;
+    font-family:var(--font-sans) !important;
+    width:100%;
+    outline:none;
+    transition:all .2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  input::placeholder, textarea::placeholder{
+    color:#52525b;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color:#0a84ff;
+    background:rgba(255,255,255,0.07);
+    box-shadow:0 0 0 3px rgba(10,132,255,0.2);
+  }
+  select option {
+    background:#121216;
+    color:#ffffff;
+    font-family:var(--font-sans) !important;
+    padding:8px 12px;
+  }
+  textarea {
+    resize:vertical;
+    min-height:76px;
+    line-height:1.6;
+    font-family:var(--font-sans) !important;
+  }
+  .form-label {
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    color:#a1a1a6;
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:6px;
+    font-family:var(--font-sans) !important;
+  }
+
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+
+  /* Modal System */
+  .admin-modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:rgba(0,0,0,0.76);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .admin-modal-overlay.active{display:flex;}
+  .admin-modal-box{
+    width:100%;
+    max-width:520px;
+    background:rgba(18,18,24,0.96);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 35px 80px rgba(0,0,0,0.9);
+    max-height:90vh;
+    overflow-y:auto;
+  }
+  @keyframes iosSpringIn{
+    from{transform:scale(0.92);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+  }
+
+  /* iOS Dynamic Island & Modal Alert */
+  .ios-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ios-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .ios-alert-box {
+    width: 100%;
+    max-width: 295px;
+    background: rgba(28, 28, 32, 0.88);
+    backdrop-filter: blur(40px) saturate(210%);
+    -webkit-backdrop-filter: blur(40px) saturate(210%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 1px 1px rgba(255, 255, 255, 0.12);
+    text-align: center;
+    overflow: hidden;
+    transform: scale(1.15);
+    transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.25s ease;
+  }
+  .ios-backdrop.active .ios-alert-box {
+    transform: scale(1);
+  }
+  .ios-alert-content {
+    padding: 24px 22px 18px;
+  }
+  .ios-alert-icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255, 69, 58, 0.12);
+    border: 1px solid rgba(255, 69, 58, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .ios-alert-icon-wrap.warning {
+    background: rgba(255, 159, 10, 0.14);
+    border-color: rgba(255, 159, 10, 0.3);
+  }
+  .ios-alert-icon-wrap.success {
+    background: rgba(52, 199, 89, 0.14);
+    border-color: rgba(52, 199, 89, 0.3);
+  }
+  .ios-alert-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.022em;
+    margin-bottom: 6px;
+  }
+  .ios-alert-desc {
+    font-size: 13.5px;
+    color: #a1a1a6;
+    line-height: 1.42;
+  }
+  .ios-alert-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    width: 100%;
+  }
+  .ios-alert-buttons {
+    display: flex;
+  }
+  .ios-btn-primary {
+    flex: 1;
+    padding: 13px 16px;
+    background: transparent;
+    border: none;
+    color: #0a84ff;
+    font-size: 16.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+  .ios-btn-primary:active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-90px) scale(0.9);
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    z-index: 999998;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  }
+  .dynamic-island.active {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .island-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .island-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .island-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+  .island-sub {
+    font-size: 11.5px;
+    color: #86868b;
+    line-height: 1.2;
+  }
+</style>
+</head>
+<body>
+
+<!-- Dynamic Island -->
+<div id="dynamicIsland" class="dynamic-island">
+  <div class="island-icon" id="islandIcon">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+  <div class="island-text">
+    <span class="island-title" id="islandTitle">Yönetim Bildirimi</span>
+    <span class="island-sub" id="islandSub">İşlem başarıyla tamamlandı</span>
+  </div>
+</div>
+
+<!-- iOS Alert Modal -->
+<div id="iosAlertBackdrop" class="ios-backdrop" style="display:none;" onclick="handleBackdropClick(event)">
+  <div class="ios-alert-box" id="iosAlertBox">
+    <div class="ios-alert-content">
+      <div id="iosAlertIcon" class="ios-alert-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 class="ios-alert-title" id="iosAlertTitle">Dikkat</h3>
+      <p class="ios-alert-desc" id="iosAlertDesc">Bir bildirim oluştu.</p>
+    </div>
+    <div class="ios-alert-divider"></div>
+    <div class="ios-alert-buttons">
+      <button type="button" class="ios-btn-primary" id="iosAlertBtn" onclick="closeIosAlert()">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEFT NAVIGATION SIDEBAR (Apple Titanium Dark) -->
+<aside class="sidebar">
+  
+  <!-- Sidebar Brand -->
+  <div style="padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;" onclick="returnToStore()" title="Mağazaya Dön">
+    <div style="position:relative;width:34px;height:34px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.3);overflow:hidden;">
+      <img src="logo-icon.png" alt="DigiStore Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
+    </div>
+    <div>
+      <div style="font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:4px;">Digi<span style="background:linear-gradient(135deg,#a855f7,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span> <span style="font-size:8.5px;color:#a855f7;background:rgba(168,85,247,0.15);padding:1px 4px;border-radius:4px;">PRO</span></div>
+      <div style="font-size:10px;color:#86868b;letter-spacing:0.04em;">TITANIUM ADMIN</div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav style="flex:1;padding:14px 0;overflow-y:auto;">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4b5563;padding:8px 24px 6px;">
+      GENEL BAKIŞ
+    </div>
+    
+    <div class="nav-item active" onclick="switchTab('dashboard',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      Dashboard
+    </div>
+
+    <div class="nav-item" onclick="switchTab('siparisler',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      Siparişler
+      <span id="pendingBadge" style="margin-left:auto;background:rgba(245,158,11,0.2);color:#fbbf24;font-size:10px;padding:2px 7px;border-radius:9999px;font-weight:700;">0</span>
+    </div>
+
+    <div class="nav-item" onclick="switchTab('urunler',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Ürün Yönetimi
+      <span id="productCountBadge" style="margin-left:auto;background:rgba(255,255,255,0.08);color:#fff;font-size:10px;padding:2px 7px;border-radius:9999px;font-weight:700;">0</span>
+    </div>
+
+    <div class="nav-item" onclick="switchTab('kategoriler',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+      Kategori Yönetimi
+    </div>
+
+    <div class="nav-item" onclick="switchTab('musteriler',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      Müşteriler
+    </div>
+
+    <div class="nav-item" onclick="switchTab('lisanslar',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+      Lisans Anahtarları
+    </div>
+
+    <div class="nav-item" onclick="switchTab('destek',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      Canlı Destek
+      <span id="supportUnreadBadge" style="display:none;margin-left:auto;background:#ef4444;color:#fff;font-size:10px;padding:2px 7px;border-radius:9999px;font-weight:700;">0</span>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4b5563;padding:16px 24px 6px;">
+      GÜVENLİK &amp; SİSTEM
+    </div>
+
+    <div class="nav-item" onclick="switchTab('guard',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      DigiGuard Kalkanı
+      <span style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;"></span>
+    </div>
+
+    <div class="nav-item" onclick="switchTab('ayarlar',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Ayarlar
+    </div>
+
+    <div class="nav-item" style="color:#ef4444;cursor:pointer;" onclick="returnToStore()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Mağazaya Dön
+    </div>
+  </nav>
+
+  <!-- User Card -->
+  <div style="padding:14px;border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,0.03);">
+      <div style="width:30px;height:30px;border-radius:50%;background:#ffffff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">A</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#fff;">Admin</div>
+        <div style="font-size:10px;color:#86868b;">admin@digistore.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN WORKSPACE -->
+<div class="main-content">
+  
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <h2 style="font-size:18px;font-weight:700;color:#fff;" id="pageTitle">Dashboard</h2>
+      <span style="font-size:11px;background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.25);padding:3px 10px;border-radius:9999px;font-weight:600;">
+        ● Canlı Senkronize
+      </span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:12px;color:#86868b;font-family:'JetBrains Mono',monospace;" id="liveTime">--:--:--</span>
+      
+      <button class="btn-pill-dark" onclick="returnToStore()" style="display:inline-flex;align-items:center;gap:6px;color:#a5b4fc;border-color:rgba(165,180,252,0.3);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Mağazayı Gör</span>
+      </button>
+
+      <button class="btn-pill-dark" onclick="openCategoryModal()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        <span>Kategoriler</span>
+      </button>
+
+      <button class="btn-pill-white" onclick="openProductModal()">
+        + Yeni Ürün Ekle
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENT TABS -->
+  <div class="content-area">
+
+    <!-- 1. DASHBOARD TAB -->
+    <div id="tab-dashboard" class="tab-content active">
+      <!-- Bento Stats Grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px;">
+        
+        <div class="apple-card">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">TOPLAM CİRO</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;" id="statRevenue">₺0</div>
+          <div style="font-size:12px;color:#22c55e;margin-top:6px;">↑ %100 Gerçek Sipariş Verisi</div>
+        </div>
+
+        <div class="apple-card">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">TOPLAM SİPARİŞ</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;" id="statOrders">0</div>
+          <div style="font-size:12px;color:#86868b;margin-top:6px;">Adet işlem</div>
+        </div>
+
+        <div class="apple-card">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">AKTİF ÜRÜN</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;" id="statProducts">0</div>
+          <div style="font-size:12px;color:#86868b;margin-top:6px;">Vitrin kataloğu</div>
+        </div>
+
+        <div class="apple-card">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">TESLİM EDİLEN LİSANS</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;" id="statLicenses">0</div>
+          <div style="font-size:12px;color:#34c759;margin-top:6px;">Aktif anahtar</div>
+        </div>
+
+      </div>
+
+      <!-- Main Dashboard 2-Col -->
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;">
+        
+        <!-- Left: Recent Orders -->
+        <div class="apple-card" style="padding:0;overflow:hidden;">
+          <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="font-size:15px;font-weight:700;color:#fff;">Son Siparişler (Canlı Akış)</h3>
+            <button class="btn-pill-dark" style="font-size:11.5px;padding:5px 12px;" onclick="switchTab('siparisler')">Tümünü Gör →</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Sipariş No</th>
+                <th>Müşteri</th>
+                <th>Ürün</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+                <th>Tarih</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="dashOrdersTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Right: Quick Actions & DigiGuard -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          
+          <div class="apple-card">
+            <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:14px;">Hızlı Yönetim Araçları</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <button class="btn-pill-white" style="width:100%;justify-content:center;padding:12px;" onclick="openProductModal()">
+                + Yeni Ürün Ekle
+              </button>
+              <button class="btn-pill-dark" style="width:100%;justify-content:center;padding:11px;display:inline-flex;align-items:center;gap:7px;" onclick="openCategoryModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                <span>Kategorileri Düzenle</span>
+              </button>
+              <button class="btn-pill-dark" style="width:100%;justify-content:center;padding:11px;display:inline-flex;align-items:center;gap:7px;" onclick="openLicenseModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
+                <span>Hızlı Lisans Anahtarı Üret</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="apple-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e;"></div>
+              <span style="font-size:13px;font-weight:700;color:#fff;">Kalkan Durumu: Kusursuz</span>
+            </div>
+            <p style="font-size:12px;color:#86868b;line-height:1.5;">
+              DDoS rate limiters, Bad Bot Shield ve SQLi/XSS filtreleri tam devrede. Mağaza indexi ve admin paneli senkronize çalışmaktadır.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. SİPARİŞLER TAB -->
+    <div id="tab-siparisler" class="tab-content">
+      <div class="apple-card" style="padding:0;overflow:hidden;">
+        
+        <!-- Header & Filters -->
+        <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;color:#fff;">Sipariş Yönetimi</h3>
+            <div style="font-size:12px;color:#86868b;" id="orderFilterCount">Tüm siparişler listeleniyor</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;">
+            <!-- Filter Pills -->
+            <div style="display:flex;gap:4px;background:rgba(255,255,255,0.04);padding:3px;border-radius:9999px;border:1px solid rgba(255,255,255,0.08);">
+              <button class="btn-pill-dark" id="btn-ord-all" style="background:#fff;color:#000;" onclick="filterOrdersByStatus('all')">Tümü</button>
+              <button class="btn-pill-dark" id="btn-ord-completed" onclick="filterOrdersByStatus('completed')">Tamamlanan</button>
+              <button class="btn-pill-dark" id="btn-ord-pending" onclick="filterOrdersByStatus('pending')">Bekleyen</button>
+              <button class="btn-pill-dark" id="btn-ord-refunded" onclick="filterOrdersByStatus('refunded')">İade</button>
+            </div>
+
+            <!-- Search input -->
+            <div style="position:relative;width:240px;">
+              <input type="text" id="orderSearchInput" placeholder="Sipariş, müşteri, e-posta ara..." oninput="handleOrderSearch(this.value)" style="padding-left:34px;font-size:12px;border-radius:9999px;"/>
+              <svg width="14" height="14" fill="none" stroke="#86868b" stroke-width="2" viewBox="0 0 24 24" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Sipariş No</th>
+              <th>Müşteri</th>
+              <th>Ürünler</th>
+              <th>Tutar</th>
+              <th>Ödeme Yöntemi</th>
+              <th>Durum</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="ordersFullTable"></tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- 3. ÜRÜN YÖNETİMİ TAB -->
+    <div id="tab-urunler" class="tab-content">
+      <div class="apple-card" style="padding:0;overflow:hidden;">
+        
+        <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;color:#fff;">Ürün Kataloğu</h3>
+            <div style="font-size:12px;color:#86868b;">Eklediğiniz veya düzenlediğiniz ürünler ana sayfaya anında yansır</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;">
+            <!-- Category filter dropdown -->
+            <select id="productCatFilter" onchange="filterProductsByCategory(this.value)" style="width:160px;font-size:12px;border-radius:9999px;padding:6px 12px;">
+              <option value="all">Tüm Kategoriler</option>
+            </select>
+
+            <button class="btn-pill-dark" onclick="openCategoryModal()" style="display:inline-flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <span>Kategori Yönet</span>
+            </button>
+
+            <button class="btn-pill-dark" onclick="restoreDefaultProducts()" style="display:inline-flex;align-items:center;gap:6px;" title="Varsayılan 6 ürünü geri getir">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <span>Varsayılanları Yükle</span>
+            </button>
+
+            <button class="btn-pill-white" onclick="openProductModal()">
+              + Yeni Ürün Ekle
+            </button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Ürün Adı</th>
+              <th>Kategori</th>
+              <th>Fiyat</th>
+              <th>Eski Fiyat</th>
+              <th>Satış</th>
+              <th>Durum</th>
+              <th>İşlemler</th>
+            </tr>
+          </thead>
+          <tbody id="productsFullTable"></tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- 4. KATEGORİ YÖNETİMİ TAB -->
+    <div id="tab-kategoriler" class="tab-content">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:28px;">
+        
+        <!-- Categories Table -->
+        <div class="apple-card" style="padding:0;overflow:hidden;">
+          <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-size:16px;font-weight:700;color:#fff;">Aktif Kategoriler</h3>
+              <div style="font-size:12px;color:#86868b;">Bu kategoriler ana vitrindeki (index.html) filtreleme butonlarına doğrudan bağlıdır.</div>
+            </div>
+            <button onclick="resetCategoriesAdmin()" class="btn-pill-dark" style="font-size:12px;padding:7px 16px;display:inline-flex;align-items:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Varsayılan Kategorileri Yükle</span>
+            </button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Kategori Adı</th>
+                <th>Kategori Kodu (Slug)</th>
+                <th>Ürün Sayısı</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Add Category Form -->
+        <div class="apple-card">
+          <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">+ Yeni Kategori Ekle</h3>
+          <p style="font-size:12px;color:#86868b;margin-bottom:18px;">
+            Yeni bir kategori oluşturduğunuzda ana sayfadaki butonlar ve ürün formları anında güncellenir.
+          </p>
+
+          <form onsubmit="submitAddCategory(event)">
+            <div style="margin-bottom:16px;">
+              <label class="form-label">Kategori Başlığı</label>
+              <input type="text" id="newCatName" placeholder="Örn: Yapay Zeka & Botlar" required />
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label class="form-label">Kategori Kodu (İsteğe bağlı)</label>
+              <input type="text" id="newCatSlug" placeholder="Örn: yapay-zeka (boş bırakılırsa otomatik üretilir)" />
+            </div>
+
+            <button type="submit" class="btn-pill-white" style="width:100%;justify-content:center;padding:12px;">
+              Kategoriyi Kaydet
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. MÜŞTERİLER TAB -->
+    <div id="tab-musteriler" class="tab-content">
+      <div class="apple-card" style="padding:0;overflow:hidden;">
+        <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;color:#fff;">Müşteri Portföyü</h3>
+            <div style="font-size:12px;color:#86868b;">Siparişlerden otomatik olarak derlenen gerçek müşteri listesi</div>
+          </div>
+          <span id="customerCountBadge" class="status-pill status-ok">0 Kayıtlı Müşteri</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Müşteri</th>
+              <th>E-Posta</th>
+              <th>Telefon</th>
+              <th>Sipariş Adedi</th>
+              <th>Toplam Harcama</th>
+              <th>Son Sipariş</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 6. LİSANSLAR TAB -->
+    <div id="tab-lisanslar" class="tab-content">
+      <div class="apple-card" style="padding:0;overflow:hidden;">
+        <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:16px;font-weight:700;color:#fff;">Lisans Anahtarları</h3>
+            <div style="font-size:12px;color:#86868b;">Müşterilere teslim edilen veya özel üretilen anahtarlar</div>
+          </div>
+          <button class="btn-pill-white" onclick="openLicenseModal()">+ Yeni Lisans Üret</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Lisans Anahtarı</th>
+              <th>Ürün</th>
+              <th>Müşteri</th>
+              <th>Sipariş No</th>
+              <th>Durum</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="licensesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7. DIGIGUARD TAB -->
+    <div id="tab-guard" class="tab-content">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div class="apple-card">
+          <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">DigiGuard v4.5 WAF Güvenlik Matrisi</h3>
+          <p style="font-size:13px;color:#86868b;margin-bottom:20px;">Saldırı vektörlerine karşı aktif koruma filtreleri.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;">
+              <span style="color:#fff;font-weight:600;">DDoS &amp; HTTP Flood Kalkanı</span>
+              <span class="status-pill status-ok">Aktif (120 req/dk)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;">
+              <span style="color:#fff;font-weight:600;">Bad Bot &amp; Tarayıcı Filtresi (sqlmap, nikto)</span>
+              <span class="status-pill status-ok">Aktif &amp; Banlıyor</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;">
+              <span style="color:#fff;font-weight:600;">Honeypot Tuzakları (/wp-admin, /.env)</span>
+              <span class="status-pill status-ok">3 Tuzak Kurulu</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;">
+              <span style="color:#fff;font-weight:600;">SQL Injection &amp; XSS Derin Filtresi</span>
+              <span class="status-pill status-ok">Aktif</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="apple-card">
+          <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">Son Yakalanan Tehdit Logları</h3>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;background:#000;padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,0.08);color:#cbd5e1;display:flex;flex-direction:column;gap:8px;">
+            <div><span style="color:#ef4444;">[BLOCKED]</span> 185.220.101.5 — /wp-admin Honeypot tuzağına düştü (IP 24h Ban)</div>
+            <div><span style="color:#ef4444;">[BLOCKED]</span> 45.154.255.89 — sqlmap User-Agent bot filtresine takıldı</div>
+            <div><span style="color:#ef4444;">[BLOCKED]</span> 194.26.29.112 — /api/orders flood denemesi (Rate limit aşıldı)</div>
+            <div><span style="color:#22c55e;">[CLEAN]</span> 88.241.90.12 — Standart SSL sipariş oturumu (200 OK)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. AYARLAR TAB -->
+    <div id="tab-ayarlar" class="tab-content">
+      <div class="apple-card" style="max-width:680px;">
+        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Sistem &amp; Ödeme Entegrasyonu</h3>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label class="form-label">Mağaza Adı</label>
+            <input type="text" value="DigiStore" id="settingStoreName" />
+          </div>
+          <div>
+            <label class="form-label">Shopier API Anahtarı</label>
+            <input type="password" value="shp_live_992144883141094821" />
+          </div>
+          <div>
+            <label class="form-label">e-Arşiv Fatura Serisi</label>
+            <input type="text" value="DS2026" />
+          </div>
+          <div>
+            <button class="btn-pill-white" onclick="showDynamicIsland('Ayarlar Kaydedildi','Sistem yapılandırması başarıyla güncellendi','success')">
+              Değişiklikleri Kaydet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. CANLI DESTEK TAB -->
+    <div id="tab-destek" class="tab-content">
+      <div style="display:flex;gap:20px;height:calc(100vh - 160px);min-height:560px;">
+        
+        <!-- Left: Conversations List -->
+        <div class="apple-card" style="width:340px;display:flex;flex-direction:column;padding:18px;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div style="font-size:15px;font-weight:700;color:#fff;">Canlı Sohbetler</div>
+            <span id="supportTotalActiveBadge" class="status-pill status-ok" style="font-size:11px;">0 Sohbet</span>
+          </div>
+
+          <!-- Search Input -->
+          <div style="margin-bottom:12px;">
+            <input type="text" id="supportSearchInput" placeholder="Müşteri veya mesaj ara..." oninput="renderSupportConversations()" style="font-size:12.5px;padding:8px 12px;" />
+          </div>
+
+          <!-- List Scroll -->
+          <div id="supportConversationsList" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Chat Box Area -->
+        <div class="apple-card" style="flex:1;display:flex;flex-direction:column;padding:0;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">
+          
+          <!-- Header -->
+          <div id="supportChatHeader" style="padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div id="supportActiveAvatar" style="width:38px;height:38px;border-radius:50%;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;color:#a855f7;font-weight:700;font-size:14px;">
+                D
+              </div>
+              <div>
+                <div id="supportActiveName" style="font-size:15px;font-weight:700;color:#fff;">Bir sohbet seçin</div>
+                <div id="supportActiveMeta" style="font-size:12px;color:#86868b;">Müşteri Destek Masası</div>
+              </div>
+            </div>
+            <div id="supportHeaderActions" style="display:flex;align-items:center;gap:8px;">
+              <!-- Action buttons -->
+            </div>
+          </div>
+
+          <!-- Message Thread -->
+          <div id="supportMessagesThread" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:#050508;">
+            <div style="text-align:center;color:#86868b;padding:60px 20px;font-size:13px;">
+              Soldaki listeden bir müşteri seçerek canlı sohbete katılabilirsiniz.
+            </div>
+          </div>
+
+          <!-- Canned Quick Responses -->
+          <div style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:8px;overflow-x:auto;">
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Merhaba! Siparişinizi ve lisans durumunuzu hemen kontrol ediyorum.')">Siparişi Kontrol Et</button>
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Lisans anahtarınız e-posta adresinize ve Hesabım > Lisanslarım sayfasına iletilmiştir.')">Lisans İletildi</button>
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Ödemeniz sistemde onaylanmıştır. Keyifli kullanımlar dileriz.')">Ödeme Onaylandı</button>
+          </div>
+
+          <!-- Message Input Form -->
+          <form id="supportReplyForm" onsubmit="handleSupportAdminSend(event)" style="padding:14px 18px;border-top:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);display:flex;gap:10px;">
+            <input type="text" id="supportAdminInput" placeholder="Müşteriye yanıt yazın..." style="flex:1;" autocomplete="off" />
+            <button type="submit" class="btn-pill-white" style="padding:10px 20px;font-weight:700;display:flex;align-items:center;gap:6px;">
+              <span>Gönder</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- 1. PRODUCT MODAL (ADD / EDIT) -->
+<div id="productModal" class="admin-modal-overlay">
+  <div class="admin-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div>
+        <h3 style="font-size:17px;font-weight:700;color:#fff;letter-spacing:-0.02em;" id="productModalTitle">Yeni Ürün Ekle</h3>
+        <p style="font-size:12px;color:#86868b;margin-top:2px;">Ürün detaylarını belirleyin, mağazada anında yayına alınsın.</p>
+      </div>
+      <button type="button" onclick="closeProductModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#a1a1a6;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='#a1a1a6'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <form onsubmit="handleProductSubmit(event)">
+      <input type="hidden" id="pmId" value="" />
+
+      <div style="margin-bottom:14px;">
+        <label class="form-label">Ürün Adı *</label>
+        <input type="text" id="pmName" placeholder="Örn: Pro Discord Bot v5.0" required />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label class="form-label">Kategori *</label>
+          <select id="pmCategory" required></select>
+        </div>
+        <div>
+          <label class="form-label">Rozet</label>
+          <select id="pmBadge">
+            <option value="">Rozet Yok</option>
+            <option value="hot">Popüler</option>
+            <option value="sale">İndirim</option>
+            <option value="new">Yeni</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label class="form-label">Fiyat (₺) *</label>
+          <input type="number" id="pmPrice" min="0" step="1" placeholder="149" required />
+        </div>
+        <div>
+          <label class="form-label">Eski Fiyat (₺)</label>
+          <input type="number" id="pmOldPrice" min="0" step="1" placeholder="299" />
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label class="form-label">Kısa Açıklama</label>
+        <textarea id="pmDesc" rows="3" placeholder="Ürünün temel faydaları ve teslimat detayları..."></textarea>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Özellikler (Her satıra bir özellik)</label>
+        <textarea id="pmFeatures" rows="3" placeholder="7/24 Discord Ses Desteği&#10;Web Dashboard Paneli&#10;Ömür Boyu Güncelleme"></textarea>
+      </div>
+
+      <div style="margin-bottom:22px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);">
+        <input type="checkbox" id="pmActive" checked style="width:16px;height:16px;accent-color:#0a84ff;cursor:pointer;" />
+        <label for="pmActive" style="font-size:12.5px;font-weight:500;color:#f5f5f7;cursor:pointer;user-select:none;">Bu ürün hemen mağaza vitrininde yayınlansın</label>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button type="button" onclick="closeProductModal()" class="btn-pill-dark" style="flex:1;justify-content:center;padding:11px;font-size:13px;font-weight:500;">
+          Vazgeç
+        </button>
+        <button type="submit" class="btn-pill-white" style="flex:1.4;justify-content:center;padding:11px;font-size:13px;font-weight:600;">
+          Kaydet &amp; Yayınla
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 2. ORDER DETAILS MODAL -->
+<div id="orderDetailModal" class="admin-modal-overlay">
+  <div class="admin-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <h3 style="font-size:18px;font-weight:700;color:#fff;" id="odModalId">#Sipariş Detayı</h3>
+      <button onclick="closeOrderDetailModal()" style="background:none;border:none;color:#86868b;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div id="odModalContent"></div>
+
+    <div style="display:flex;gap:10px;margin-top:20px;" id="odModalActions"></div>
+  </div>
+</div>
+
+<!-- 3. CATEGORY MODAL -->
+<div id="categoryModal" class="admin-modal-overlay">
+  <div class="admin-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <h3 style="font-size:18px;font-weight:700;color:#fff;">Kategori Yönetimi</h3>
+      <button onclick="closeCategoryModal()" style="background:none;border:none;color:#86868b;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div style="margin-bottom:20px;" id="modalCategoryList"></div>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
+      <h4 style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Hızlı Kategori Ekle</h4>
+      <div style="display:flex;gap:10px;">
+        <input type="text" id="quickCatInput" placeholder="Yeni kategori adı (Örn: Botlar)" />
+        <button class="btn-pill-white" onclick="quickAddCategory()">Ekle</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. LICENSE GENERATION MODAL -->
+<div id="licenseModal" class="admin-modal-overlay">
+  <div class="admin-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <h3 style="font-size:18px;font-weight:700;color:#fff;">Manuel Lisans Anahtarı Üret</h3>
+      <button onclick="closeLicenseModal()" style="background:none;border:none;color:#86868b;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <form onsubmit="handleLicenseGenerate(event)">
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Hangi Ürün İçin?</label>
+        <select id="licProductSelect" required></select>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Müşteri E-Postası</label>
+        <input type="email" id="licEmail" placeholder="musteri@ornek.com" required />
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label class="form-label">Müşteri Adı</label>
+        <input type="text" id="licCustomerName" placeholder="Ahmet Yılmaz" />
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button type="button" onclick="closeLicenseModal()" class="btn-pill-dark" style="flex:1;justify-content:center;padding:12px;font-size:13.5px;font-weight:600;">Vazgeç</button>
+        <button type="submit" class="btn-pill-white" style="flex:1;justify-content:center;padding:12px;font-size:13.5px;font-weight:700;">Lisansı Üret</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== SCRIPT ENGINE ==================== -->
+<script>
+let currentOrderFilter = 'all';
+let currentOrderSearch = '';
+let currentProductCatFilter = 'all';
+
+// Initialize view
+function renderAll() {
+  updateStats();
+  renderDashboardOrders();
+  renderFullOrders();
+  renderFullProducts();
+  renderCategoriesView();
+  renderCustomersView();
+  renderLicensesView();
+  renderSupportConversations();
+  populateCategorySelects();
+}
+
+// ─── STATS ──────────────────────────────────────────────────────────
+function updateStats() {
+  const stats = DigiStoreDB.getStats();
+  const licenses = (typeof DigiStoreDB.getLicenses === 'function') ? DigiStoreDB.getLicenses() : [];
+
+  const revEl = document.getElementById("statRevenue");
+  if (revEl) revEl.textContent = '₺' + (stats.revenue || 0).toLocaleString("tr-TR");
+
+  const ordEl = document.getElementById("statOrders");
+  if (ordEl) ordEl.textContent = stats.totalOrders || 0;
+
+  const prodEl = document.getElementById("statProducts");
+  if (prodEl) prodEl.textContent = stats.activeProducts || 0;
+
+  const licEl = document.getElementById("statLicenses");
+  if (licEl) licEl.textContent = licenses.length || 0;
+
+  const pendingBadge = document.getElementById("pendingBadge");
+  if (pendingBadge) pendingBadge.textContent = stats.pendingOrders || 0;
+
+  const prodBadge = document.getElementById("productCountBadge");
+  if (prodBadge) prodBadge.textContent = stats.activeProducts || 0;
+
+  const custBadge = document.getElementById("customerCountBadge");
+  if (custBadge) custBadge.textContent = (stats.customers || 0) + " Kayıtlı Müşteri";
+
+  const unreadSupport = (typeof DigiStoreDB.getSupportUnreadAdminCount === 'function') ? DigiStoreDB.getSupportUnreadAdminCount() : 0;
+  const supBadge = document.getElementById("supportUnreadBadge");
+  if (supBadge) {
+    supBadge.textContent = unreadSupport;
+    supBadge.style.display = unreadSupport > 0 ? "inline-block" : "none";
+  }
+
+  const activeTotalBadge = document.getElementById("supportTotalActiveBadge");
+  if (activeTotalBadge && typeof DigiStoreDB.getSupportChats === 'function') {
+    activeTotalBadge.textContent = DigiStoreDB.getSupportChats().length + " Sohbet";
+  }
+}
+
+// ─── DASHBOARD RECENT ORDERS ─────────────────────────────────────────
+function renderDashboardOrders() {
+  const orders = DigiStoreDB.getOrders().slice(0, 5);
+  const tbody = document.getElementById("dashOrdersTable");
+  if (!tbody) return;
+
+  if (!orders.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#86868b;padding:24px;">Henüz sipariş yok.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = orders.map(o => `
+    <tr>
+      <td style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-weight:700;">#${o.id}</td>
+      <td style="color:#fff;font-weight:600;">${o.customer || 'İsimsiz Müşteri'}</td>
+      <td style="color:#cbd5e1;">${o.product || (o.items && o.items.length ? o.items[0].name : 'Dijital Ürün')}</td>
+      <td style="color:#fff;font-weight:700;">₺${Number(o.amount).toLocaleString('tr-TR')}</td>
+      <td>${renderStatusPill(o.status)}</td>
+      <td style="color:#86868b;font-size:12px;">${o.date || '-'}</td>
+      <td><button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button></td>
+    </tr>
+  `).join('');
+}
+
+// ─── ORDERS FULL TABLE ──────────────────────────────────────────────
+function renderFullOrders() {
+  let orders = DigiStoreDB.getOrders();
+  
+  if (currentOrderFilter !== 'all') {
+    orders = orders.filter(o => o.status === currentOrderFilter);
+  }
+  if (currentOrderSearch) {
+    const q = currentOrderSearch.toLowerCase();
+    orders = orders.filter(o => 
+      o.id.toLowerCase().includes(q) || 
+      (o.customer && o.customer.toLowerCase().includes(q)) || 
+      (o.email && o.email.toLowerCase().includes(q)) ||
+      (o.product && o.product.toLowerCase().includes(q))
+    );
+  }
+
+  document.getElementById("orderFilterCount").textContent = `${orders.length} sipariş gösteriliyor`;
+
+  const tbody = document.getElementById("ordersFullTable");
+  if (!orders.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#86868b;padding:32px;">Kriterlere uygun sipariş bulunamadı.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = orders.map(o => `
+    <tr>
+      <td style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-weight:700;">#${o.id}</td>
+      <td>
+        <div style="color:#fff;font-weight:600;">${o.customer}</div>
+        <div style="font-size:11px;color:#86868b;">${o.email}</div>
+      </td>
+      <td style="color:#cbd5e1;">${o.product}</td>
+      <td style="color:#fff;font-weight:700;">₺${Number(o.amount).toLocaleString('tr-TR')}</td>
+      <td style="font-size:12px;color:#86868b;">${o.method || 'Kredi Kartı'}</td>
+      <td>${renderStatusPill(o.status)}</td>
+      <td>
+        <button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterOrdersByStatus(status) {
+  currentOrderFilter = status;
+  ['all','completed','pending','refunded'].forEach(s => {
+    const b = document.getElementById('btn-ord-'+s);
+    if(b) {
+      if(s === status) {
+        b.style.background = '#ffffff';
+        b.style.color = '#000000';
+      } else {
+        b.style.background = 'rgba(255,255,255,0.06)';
+        b.style.color = '#f5f5f7';
+      }
+    }
+  });
+  renderFullOrders();
+}
+
+function handleOrderSearch(val) {
+  currentOrderSearch = val.trim();
+  renderFullOrders();
+}
+
+function renderStatusPill(status) {
+  if (status === 'completed') return `<span class="status-pill status-ok">● Tamamlandı</span>`;
+  if (status === 'pending') return `<span class="status-pill status-wait">● Bekliyor</span>`;
+  return `<span class="status-pill status-fail">● İade Edildi</span>`;
+}
+
+// Order View Modal
+function viewOrder(orderId) {
+  const o = DigiStoreDB.getOrderById(orderId);
+  if (!o) return;
+
+  document.getElementById('odModalId').textContent = `#${o.id} Sipariş Detayı`;
+  
+  const itemsHtml = (o.items && o.items.length) ? o.items.map(it => `
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+      <span style="color:#fff;">${it.name} (x${it.qty || 1})</span>
+      <span style="color:#fff;font-weight:600;">₺${it.price || 0}</span>
+    </div>
+  `).join('') : `<div style="font-size:13px;color:#cbd5e1;">${o.product}</div>`;
+
+  const licensesHtml = (o.licenseKeys && o.licenseKeys.length) ? o.licenseKeys.map(k => `
+    <div style="background:#000;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+      <code style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-size:13px;font-weight:700;">${k}</code>
+      <button class="btn-pill-dark" onclick="navigator.clipboard.writeText('${k}');showDynamicIsland('Kopyalandı','Lisans panoya kopyalandı','copy');">Kopyala</button>
+    </div>
+  `).join('') : '<div style="font-size:12px;color:#86868b;">Lisans atanmadı</div>';
+
+  document.getElementById('odModalContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+      <div style="background:rgba(255,255,255,0.03);padding:14px;border-radius:14px;">
+        <div style="font-size:11px;color:#86868b;font-weight:700;text-transform:uppercase;">MÜŞTERİ BİLGİSİ</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-top:2px;">${o.customer}</div>
+        <div style="font-size:12px;color:#cbd5e1;">${o.email}</div>
+        <div style="font-size:12px;color:#86868b;">${o.phone || '+90 (Belirtilmedi)'}</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);padding:14px;border-radius:14px;">
+        <div style="font-size:11px;color:#86868b;font-weight:700;text-transform:uppercase;">ÖDEME &amp; FATURA</div>
+        <div style="font-size:14px;font-weight:700;color:#22c55e;margin-top:2px;">₺${Number(o.amount).toLocaleString('tr-TR')}</div>
+        <div style="font-size:12px;color:#cbd5e1;">${o.method || 'Kredi Kartı'}</div>
+        <div style="font-size:11px;color:#86868b;">${o.invoiceType || 'Bireysel Fatura'}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11.5px;font-weight:700;letter-spacing:0.04em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;">SİPARİŞ EDİLEN ÜRÜNLER</div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 14px;">
+        ${itemsHtml}
+      </div>
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:11.5px;font-weight:700;letter-spacing:0.04em;color:#94a3b8;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
+        <span>ATANAN DİJİTAL LİSANSLAR</span>
+      </div>
+      ${licensesHtml}
+    </div>
+  `;
+
+  document.getElementById('odModalActions').innerHTML = `
+    ${o.status !== 'completed' ? `<button class="btn-pill-white" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;" onclick="setOrderStatus('${o.id}','completed')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Siparişi Onayla &amp; Tamamla</span></button>` : ''}
+    ${o.status !== 'refunded' ? `<button class="btn-pill-danger" style="flex:1;" onclick="setOrderStatus('${o.id}','refunded')">İade Et</button>` : ''}
+    <button class="btn-pill-dark" onclick="closeOrderDetailModal()">Kapat</button>
+  `;
+
+  document.getElementById('orderDetailModal').classList.add('active');
+}
+
+function closeOrderDetailModal() {
+  document.getElementById('orderDetailModal').classList.remove('active');
+}
+
+function setOrderStatus(orderId, newStatus) {
+  DigiStoreDB.updateOrderStatus(orderId, newStatus);
+  closeOrderDetailModal();
+  renderAll();
+  showDynamicIsland('Sipariş Güncellendi', `#${orderId} durumu: ${newStatus}`, 'success');
+}
+
+// ─── PRODUCTS FULL TABLE & CRUD ─────────────────────────────────────
+function renderFullProducts() {
+  let products = DigiStoreDB.getProducts();
+  if (currentProductCatFilter !== 'all') {
+    products = products.filter(p => p.category === currentProductCatFilter);
+  }
+
+  const tbody = document.getElementById("productsFullTable");
+  if (!tbody) return;
+
+  if (!products.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;padding:52px 24px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;color:#86868b;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          </div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;">Katalogda Ürün Bulunamadı</div>
+          <div style="font-size:13px;color:#86868b;max-width:380px;margin:0 auto 18px;line-height:1.5;">Ürünler silinmiş veya kategori boş. Hazır 6 vitrin ürününü tek tıkla geri getirebilirsiniz.</div>
+          <button onclick="restoreDefaultProducts()" class="btn-pill-white" style="padding:9px 20px;font-size:13px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Varsayılan Ürünleri Geri Yükle</span>
+          </button>
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = products.map(p => `
+    <tr>
+      <td>
+        <div style="color:#fff;font-weight:600;font-size:13.5px;">${p.name}</div>
+        <div style="font-size:11.5px;color:#86868b;margin-top:2px;">${p.desc ? p.desc.slice(0,55)+'...' : ''}</div>
+      </td>
+      <td><span style="font-size:11px;color:#60a5fa;font-weight:600;background:rgba(96,165,250,0.1);padding:3px 8px;border-radius:6px;text-transform:uppercase;">${p.category}</span></td>
+      <td style="color:#fff;font-weight:700;">₺${p.price}</td>
+      <td style="color:#71717a;text-decoration:line-through;font-size:12px;">${p.oldPrice ? '₺'+p.oldPrice : '—'}</td>
+      <td style="color:#d4d4d8;font-size:12.5px;">${p.downloads || 0}</td>
+      <td>
+        ${p.active !== false 
+          ? `<span class="status-pill status-ok">● Yayında</span>` 
+          : `<span class="status-pill status-fail">● Pasif</span>`}
+      </td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-pill-dark" onclick="openProductModal(${p.id})">Düzenle</button>
+          <button class="btn-pill-dark" onclick="toggleProduct(${p.id})">${p.active !== false ? 'Durdur' : 'Yayınla'}</button>
+          <button class="btn-pill-danger" onclick="deleteProduct(${p.id})">Sil</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function restoreDefaultProducts() {
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.restoreDefaultProducts === 'function') {
+    DigiStoreDB.restoreDefaultProducts();
+    renderAll();
+    showDynamicIsland('Ürünler Geri Yüklendi', 'Varsayılan mağaza kataloğu başarıyla yüklendi', 'success');
+  }
+}
+
+function filterProductsByCategory(cat) {
+  currentProductCatFilter = cat;
+  renderFullProducts();
+}
+
+function toggleProduct(id) {
+  const active = DigiStoreDB.toggleProductStatus(id);
+  renderAll();
+  showDynamicIsland('Ürün Durumu Değişti', active ? 'Ürün mağazada yayına alındı' : 'Ürün pasife çekildi', 'success');
+}
+
+function deleteProduct(id) {
+  showIosAlert({
+    title: 'Ürünü Sil?',
+    message: 'Bu ürün mağaza vitrininden ve veritabanından kalıcı olarak kaldırılacaktır.',
+    type: 'warning',
+    confirmText: 'Sil',
+    onConfirm: () => {
+      DigiStoreDB.deleteProduct(id);
+      renderAll();
+      showDynamicIsland('Ürün Silindi', 'Ürün mağazadan kaldırıldı', 'success');
+    }
+  });
+}
+
+// Product Add / Edit Modal
+function openProductModal(productId = null) {
+  populateCategorySelects();
+  
+  const modal = document.getElementById('productModal');
+  const title = document.getElementById('productModalTitle');
+  
+  if (productId) {
+    const p = DigiStoreDB.getProductById(productId);
+    if (!p) return;
+    title.textContent = 'Ürünü Düzenle: ' + p.name;
+    document.getElementById('pmId').value = p.id;
+    document.getElementById('pmName').value = p.name;
+    document.getElementById('pmCategory').value = p.category;
+    document.getElementById('pmBadge').value = p.badge || '';
+    document.getElementById('pmPrice').value = p.price;
+    document.getElementById('pmOldPrice').value = p.oldPrice || '';
+    document.getElementById('pmDesc').value = p.desc || '';
+    document.getElementById('pmFeatures').value = (p.features || []).join('\n');
+    document.getElementById('pmActive').checked = p.active !== false;
+  } else {
+    title.textContent = 'Yeni Ürün Ekle';
+    document.getElementById('pmId').value = '';
+    document.getElementById('pmName').value = '';
+    document.getElementById('pmCategory').value = 'yazilim';
+    document.getElementById('pmBadge').value = '';
+    document.getElementById('pmPrice').value = '';
+    document.getElementById('pmOldPrice').value = '';
+    document.getElementById('pmDesc').value = '';
+    document.getElementById('pmFeatures').value = '';
+    document.getElementById('pmActive').checked = true;
+  }
+
+  modal.classList.add('active');
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('active');
+}
+
+function handleProductSubmit(e) {
+  e.preventDefault();
+  const id = document.getElementById('pmId').value;
+  const name = document.getElementById('pmName').value.trim();
+  const category = document.getElementById('pmCategory').value;
+  const badge = document.getElementById('pmBadge').value || null;
+  const price = Number(document.getElementById('pmPrice').value);
+  const oldPrice = document.getElementById('pmOldPrice').value ? Number(document.getElementById('pmOldPrice').value) : null;
+  const desc = document.getElementById('pmDesc').value.trim();
+  const features = document.getElementById('pmFeatures').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const active = document.getElementById('pmActive').checked;
+
+  if (id) {
+    DigiStoreDB.updateProduct(id, { name, category, badge, price, oldPrice, desc, features, active });
+    showDynamicIsland('Ürün Güncellendi', `${name} başarıyla güncellendi`, 'success');
+  } else {
+    DigiStoreDB.addProduct({ name, category, badge, price, oldPrice, desc, features, active });
+    showDynamicIsland('Ürün Eklendi', `${name} mağazada yayına girdi`, 'success');
+  }
+
+  closeProductModal();
+  renderAll();
+}
+
+// ─── CATEGORIES VIEW & SYNC ─────────────────────────────────────────
+function renderCategoriesView() {
+  const categories = DigiStoreDB.getCategories();
+  const products = DigiStoreDB.getProducts();
+
+  const tbody = document.getElementById("categoriesTableBody");
+  tbody.innerHTML = categories.map(c => {
+    const count = c.slug === 'all' ? products.length : products.filter(p => p.category === c.slug).length;
+    return `
+      <tr>
+        <td style="color:#fff;font-weight:700;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,0.06);margin-right:8px;color:#94a3b8;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span>
+          <span>${c.name}</span>
+        </td>
+        <td><code style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-size:12px;">${c.slug}</code></td>
+        <td><span class="status-pill status-ok">${count} Ürün</span></td>
+        <td>
+          ${c.slug !== 'all' ? `<button class="btn-pill-danger" onclick="deleteCategory('${c.slug}')">Sil</button>` : `<span style="font-size:11px;color:#86868b;">Sabit Filtre</span>`}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function resetCategoriesAdmin() {
+  DigiStoreDB.resetCategories();
+  renderAll();
+  renderModalCategories();
+  showDynamicIsland('Kategoriler Sıfırlandı', 'Varsayılan 6 kategori başarıyla yüklendi', 'success');
+}
+
+function populateCategorySelects() {
+  const categories = DigiStoreDB.getCategories().filter(c => c.slug !== 'all');
+  
+  const pmCat = document.getElementById('pmCategory');
+  if (pmCat) {
+    const prev = pmCat.value;
+    pmCat.innerHTML = categories.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+    if (prev) pmCat.value = prev;
+  }
+
+  const pcf = document.getElementById('productCatFilter');
+  if (pcf) {
+    const prev = pcf.value;
+    pcf.innerHTML = `<option value="all">Tüm Kategoriler</option>` + categories.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+    if (prev) pcf.value = prev;
+  }
+}
+
+function submitAddCategory(e) {
+  e.preventDefault();
+  const name = document.getElementById('newCatName').value.trim();
+  const slug = document.getElementById('newCatSlug').value.trim();
+  if (!name) return;
+
+  const created = DigiStoreDB.addCategory(name, slug);
+  document.getElementById('newCatName').value = '';
+  document.getElementById('newCatSlug').value = '';
+  
+  renderAll();
+  showDynamicIsland('Kategori Eklendi', `"${created.name}" mağaza filtrelerine entegre edildi`, 'success');
+}
+
+function quickAddCategory() {
+  const name = document.getElementById('quickCatInput').value.trim();
+  if (!name) return;
+  const created = DigiStoreDB.addCategory(name);
+  document.getElementById('quickCatInput').value = '';
+  renderAll();
+  renderModalCategories();
+  showDynamicIsland('Kategori Eklendi', `"${created.name}" entegre edildi`, 'success');
+}
+
+function deleteCategory(slug) {
+  showIosAlert({
+    title: 'Kategoriyi Sil?',
+    message: 'Bu kategori mağaza menüsünden ve filtrelerinden kaldırılacaktır.',
+    type: 'warning',
+    confirmText: 'Sil',
+    onConfirm: () => {
+      DigiStoreDB.deleteCategory(slug);
+      renderAll();
+      renderModalCategories();
+      showDynamicIsland('Kategori Silindi', 'Kategori mağazadan kaldırıldı', 'success');
+    }
+  });
+}
+
+function openCategoryModal() {
+  renderModalCategories();
+  document.getElementById('categoryModal').classList.add('active');
+}
+function closeCategoryModal() {
+  document.getElementById('categoryModal').classList.remove('active');
+}
+function renderModalCategories() {
+  const categories = DigiStoreDB.getCategories();
+  const list = document.getElementById('modalCategoryList');
+  list.innerHTML = categories.map(c => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:8px;">
+      <div>
+        <span style="font-weight:600;color:#fff;font-size:13px;">${c.name}</span>
+        <code style="font-size:11px;color:#86868b;margin-left:8px;">(${c.slug})</code>
+      </div>
+      ${c.slug !== 'all' ? `<button class="btn-pill-danger" onclick="deleteCategory('${c.slug}')">Sil</button>` : '<span style="font-size:11px;color:#86868b;">Varsayılan</span>'}
+    </div>
+  `).join('');
+}
+
+// ─── CUSTOMERS VIEW ─────────────────────────────────────────────────
+function renderCustomersView() {
+  const customers = DigiStoreDB.getCustomers();
+  const tbody = document.getElementById("customersTableBody");
+  if (!customers.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#86868b;padding:32px;">Henüz kayıtlı müşteri yok.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = customers.map(c => `
+    <tr>
+      <td style="color:#fff;font-weight:700;">${c.name}</td>
+      <td style="color:#86868b;">${c.email}</td>
+      <td style="color:#d1d5db;">${c.phone || '—'}</td>
+      <td><span class="status-pill status-ok">${c.orderCount} Sipariş</span></td>
+      <td style="color:#fff;font-weight:700;">₺${c.totalSpent.toLocaleString('tr-TR')}</td>
+      <td style="font-size:12px;color:#86868b;">${c.lastOrderDate}</td>
+      <td><span class="status-pill status-ok">Doğrulanmış</span></td>
+    </tr>
+  `).join('');
+}
+
+// ─── LICENSES VIEW ──────────────────────────────────────────────────
+function renderLicensesView() {
+  const licenses = DigiStoreDB.getLicenses();
+  const tbody = document.getElementById("licensesTableBody");
+  if (!licenses.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#86868b;padding:32px;">Henüz aktif lisans yok.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = licenses.map(l => `
+    <tr>
+      <td><code style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-size:13px;font-weight:700;">${l.key}</code></td>
+      <td style="color:#fff;font-weight:600;">${l.product}</td>
+      <td>
+        <div style="color:#fff;">${l.customer}</div>
+        <div style="font-size:11px;color:#86868b;">${l.email}</div>
+      </td>
+      <td style="font-family:'JetBrains Mono',monospace;color:#86868b;">#${l.orderId}</td>
+      <td>
+        ${l.status === 'active' 
+          ? '<span class="status-pill status-ok">● Aktif</span>' 
+          : (l.status === 'revoked' ? '<span class="status-pill status-fail">● İptal</span>' : '<span class="status-pill status-wait">● Bekliyor</span>')}
+      </td>
+      <td>
+        <button class="btn-pill-dark" onclick="navigator.clipboard.writeText('${l.key}');showDynamicIsland('Kopyalandı','Lisans anahtarı panoya kopyalandı','copy');">Kopyala</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openLicenseModal() {
+  const products = DigiStoreDB.getProducts();
+  const sel = document.getElementById('licProductSelect');
+  sel.innerHTML = products.map(p => `<option value="${p.name}">${p.name} (₺${p.price})</option>`).join('');
+  document.getElementById('licenseModal').classList.add('active');
+}
+
+function closeLicenseModal() {
+  document.getElementById('licenseModal').classList.remove('active');
+}
+
+function handleLicenseGenerate(e) {
+  e.preventDefault();
+  const prod = document.getElementById('licProductSelect').value;
+  const email = document.getElementById('licEmail').value.trim();
+  const name = document.getElementById('licCustomerName').value.trim();
+
+  const { key } = DigiStoreDB.generateNewLicense(prod, email, name);
+  closeLicenseModal();
+  renderAll();
+  showDynamicIsland('Lisans Üretildi', `Anahtar: ${key}`, 'success');
+}
+
+// ─── CANLI DESTEK ENGINE (ADMIN) ────────────────────────────────────
+let currentSelectedChatId = null;
+
+function renderSupportConversations() {
+  const listEl = document.getElementById('supportConversationsList');
+  if (!listEl || typeof DigiStoreDB === 'undefined' || typeof DigiStoreDB.getSupportChats !== 'function') return;
+
+  const searchVal = (document.getElementById('supportSearchInput')?.value || '').toLowerCase().trim();
+  let chats = DigiStoreDB.getSupportChats();
+
+  if (searchVal) {
+    chats = chats.filter(c => 
+      (c.userName && c.userName.toLowerCase().includes(searchVal)) ||
+      (c.userEmail && c.userEmail.toLowerCase().includes(searchVal)) ||
+      (c.messages && c.messages.some(m => m.text && m.text.toLowerCase().includes(searchVal)))
+    );
+  }
+
+  if (!chats.length) {
+    listEl.innerHTML = '<div style="padding:28px 12px;text-align:center;color:#86868b;font-size:12px;">Henüz aktif destek talebi yok.</div>';
+    if (!currentSelectedChatId) renderActiveSupportChat();
+    return;
+  }
+
+  if (!currentSelectedChatId && chats.length > 0) {
+    currentSelectedChatId = chats[0].id;
+  }
+
+  listEl.innerHTML = chats.map(c => {
+    const isSelected = c.id === currentSelectedChatId;
+    const lastMsg = (c.messages && c.messages.length) ? c.messages[c.messages.length - 1] : { text: '', time: '' };
+    const unread = c.unreadByAdmin || 0;
+    const initial = (c.userName || 'M').charAt(0).toUpperCase();
+
+    return `
+      <div onclick="selectSupportChat('${c.id}')" style="padding:12px 14px;border-radius:14px;background:${isSelected ? 'rgba(168,85,247,0.14)' : 'rgba(255,255,255,0.03)'};border:1px solid ${isSelected ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.06)'};cursor:pointer;transition:all .18s;display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:34px;height:34px;border-radius:50%;background:${isSelected ? '#a855f7' : 'rgba(255,255,255,0.08)'};color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">
+          ${initial}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+            <span style="font-size:13px;font-weight:700;color:#ffffff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.userName || 'Müşteri'}</span>
+            <span style="font-size:10.5px;color:#86868b;">${lastMsg.time || ''}</span>
+          </div>
+          <div style="font-size:11.5px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;">
+            ${lastMsg.text || 'Yeni sohbet'}
+          </div>
+        </div>
+        ${unread > 0 ? `<span style="background:#ef4444;color:#fff;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:9999px;margin-top:2px;">${unread}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  renderActiveSupportChat();
+}
+
+function selectSupportChat(chatId) {
+  currentSelectedChatId = chatId;
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.markSupportReadByAdmin === 'function') {
+    DigiStoreDB.markSupportReadByAdmin(chatId);
+  }
+  renderSupportConversations();
+  updateStats();
+}
+
+function renderActiveSupportChat() {
+  const threadEl = document.getElementById('supportMessagesThread');
+  const nameEl = document.getElementById('supportActiveName');
+  const metaEl = document.getElementById('supportActiveMeta');
+  const avatarEl = document.getElementById('supportActiveAvatar');
+  const actionsEl = document.getElementById('supportHeaderActions');
+  if (!threadEl) return;
+
+  if (!currentSelectedChatId) {
+    if (nameEl) nameEl.textContent = 'Bir sohbet seçin';
+    if (metaEl) metaEl.textContent = 'Müşteri Destek Masası';
+    threadEl.innerHTML = '<div style="text-align:center;color:#86868b;padding:60px 20px;font-size:13px;">Soldaki listeden bir müşteri seçerek canlı sohbete katılabilirsiniz.</div>';
+    if (actionsEl) actionsEl.innerHTML = '';
+    return;
+  }
+
+  const chat = DigiStoreDB.getSupportChat(currentSelectedChatId);
+  if (!chat) {
+    currentSelectedChatId = null;
+    return;
+  }
+
+  if (nameEl) nameEl.textContent = chat.userName || 'Misafir Müşteri';
+  if (metaEl) metaEl.textContent = (chat.userEmail ? chat.userEmail + ' · ' : '') + 'Başlangıç: ' + (chat.createdAt || '');
+  if (avatarEl) avatarEl.textContent = (chat.userName || 'M').charAt(0).toUpperCase();
+
+  if (actionsEl) {
+    actionsEl.innerHTML = `
+      <button onclick="deleteSupportChatAdmin('${chat.id}')" class="btn-pill-danger" style="font-size:11px;padding:5px 12px;">
+        Sohbeti Sil
+      </button>
+    `;
+  }
+
+  threadEl.innerHTML = (chat.messages || []).map(m => {
+    const isUser = m.sender === 'user';
+    if (isUser) {
+      return `
+        <div style="align-self:flex-start;max-width:75%;display:flex;flex-direction:column;align-items:flex-start;">
+          <span style="font-size:10.5px;color:#86868b;margin-bottom:3px;padding-left:2px;">${chat.userName || 'Müşteri'}</span>
+          <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#ffffff;padding:10px 14px;border-radius:14px 14px 14px 2px;font-size:13px;line-height:1.45;word-break:break-word;">
+            ${m.text}
+          </div>
+          <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
+        </div>
+      `;
+    } else {
+      return `
+        <div style="align-self:flex-end;max-width:75%;display:flex;flex-direction:column;align-items:flex-end;">
+          <span style="font-size:10.5px;color:#a855f7;font-weight:600;margin-bottom:3px;padding-right:2px;">${m.senderName || 'Destek Temsilcisi'}</span>
+          <div style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#ffffff;padding:10px 14px;border-radius:14px 14px 2px 14px;font-size:13px;line-height:1.42;box-shadow:0 4px 14px rgba(168,85,247,0.25);word-break:break-word;">
+            ${m.text}
+          </div>
+          <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''}</span>
+        </div>
+      `;
+    }
+  }).join('');
+
+  threadEl.scrollTop = threadEl.scrollHeight;
+}
+
+function handleSupportAdminSend(e) {
+  e.preventDefault();
+  if (!currentSelectedChatId) {
+    showDynamicIsland('Hata', 'Lütfen önce bir sohbet seçin', 'warning');
+    return;
+  }
+  const inp = document.getElementById('supportAdminInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+
+  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'admin@digistore.com');
+  renderSupportConversations();
+  renderActiveSupportChat();
+  showDynamicIsland('Mesaj Gönderildi', 'Müşteriye canlı iletildi', 'success');
+}
+
+function useCannedResponse(text) {
+  const inp = document.getElementById('supportAdminInput');
+  if (inp) {
+    inp.value = text;
+    inp.focus();
+  }
+}
+
+function deleteSupportChatAdmin(chatId) {
+  showIosAlert({
+    title: 'Sohbeti Sil?',
+    message: 'Bu müşteri destek kaydı ve mesaj geçmişi kalıcı olarak silinecektir.',
+    type: 'warning',
+    confirmText: 'Sil',
+    onConfirm: () => {
+      DigiStoreDB.deleteSupportChat(chatId);
+      currentSelectedChatId = null;
+      renderSupportConversations();
+      showDynamicIsland('Sohbet Silindi', 'Destek kaydı kaldırıldı', 'success');
+    }
+  });
+}
+
+// ─── TAB SWITCHER ───────────────────────────────────────────────────
+function switchTab(id, el) {
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+  const target = document.getElementById("tab-" + id);
+  if (target) target.classList.add("active");
+  
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  if (el) el.classList.add("active");
+
+  const titles = {
+    dashboard: "Dashboard",
+    siparisler: "Sipariş Yönetimi",
+    urunler: "Ürün Yönetimi",
+    kategoriler: "Kategori Yönetimi",
+    musteriler: "Müşteri Portföyü",
+    lisanslar: "Lisans Anahtarları",
+    destek: "Canlı Destek Masası",
+    guard: "DigiGuard Kalkan Monitörü",
+    ayarlar: "Sistem Ayarları"
+  };
+  document.getElementById("pageTitle").textContent = titles[id] || "Yönetim Paneli";
+  renderAll();
+}
+
+// ─── IOS ALERT & DYNAMIC ISLAND ENGINE ──────────────────────────────
+let iosAlertCallback = null;
+
+function showIosAlert(options) {
+  let title = 'Dikkat';
+  let message = '';
+  let type = 'error';
+  let confirmText = 'Tamam';
+  let onConfirm = null;
+
+  if (typeof options === 'string') {
+    message = options;
+  } else if (typeof options === 'object') {
+    title = options.title || title;
+    message = options.message || '';
+    type = options.type || type;
+    confirmText = options.confirmText || confirmText;
+    onConfirm = options.onConfirm || null;
+  }
+
+  iosAlertCallback = onConfirm;
+  document.getElementById('iosAlertTitle').textContent = title;
+  document.getElementById('iosAlertDesc').textContent = message;
+
+  const iconWrap = document.getElementById('iosAlertIcon');
+  iconWrap.className = 'ios-alert-icon-wrap ' + type;
+
+  let iconSvg = '';
+  if (type === 'error') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  } else if (type === 'warning') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+  } else if (type === 'success') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12l3 3 5-5"/></svg>`;
+  } else {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+  }
+  iconWrap.innerHTML = iconSvg;
+
+  const btn = document.getElementById('iosAlertBtn');
+  if (btn) btn.textContent = confirmText;
+
+  const backdrop = document.getElementById('iosAlertBackdrop');
+  backdrop.style.display = 'flex';
+  requestAnimationFrame(() => {
+    backdrop.classList.add('active');
+  });
+}
+
+function closeIosAlert() {
+  const backdrop = document.getElementById('iosAlertBackdrop');
+  backdrop.classList.remove('active');
+  setTimeout(() => {
+    backdrop.style.display = 'none';
+    if (typeof iosAlertCallback === 'function') {
+      const cb = iosAlertCallback;
+      iosAlertCallback = null;
+      cb();
+    }
+  }, 220);
+}
+
+function handleBackdropClick(e) {
+  if (e.target.id === 'iosAlertBackdrop') closeIosAlert();
+}
+
+let islandTimeout = null;
+function showDynamicIsland(title, sub, type = 'success') {
+  const island = document.getElementById('dynamicIsland');
+  if (!island) return;
+
+  document.getElementById('islandTitle').textContent = title;
+  document.getElementById('islandSub').textContent = sub;
+
+  const icon = document.getElementById('islandIcon');
+  if (type === 'success') {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  } else if (type === 'copy') {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  } else {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  }
+
+  island.classList.add('active');
+  if (islandTimeout) clearTimeout(islandTimeout);
+  islandTimeout = setTimeout(() => {
+    island.classList.remove('active');
+  }, 3200);
+}
+
+// Global window.alert interceptor
+window.alert = function(msg) {
+  showIosAlert({
+    title: 'Yönetim Uyarısı',
+    message: msg,
+    type: 'warning'
+  });
+};
+
+// Listen to changes from storefront or checkout tabs
+DigiStoreDB.onUpdate(() => {
+  renderAll();
+});
+
+// Return to Storefront
+function returnToStore() {
+  if (window.location.hostname.includes('closydev.site')) {
+    window.location.href = '/frontend/index.html';
+  } else {
+    window.location.href = '../index.html';
+  }
+}
+
+// Real-time clock
+function updateLiveClock() {
+  const clockEl = document.getElementById("liveTime");
+  if (clockEl) clockEl.textContent = new Date().toLocaleTimeString("tr-TR");
+}
+updateLiveClock();
+setInterval(updateLiveClock, 1000);
+
+// Initial start
+try {
+  renderAll();
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+  }
+} catch (err) {
+  console.error('Admin dashboard initial render error:', err);
+}
+
+// Background order synchronizer (Polls every 8 seconds for live incoming orders)
+setInterval(() => {
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+  }
+}, 8000);
+</script>
+</body>
+</html>
