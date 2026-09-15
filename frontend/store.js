@@ -18,6 +18,19 @@
     const DEFAULT_USERS = [];
 
   const DEFAULT_PROFILE = null;
+  const ADMIN_ACCOUNT = {
+    id: 'usr_admin',
+    name: 'Sistem Yöneticisi',
+    email: 'admin@digistore.com',
+    phone: '+90 500 000 00 00',
+    role: 'Yönetici (Admin)',
+    password: 'Admin123!',
+    provider: 'local',
+    isAdmin: true,
+    avatar: null,
+    createdAt: '2026-01-01'
+  };
+
 
   const DEFAULT_CATEGORIES = [
     { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
@@ -164,9 +177,13 @@
     getUsers() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_USERS);
-        return raw ? JSON.parse(raw) : DEFAULT_USERS;
+        const list = raw ? JSON.parse(raw) : [];
+        if (!list.some(u => u.email && u.email.toLowerCase() === 'admin@digistore.com')) {
+          list.unshift(ADMIN_ACCOUNT);
+        }
+        return list;
       } catch (e) {
-        return DEFAULT_USERS;
+        return [ADMIN_ACCOUNT];
       }
     },
 
@@ -182,6 +199,13 @@
       } catch (e) {
         return { loggedIn: false };
       }
+    },
+
+    
+    isAdmin() {
+      if (!this.isLoggedIn()) return false;
+      const u = this.getCurrentUser();
+      return !!(u && (u.isAdmin === true || (u.email && u.email.toLowerCase() === 'admin@digistore.com') || u.role === 'Yönetici (Admin)'));
     },
 
     isLoggedIn() {

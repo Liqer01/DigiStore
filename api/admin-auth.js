@@ -13,7 +13,7 @@ module.exports = (req, res) => {
     return res.status(403).json({
       allowed: false,
       clientIp: clientIp,
-      error: 'Eri?im reddedildi: Y?netici paneli yaln?zca yetkili IP adresine a??kt?r.'
+      error: 'Erisim engellendi: Yonetim paneli yalnizca yetkili IP adresine tahsis edilmistir.'
     });
   }
 
