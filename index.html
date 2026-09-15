@@ -11,6 +11,8 @@
 <meta property="og:image" content="logo.png">
 <script>
 (async function() {
+  const currentPath = (window.location.pathname || '').toLowerCase();
+  if (!currentPath.includes('admin')) return;
   try {
     const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? (window.location.port === '3001' ? '' : 'http://localhost:3001') : '';
     const res = await fetch(apiBase + '/api/admin-auth');
@@ -49,6 +51,8 @@
 // Admin Account Verification (Strictly requires admin@digistore.com login)
 (function() {
   function verifyAdminAccess() {
+    const currentPath = (window.location.pathname || '').toLowerCase();
+    if (!currentPath.includes('admin')) return;
     if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.isAdmin()) {
       document.documentElement.innerHTML = `
         <head><title>401 - Yetkisiz Erisim</title><meta name="viewport" content="width=device-width,initial-scale=1"></head>
