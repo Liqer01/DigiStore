@@ -11,6 +11,8 @@
 <meta property="og:image" content="logo.png">
 <script>
 (async function() {
+  const currentPath = (window.location.pathname || '').toLowerCase();
+  if (!currentPath.includes('admin')) return;
   try {
     const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? (window.location.port === '3001' ? '' : 'http://localhost:3001') : '';
     const res = await fetch(apiBase + '/api/admin-auth');
@@ -49,6 +51,8 @@
 // Admin Account Verification (Strictly requires admin@digistore.com login)
 (function() {
   function verifyAdminAccess() {
+    const currentPath = (window.location.pathname || '').toLowerCase();
+    if (!currentPath.includes('admin')) return;
     if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.isAdmin()) {
       document.documentElement.innerHTML = `
         <head><title>401 - Yetkisiz Erisim</title><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -593,6 +597,12 @@
       Lisans Anahtarları
     </div>
 
+    <div class="nav-item" onclick="switchTab('destek',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      Canlı Destek
+      <span id="supportUnreadBadge" style="display:none;margin-left:auto;background:#ef4444;color:#fff;font-size:10px;padding:2px 7px;border-radius:9999px;font-weight:700;">0</span>
+    </div>
+
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4b5563;padding:16px 24px 6px;">
       GÜVENLİK &amp; SİSTEM
     </div>
@@ -1015,6 +1025,75 @@
       </div>
     </div>
 
+    <!-- 9. CANLI DESTEK TAB -->
+    <div id="tab-destek" class="tab-content">
+      <div style="display:flex;gap:20px;height:calc(100vh - 160px);min-height:560px;">
+        
+        <!-- Left: Conversations List -->
+        <div class="apple-card" style="width:340px;display:flex;flex-direction:column;padding:18px;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div style="font-size:15px;font-weight:700;color:#fff;">Canlı Sohbetler</div>
+            <span id="supportTotalActiveBadge" class="status-pill status-ok" style="font-size:11px;">0 Sohbet</span>
+          </div>
+
+          <!-- Search Input -->
+          <div style="margin-bottom:12px;">
+            <input type="text" id="supportSearchInput" placeholder="Müşteri veya mesaj ara..." oninput="renderSupportConversations()" style="font-size:12.5px;padding:8px 12px;" />
+          </div>
+
+          <!-- List Scroll -->
+          <div id="supportConversationsList" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Chat Box Area -->
+        <div class="apple-card" style="flex:1;display:flex;flex-direction:column;padding:0;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">
+          
+          <!-- Header -->
+          <div id="supportChatHeader" style="padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div id="supportActiveAvatar" style="width:38px;height:38px;border-radius:50%;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;color:#a855f7;font-weight:700;font-size:14px;">
+                D
+              </div>
+              <div>
+                <div id="supportActiveName" style="font-size:15px;font-weight:700;color:#fff;">Bir sohbet seçin</div>
+                <div id="supportActiveMeta" style="font-size:12px;color:#86868b;">Müşteri Destek Masası</div>
+              </div>
+            </div>
+            <div id="supportHeaderActions" style="display:flex;align-items:center;gap:8px;">
+              <!-- Action buttons -->
+            </div>
+          </div>
+
+          <!-- Message Thread -->
+          <div id="supportMessagesThread" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:#050508;">
+            <div style="text-align:center;color:#86868b;padding:60px 20px;font-size:13px;">
+              Soldaki listeden bir müşteri seçerek canlı sohbete katılabilirsiniz.
+            </div>
+          </div>
+
+          <!-- Canned Quick Responses -->
+          <div style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:8px;overflow-x:auto;">
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Merhaba! Siparişinizi ve lisans durumunuzu hemen kontrol ediyorum.')">Siparişi Kontrol Et</button>
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Lisans anahtarınız e-posta adresinize ve Hesabım > Lisanslarım sayfasına iletilmiştir.')">Lisans İletildi</button>
+            <button type="button" class="btn-pill-dark" style="font-size:11px;padding:4px 10px;white-space:nowrap;" onclick="useCannedResponse('Ödemeniz sistemde onaylanmıştır. Keyifli kullanımlar dileriz.')">Ödeme Onaylandı</button>
+          </div>
+
+          <!-- Message Input Form -->
+          <form id="supportReplyForm" onsubmit="handleSupportAdminSend(event)" style="padding:14px 18px;border-top:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);display:flex;gap:10px;">
+            <input type="text" id="supportAdminInput" placeholder="Müşteriye yanıt yazın..." style="flex:1;" autocomplete="off" />
+            <button type="submit" class="btn-pill-white" style="padding:10px 20px;font-weight:700;display:flex;align-items:center;gap:6px;">
+              <span>Gönder</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1182,6 +1261,7 @@ function renderAll() {
   renderCategoriesView();
   renderCustomersView();
   renderLicensesView();
+  renderSupportConversations();
   populateCategorySelects();
 }
 
@@ -1210,6 +1290,18 @@ function updateStats() {
 
   const custBadge = document.getElementById("customerCountBadge");
   if (custBadge) custBadge.textContent = (stats.customers || 0) + " Kayıtlı Müşteri";
+
+  const unreadSupport = (typeof DigiStoreDB.getSupportUnreadAdminCount === 'function') ? DigiStoreDB.getSupportUnreadAdminCount() : 0;
+  const supBadge = document.getElementById("supportUnreadBadge");
+  if (supBadge) {
+    supBadge.textContent = unreadSupport;
+    supBadge.style.display = unreadSupport > 0 ? "inline-block" : "none";
+  }
+
+  const activeTotalBadge = document.getElementById("supportTotalActiveBadge");
+  if (activeTotalBadge && typeof DigiStoreDB.getSupportChats === 'function') {
+    activeTotalBadge.textContent = DigiStoreDB.getSupportChats().length + " Sohbet";
+  }
 }
 
 // ─── DASHBOARD RECENT ORDERS ─────────────────────────────────────────
@@ -1712,6 +1804,173 @@ function handleLicenseGenerate(e) {
   showDynamicIsland('Lisans Üretildi', `Anahtar: ${key}`, 'success');
 }
 
+// ─── CANLI DESTEK ENGINE (ADMIN) ────────────────────────────────────
+let currentSelectedChatId = null;
+
+function renderSupportConversations() {
+  const listEl = document.getElementById('supportConversationsList');
+  if (!listEl || typeof DigiStoreDB === 'undefined' || typeof DigiStoreDB.getSupportChats !== 'function') return;
+
+  const searchVal = (document.getElementById('supportSearchInput')?.value || '').toLowerCase().trim();
+  let chats = DigiStoreDB.getSupportChats();
+
+  if (searchVal) {
+    chats = chats.filter(c => 
+      (c.userName && c.userName.toLowerCase().includes(searchVal)) ||
+      (c.userEmail && c.userEmail.toLowerCase().includes(searchVal)) ||
+      (c.messages && c.messages.some(m => m.text && m.text.toLowerCase().includes(searchVal)))
+    );
+  }
+
+  if (!chats.length) {
+    listEl.innerHTML = '<div style="padding:28px 12px;text-align:center;color:#86868b;font-size:12px;">Henüz aktif destek talebi yok.</div>';
+    if (!currentSelectedChatId) renderActiveSupportChat();
+    return;
+  }
+
+  if (!currentSelectedChatId && chats.length > 0) {
+    currentSelectedChatId = chats[0].id;
+  }
+
+  listEl.innerHTML = chats.map(c => {
+    const isSelected = c.id === currentSelectedChatId;
+    const lastMsg = (c.messages && c.messages.length) ? c.messages[c.messages.length - 1] : { text: '', time: '' };
+    const unread = c.unreadByAdmin || 0;
+    const initial = (c.userName || 'M').charAt(0).toUpperCase();
+
+    return `
+      <div onclick="selectSupportChat('${c.id}')" style="padding:12px 14px;border-radius:14px;background:${isSelected ? 'rgba(168,85,247,0.14)' : 'rgba(255,255,255,0.03)'};border:1px solid ${isSelected ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.06)'};cursor:pointer;transition:all .18s;display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:34px;height:34px;border-radius:50%;background:${isSelected ? '#a855f7' : 'rgba(255,255,255,0.08)'};color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">
+          ${initial}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+            <span style="font-size:13px;font-weight:700;color:#ffffff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.userName || 'Müşteri'}</span>
+            <span style="font-size:10.5px;color:#86868b;">${lastMsg.time || ''}</span>
+          </div>
+          <div style="font-size:11.5px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;">
+            ${lastMsg.text || 'Yeni sohbet'}
+          </div>
+        </div>
+        ${unread > 0 ? `<span style="background:#ef4444;color:#fff;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:9999px;margin-top:2px;">${unread}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  renderActiveSupportChat();
+}
+
+function selectSupportChat(chatId) {
+  currentSelectedChatId = chatId;
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.markSupportReadByAdmin === 'function') {
+    DigiStoreDB.markSupportReadByAdmin(chatId);
+  }
+  renderSupportConversations();
+  updateStats();
+}
+
+function renderActiveSupportChat() {
+  const threadEl = document.getElementById('supportMessagesThread');
+  const nameEl = document.getElementById('supportActiveName');
+  const metaEl = document.getElementById('supportActiveMeta');
+  const avatarEl = document.getElementById('supportActiveAvatar');
+  const actionsEl = document.getElementById('supportHeaderActions');
+  if (!threadEl) return;
+
+  if (!currentSelectedChatId) {
+    if (nameEl) nameEl.textContent = 'Bir sohbet seçin';
+    if (metaEl) metaEl.textContent = 'Müşteri Destek Masası';
+    threadEl.innerHTML = '<div style="text-align:center;color:#86868b;padding:60px 20px;font-size:13px;">Soldaki listeden bir müşteri seçerek canlı sohbete katılabilirsiniz.</div>';
+    if (actionsEl) actionsEl.innerHTML = '';
+    return;
+  }
+
+  const chat = DigiStoreDB.getSupportChat(currentSelectedChatId);
+  if (!chat) {
+    currentSelectedChatId = null;
+    return;
+  }
+
+  if (nameEl) nameEl.textContent = chat.userName || 'Misafir Müşteri';
+  if (metaEl) metaEl.textContent = (chat.userEmail ? chat.userEmail + ' · ' : '') + 'Başlangıç: ' + (chat.createdAt || '');
+  if (avatarEl) avatarEl.textContent = (chat.userName || 'M').charAt(0).toUpperCase();
+
+  if (actionsEl) {
+    actionsEl.innerHTML = `
+      <button onclick="deleteSupportChatAdmin('${chat.id}')" class="btn-pill-danger" style="font-size:11px;padding:5px 12px;">
+        Sohbeti Sil
+      </button>
+    `;
+  }
+
+  threadEl.innerHTML = (chat.messages || []).map(m => {
+    const isUser = m.sender === 'user';
+    if (isUser) {
+      return `
+        <div style="align-self:flex-start;max-width:75%;display:flex;flex-direction:column;align-items:flex-start;">
+          <span style="font-size:10.5px;color:#86868b;margin-bottom:3px;padding-left:2px;">${chat.userName || 'Müşteri'}</span>
+          <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#ffffff;padding:10px 14px;border-radius:14px 14px 14px 2px;font-size:13px;line-height:1.45;word-break:break-word;">
+            ${m.text}
+          </div>
+          <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
+        </div>
+      `;
+    } else {
+      return `
+        <div style="align-self:flex-end;max-width:75%;display:flex;flex-direction:column;align-items:flex-end;">
+          <span style="font-size:10.5px;color:#a855f7;font-weight:600;margin-bottom:3px;padding-right:2px;">${m.senderName || 'Destek Temsilcisi'}</span>
+          <div style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#ffffff;padding:10px 14px;border-radius:14px 14px 2px 14px;font-size:13px;line-height:1.42;box-shadow:0 4px 14px rgba(168,85,247,0.25);word-break:break-word;">
+            ${m.text}
+          </div>
+          <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''}</span>
+        </div>
+      `;
+    }
+  }).join('');
+
+  threadEl.scrollTop = threadEl.scrollHeight;
+}
+
+function handleSupportAdminSend(e) {
+  e.preventDefault();
+  if (!currentSelectedChatId) {
+    showDynamicIsland('Hata', 'Lütfen önce bir sohbet seçin', 'warning');
+    return;
+  }
+  const inp = document.getElementById('supportAdminInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+
+  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'admin@digistore.com');
+  renderSupportConversations();
+  renderActiveSupportChat();
+  showDynamicIsland('Mesaj Gönderildi', 'Müşteriye canlı iletildi', 'success');
+}
+
+function useCannedResponse(text) {
+  const inp = document.getElementById('supportAdminInput');
+  if (inp) {
+    inp.value = text;
+    inp.focus();
+  }
+}
+
+function deleteSupportChatAdmin(chatId) {
+  showIosAlert({
+    title: 'Sohbeti Sil?',
+    message: 'Bu müşteri destek kaydı ve mesaj geçmişi kalıcı olarak silinecektir.',
+    type: 'warning',
+    confirmText: 'Sil',
+    onConfirm: () => {
+      DigiStoreDB.deleteSupportChat(chatId);
+      currentSelectedChatId = null;
+      renderSupportConversations();
+      showDynamicIsland('Sohbet Silindi', 'Destek kaydı kaldırıldı', 'success');
+    }
+  });
+}
+
 // ─── TAB SWITCHER ───────────────────────────────────────────────────
 function switchTab(id, el) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
@@ -1728,6 +1987,7 @@ function switchTab(id, el) {
     kategoriler: "Kategori Yönetimi",
     musteriler: "Müşteri Portföyü",
     lisanslar: "Lisans Anahtarları",
+    destek: "Canlı Destek Masası",
     guard: "DigiGuard Kalkan Monitörü",
     ayarlar: "Sistem Ayarları"
   };
