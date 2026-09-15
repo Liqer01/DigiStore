@@ -882,10 +882,20 @@
     getProducts() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-        return raw ? JSON.parse(raw) : DEFAULT_PRODUCTS;
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+        return DEFAULT_PRODUCTS;
       } catch (e) {
         return DEFAULT_PRODUCTS;
       }
+    },
+
+    restoreDefaultProducts() {
+      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(DEFAULT_PRODUCTS));
+      this.broadcastChange('products');
+      return DEFAULT_PRODUCTS;
     },
 
     getProductById(id) {
