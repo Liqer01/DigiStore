@@ -7,62 +7,17 @@
 (function(window) {
   'use strict';
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v2';
-  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v2';
-  const STORAGE_KEY_ORDERS = 'digistore_orders_v2';
-  const STORAGE_KEY_PROFILE = 'digistore_profile_v2';
-  const STORAGE_KEY_USERS = 'digistore_users_v2';
-  const STORAGE_KEY_SESSION = 'digistore_session_v2';
-  const STORAGE_KEY_EMAILS = 'digistore_emails_v2';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v3';
+  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v3';
+  const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
+  const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
+  const STORAGE_KEY_USERS = 'digistore_users_v3';
+  const STORAGE_KEY_SESSION = 'digistore_session_v3';
+  const STORAGE_KEY_EMAILS = 'digistore_emails_v3';
 
-  const DEFAULT_USERS = [
-    {
-      id: 'usr_1',
-      name: 'Eren Zeybek',
-      email: 'erenzeybek01@gmail.com',
-      phone: '+90 532 999 88 77',
-      role: 'Google Doğrulanmış',
-      password: '',
-      provider: 'google',
-      avatar: null,
-      createdAt: '2026-02-15'
-    },
-    {
-      id: 'usr_2',
-      name: 'Liqer Ford',
-      email: 'zeybekeren896@gmail.com',
-      phone: '+90 532 888 77 66',
-      role: 'Google Doğrulanmış',
-      password: '',
-      provider: 'google',
-      avatar: null,
-      createdAt: '2026-02-15'
-    },
-    {
-      id: 'usr_3',
-      name: 'Eren Zeybek',
-      email: 'zeybekeren000@gmail.com',
-      phone: '+90 532 777 66 55',
-      role: 'Google Doğrulanmış',
-      password: '',
-      provider: 'google',
-      avatar: null,
-      createdAt: '2026-02-15'
-    },
-    {
-      id: 'usr_4',
-      name: '6closy',
-      email: '6closy@gmail.com',
-      phone: '+90 530 111 22 33',
-      role: 'Google Doğrulanmış',
-      password: '',
-      provider: 'google',
-      avatar: null,
-      createdAt: '2026-02-15'
-    }
-  ];
+    const DEFAULT_USERS = [];
 
-  const DEFAULT_PROFILE = DEFAULT_USERS[0];
+  const DEFAULT_PROFILE = null;
 
   const DEFAULT_CATEGORIES = [
     { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
@@ -160,82 +115,16 @@
     }
   ];
 
-  const DEFAULT_ORDERS = [
-    {
-      id: "DS-00142",
-      customer: "Ahmet Yılmaz",
-      email: "ahmet@gmail.com",
-      phone: "+90 532 100 2030",
-      product: "Pro Discord Bot v4.0",
-      items: [{ id: 1, name: "Pro Discord Bot v4.0", qty: 1, price: 149 }],
-      amount: 179,
-      status: "completed",
-      date: "Bugün 14:32",
-      method: "Kredi Kartı (Shopier)",
-      licenseKeys: ["DS-PRO-BOT-8842-AF9X"],
-      invoiceType: "Bireysel (TC: 12345678901)"
-    },
-    {
-      id: "DS-00141",
-      customer: "Zeynep Kaya",
-      email: "zeynep@email.com",
-      phone: "+90 544 222 3344",
-      product: "Figma UI Kit 2026",
-      items: [{ id: 5, name: "Figma UI Kit 2026", qty: 1, price: 129 }],
-      amount: 155,
-      status: "completed",
-      date: "Dün 18:12",
-      method: "Kredi Kartı (PayTR)",
-      licenseKeys: ["DS-FGM-UI-9912-KL88"],
-      invoiceType: "Bireysel (TC: 98765432109)"
-    },
-    {
-      id: "DS-00140",
-      customer: "Murat Demir",
-      email: "murat@hotmail.com",
-      phone: "+90 555 888 7766",
-      product: "Windows 11 Pro",
-      items: [{ id: 4, name: "Windows 11 Pro Orijinal Lisans", qty: 1, price: 89 }],
-      amount: 107,
-      status: "completed",
-      date: "13 Eyl 11:05",
-      method: "Havale / EFT",
-      licenseKeys: ["DS-W11-PRO-4412-ZZ01"],
-      invoiceType: "Kurumsal (Demir Yazılım A.Ş. / VKN: 1122334455)"
-    },
-    {
-      id: "DS-00139",
-      customer: "Elif Aydın",
-      email: "elif@gmail.com",
-      phone: "+90 533 444 5566",
-      product: "Python Kursu",
-      items: [{ id: 3, name: "Python Otomasyon Kursu", qty: 1, price: 199 }],
-      amount: 239,
-      status: "pending",
-      date: "12 Eyl 09:30",
-      method: "Havale / EFT",
-      licenseKeys: ["DS-PY-AUTO-3312-PENDING"],
-      invoiceType: "Bireysel"
-    },
-    {
-      id: "DS-00138",
-      customer: "Can Yıldız",
-      email: "can@email.com",
-      phone: "+90 530 999 1122",
-      product: "Next.js Template",
-      items: [{ id: 2, name: "Next.js 14 E-Ticaret Suite", qty: 1, price: 299 }],
-      amount: 359,
-      status: "pending",
-      date: "12 Eyl 01:15",
-      method: "Kredi Kartı",
-      licenseKeys: ["DS-NXT-14-1100-PENDING"],
-      invoiceType: "Bireysel"
-    }
-  ];
+    const DEFAULT_ORDERS = [];
 
   const DigiStoreDB = {
     // ─── INITIALIZATION ──────────────────────────────────────────────────
     init() {
+      // Purge any legacy test storage from user browsers
+      try {
+        ['digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
+      } catch(e) {}
+
       const savedCats = this.getCategories();
       if (!savedCats || savedCats.length <= 1) {
         this.saveCategories(DEFAULT_CATEGORIES);
@@ -250,16 +139,19 @@
         this.saveUsers(DEFAULT_USERS);
       }
       if (localStorage.getItem(STORAGE_KEY_SESSION) === null) {
-        // Default session starts logged in as Zeybe
         localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
-          loggedIn: true,
-          userId: DEFAULT_USERS[0].id,
-          email: DEFAULT_USERS[0].email
+          loggedIn: false,
+          userId: null,
+          email: null
         }));
       }
-      if (!localStorage.getItem(STORAGE_KEY_PROFILE)) {
-        this.saveUserProfile(DEFAULT_PROFILE);
-      }
+      // Ensure guests start cleanly with NO leaked profile
+      try {
+        const sess = this.getSession();
+        if (!sess || !sess.loggedIn) {
+          localStorage.removeItem(STORAGE_KEY_PROFILE);
+        }
+      } catch (e) {}
       if (!localStorage.getItem(STORAGE_KEY_EMAILS)) {
         this.initDefaultEmails();
       }
@@ -473,6 +365,93 @@
       this.broadcastChange('profile');
       return { success: true, user };
     },
+    loginWithOAuth(provider, oauthUser) {
+      const users = this.getUsers();
+      const prov = (provider || 'oauth').toLowerCase();
+      const email = ((oauthUser && (oauthUser.email || oauthUser.mail)) || ((oauthUser.username || 'kullanici') + '@' + prov + '.user')).toLowerCase().trim();
+      const name = (oauthUser && (oauthUser.name || oauthUser.username || oauthUser.displayName)) || email.split('@')[0];
+      let user = users.find(u => (u.email && u.email.toLowerCase() === email) || (u.oauthId && u.oauthId === oauthUser.id));
+
+      const roleName = prov === 'discord' ? 'Discord Do?rulanm??' : (prov === 'github' ? 'GitHub Do?rulanm??' : (prov.toUpperCase() + ' Do?rulanm??'));
+
+      if (!user) {
+        user = {
+          id: 'usr_' + prov.slice(0, 2) + '_' + Date.now().toString(36),
+          oauthId: oauthUser.id || null,
+          name: name,
+          email: email,
+          phone: oauthUser.phone || '',
+          role: roleName,
+          password: '',
+          provider: prov,
+          avatar: oauthUser.avatar || oauthUser.avatar_url || null,
+          createdAt: new Date().toISOString()
+        };
+        users.push(user);
+        this.saveUsers(users);
+      } else {
+        if (oauthUser.avatar || oauthUser.avatar_url) user.avatar = oauthUser.avatar || oauthUser.avatar_url;
+        if (name) user.name = name;
+        user.provider = prov;
+        user.role = roleName;
+        this.saveUsers(users);
+      }
+
+      const session = {
+        loggedIn: true,
+        userId: user.id,
+        email: user.email,
+        loginTime: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(session));
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(user));
+      this.broadcastChange('auth');
+      this.broadcastChange('session');
+      this.broadcastChange('profile');
+      return { success: true, user };
+    },
+
+    loginWithDiscord(discordUser) {
+      return this.loginWithOAuth('discord', discordUser);
+    },
+
+    loginWithGithub(githubUser) {
+      return this.loginWithOAuth('github', githubUser);
+    },
+
+    startDiscordAuth(options = {}) {
+      const width = 580, height = 750;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+      const url = this.getApiBaseUrl() + '/api/auth-discord';
+
+      const popup = window.open(
+        url,
+        'DiscordAuthPopup',
+        'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',status=no,resizable=yes'
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        window.location.href = url;
+      }
+    },
+
+    startGithubAuth(options = {}) {
+      const width = 580, height = 750;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+      const url = this.getApiBaseUrl() + '/api/auth-github';
+
+      const popup = window.open(
+        url,
+        'GithubAuthPopup',
+        'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',status=no,resizable=yes'
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        window.location.href = url;
+      }
+    },
 
     getGoogleClientId() {
       const stored = localStorage.getItem('digistore_google_client_id');
@@ -519,6 +498,18 @@
 
     checkOAuthRedirect() {
       if (typeof window === 'undefined') return;
+      // Check for stored OAuth redirect session
+      try {
+        const storedOauth = localStorage.getItem('digistore_oauth_user');
+        if (storedOauth) {
+          const parsed = JSON.parse(storedOauth);
+          localStorage.removeItem('digistore_oauth_user');
+          if (parsed && parsed.user && parsed.provider) {
+            DigiStoreDB.loginWithOAuth(parsed.provider, parsed.user);
+          }
+        }
+      } catch (e) {}
+
       if (window.location.hash && window.location.hash.includes('access_token=')) {
         try {
           const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -699,8 +690,8 @@
         document.getElementById('g-setup-fast-btn').onclick = () => {
           modal.remove();
           const authRes = DigiStoreDB.loginWithGoogle({
-            email: 'erenzeybek01@gmail.com',
-            name: 'Eren Zeybek'
+            email: 'kullanici@gmail.com',
+            name: 'Kullan?c?'
           });
           if (onSuccess) onSuccess(authRes.user);
         };
@@ -944,6 +935,31 @@
     },
 
     // ─── ORDERS ─────────────────────────────────────────────────────────
+    
+    getUserOrders(userEmail) {
+      if (!userEmail) return [];
+      const orders = this.getOrders();
+      const norm = userEmail.toLowerCase().trim();
+      return orders.filter(o => o.email && o.email.toLowerCase().trim() === norm);
+    },
+
+    getUserLicenses(userEmail) {
+      if (!userEmail) return [];
+      const userOrders = this.getUserOrders(userEmail);
+      const licenses = [];
+      userOrders.forEach(o => {
+        (o.licenseKeys || []).forEach(k => {
+          licenses.push({
+            orderId: o.id,
+            product: o.product,
+            key: k,
+            date: o.date
+          });
+        });
+      });
+      return licenses;
+    },
+
     getOrders() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_ORDERS);
@@ -1276,38 +1292,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
     },
 
     initDefaultEmails() {
-      const orders = this.getOrders();
-      const defaultMails = [];
-
-      orders.slice(0, 3).forEach(o => {
-        const to = o.email || 'erenzeybek01@gmail.com';
-        const customer = o.customer || 'Eren Zeybek';
-        const subject = `Siparişiniz & Lisans Anahtarlarınız Teslim Edildi: #${o.id}`;
-        const html = this.generateEmailHtml(o, to, customer);
-        const plain = this.generateEmailPlainText(o, to, customer);
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
-        const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
-
-        defaultMails.push({
-          id: 'EML-' + Math.floor(100000 + Math.random() * 900000),
-          orderId: o.id,
-          to: to,
-          customer: customer,
-          subject: subject,
-          preview: `${o.product} lisans anahtarlarınız ve e-Arşiv faturanız hazırlandı.`,
-          html: html,
-          plain: plain,
-          gmailUrl: gmailUrl,
-          mailtoUrl: mailtoUrl,
-          date: o.date || '14 Eyl 19:45',
-          timestamp: Date.now() - 3600000,
-          status: 'Teslim Edildi',
-          read: true,
-          licenseKeys: o.licenseKeys || []
-        });
-      });
-
-      this.saveEmails(defaultMails);
+      this.saveEmails([]);
     },
 
     // ─── CUSTOMERS (DERIVED FROM ORDERS) ────────────────────────────────

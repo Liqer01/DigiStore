@@ -1424,10 +1424,15 @@ function processPayment() {
   document.getElementById('step3').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
   document.getElementById('step3lbl').style.color = '#ffffff';
 
-  const email = document.getElementById('email').value.trim() || 'erenzeybek01@gmail.com';
-  const name = (document.getElementById('fname')?.value || 'Eren').trim();
-  const surname = (document.getElementById('lname')?.value || 'Zeybek').trim();
-  const fullName = (name + ' ' + surname).trim() || 'Eren Zeybek';
+  const email = document.getElementById('email').value.trim();
+  const name = (document.getElementById('fname')?.value || '').trim();
+  const surname = (document.getElementById('lname')?.value || '').trim();
+  const fullName = (name + ' ' + surname).trim();
+
+  if (!email || !fullName) {
+    showIosAlert({ title: 'Eksik Bilgi', message: 'L?tfen ad, soyad ve ge?erli e-posta adresinizi girin.', type: 'error' });
+    return;
+  }
   const phone = document.getElementById('phone').value.trim();
 
   const orderId = 'DS-' + Math.floor(100000 + Math.random() * 900000);

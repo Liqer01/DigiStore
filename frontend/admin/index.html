@@ -4,6 +4,37 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>DigiStore — Yönetim Paneli</title>
+<script>
+(async function() {
+  try {
+    const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? (window.location.port === '3001' ? '' : 'http://localhost:3001') : '';
+    const res = await fetch(apiBase + '/api/admin-auth');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      document.documentElement.innerHTML = `
+        <head><title>403 - Yetkisiz Erisim</title><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+        <body style="background:#000000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;box-sizing:border-box;text-align:center;">
+          <div style="background:rgba(18,18,24,0.9);border:1px solid rgba(255,69,58,0.35);border-radius:24px;padding:40px 32px;max-width:460px;width:100%;box-shadow:0 30px 60px rgba(0,0,0,0.8);backdrop-filter:blur(20px);">
+            <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,69,58,0.12);border:1px solid rgba(255,69,58,0.25);display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px;color:#ff453a;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 8px;color:#fff;letter-spacing:-0.3px;">Yonetici Erisimi Engellendi</h2>
+            <p style="font-size:13.5px;color:#86868b;line-height:1.6;margin:0 0 20px;">Bu yonetim paneli guvenlik protokolleri geregince yalnizca yetkilendirilmis IP adresine tahsis edilmistir.</p>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:12px;font-size:12px;font-family:monospace;color:#a1a1a6;margin-bottom:24px;">
+              Tespit Edilen IP: <span style="color:#ff453a;font-weight:700;">${data.clientIp || 'Yetkisiz IP'}</span>
+            </div>
+            <a href="/" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Magazaya Don</a>
+          </div>
+        </body>`;
+      window.stop();
+    }
+  } catch (e) {
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.warn('IP verification could not be completed.');
+    }
+  }
+})();
+</script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
