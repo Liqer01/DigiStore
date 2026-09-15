@@ -279,6 +279,10 @@
       return updated;
     },
 
+    updateUserAvatar(avatarDataUrl) {
+      return this.saveUserProfile({ avatar: avatarDataUrl || null });
+    },
+
     login(email, password) {
       if (!email || !email.trim()) {
         return { success: false, message: 'Lütfen geçerli bir e-posta adresi girin.' };
