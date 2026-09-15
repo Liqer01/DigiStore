@@ -1153,30 +1153,48 @@ function renderAll() {
 // ─── STATS ──────────────────────────────────────────────────────────
 function updateStats() {
   const stats = DigiStoreDB.getStats();
-  document.getElementById("statRevenue").textContent = '₺' + stats.revenue.toLocaleString("tr-TR");
-  document.getElementById("statOrders").textContent = stats.totalOrders;
-  document.getElementById("statPendingOrders").textContent = stats.pendingOrders + " bekleyen onay";
-  document.getElementById("statProducts").textContent = stats.activeProducts;
-  document.getElementById("statCategories").textContent = DigiStoreDB.getCategories().filter(c => c.slug !== 'all').length + " kategori bağlı";
-  document.getElementById("pendingBadge").textContent = stats.pendingOrders;
-  document.getElementById("productCountBadge").textContent = stats.activeProducts;
-  document.getElementById("customerCountBadge").textContent = stats.customers + " Kayıtlı Müşteri";
+  const licenses = (typeof DigiStoreDB.getLicenses === 'function') ? DigiStoreDB.getLicenses() : [];
+
+  const revEl = document.getElementById("statRevenue");
+  if (revEl) revEl.textContent = '₺' + (stats.revenue || 0).toLocaleString("tr-TR");
+
+  const ordEl = document.getElementById("statOrders");
+  if (ordEl) ordEl.textContent = stats.totalOrders || 0;
+
+  const prodEl = document.getElementById("statProducts");
+  if (prodEl) prodEl.textContent = stats.activeProducts || 0;
+
+  const licEl = document.getElementById("statLicenses");
+  if (licEl) licEl.textContent = licenses.length || 0;
+
+  const pendingBadge = document.getElementById("pendingBadge");
+  if (pendingBadge) pendingBadge.textContent = stats.pendingOrders || 0;
+
+  const prodBadge = document.getElementById("productCountBadge");
+  if (prodBadge) prodBadge.textContent = stats.activeProducts || 0;
+
+  const custBadge = document.getElementById("customerCountBadge");
+  if (custBadge) custBadge.textContent = (stats.customers || 0) + " Kayıtlı Müşteri";
 }
 
 // ─── DASHBOARD RECENT ORDERS ─────────────────────────────────────────
 function renderDashboardOrders() {
   const orders = DigiStoreDB.getOrders().slice(0, 5);
-  const tbody = document.getElementById("dashboardOrdersTable");
+  const tbody = document.getElementById("dashOrdersTable");
+  if (!tbody) return;
+
   if (!orders.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#86868b;padding:24px;">Henüz sipariş yok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#86868b;padding:24px;">Henüz sipariş yok.</td></tr>`;
     return;
   }
   tbody.innerHTML = orders.map(o => `
     <tr>
       <td style="font-family:'JetBrains Mono',monospace;color:#60a5fa;font-weight:700;">#${o.id}</td>
-      <td style="color:#fff;font-weight:600;">${o.customer}</td>
+      <td style="color:#fff;font-weight:600;">${o.customer || 'İsimsiz Müşteri'}</td>
+      <td style="color:#cbd5e1;">${o.product || (o.items && o.items.length ? o.items[0].name : 'Dijital Ürün')}</td>
       <td style="color:#fff;font-weight:700;">₺${Number(o.amount).toLocaleString('tr-TR')}</td>
       <td>${renderStatusPill(o.status)}</td>
+      <td style="color:#86868b;font-size:12px;">${o.date || '-'}</td>
       <td><button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button></td>
     </tr>
   `).join('');
@@ -1764,12 +1782,29 @@ DigiStoreDB.onUpdate(() => {
 });
 
 // Real-time clock
-setInterval(() => {
-  document.getElementById("liveTime").textContent = new Date().toLocaleTimeString("tr-TR");
-}, 1000);
+function updateLiveClock() {
+  const clockEl = document.getElementById("liveTime");
+  if (clockEl) clockEl.textContent = new Date().toLocaleTimeString("tr-TR");
+}
+updateLiveClock();
+setInterval(updateLiveClock, 1000);
 
 // Initial start
-renderAll();
+try {
+  renderAll();
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+  }
+} catch (err) {
+  console.error('Admin dashboard initial render error:', err);
+}
+
+// Background order synchronizer (Polls every 8 seconds for live incoming orders)
+setInterval(() => {
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+  }
+}, 8000);
 </script>
 </body>
 </html>

@@ -2234,6 +2234,9 @@ if (typeof DigiStoreDB !== 'undefined') {
 renderAllData();
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.initGoogleIdentityServices();
+  if (typeof DigiStoreDB.syncRemoteOrders === 'function') {
+    DigiStoreDB.syncRemoteOrders().then(() => renderAllData());
+  }
 }
 if (window.location.hash) {
   const initialTab = window.location.hash.replace('#', '');

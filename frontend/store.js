@@ -1038,18 +1038,62 @@
       const emailRecord = this.sendOrderEmail(newOrder);
       newOrder.emailId = emailRecord.id;
 
+      // Asynchronously sync to backend orders API
+      try {
+        fetch(this.getApiBaseUrl() + '/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newOrder)
+        }).catch(() => {});
+      } catch (e) {}
+
       return newOrder;
+    },
+
+    async syncRemoteOrders() {
+      try {
+        const res = await fetch(this.getApiBaseUrl() + '/api/orders');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.orders) && data.orders.length) {
+            const local = this.getOrders();
+            let changed = false;
+            data.orders.forEach(ro => {
+              const idx = local.findIndex(lo => String(lo.id) === String(ro.id));
+              if (idx === -1) {
+                local.unshift(ro);
+                changed = true;
+              } else if (ro.status && local[idx].status !== ro.status) {
+                local[idx].status = ro.status;
+                changed = true;
+              }
+            });
+            if (changed) {
+              localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(local));
+              this.broadcastChange('orders');
+            }
+            return local;
+          }
+        }
+      } catch (e) {}
+      return this.getOrders();
     },
 
     updateOrderStatus(orderId, newStatus) {
       const orders = this.getOrders();
-      const order = orders.find(o => String(o.id) === String(orderId));
-      if (order) {
-        order.status = newStatus;
+      const o = orders.find(x => String(x.id) === String(orderId));
+      if (o) {
+        o.status = newStatus;
         this.saveOrders(orders);
+        try {
+          fetch(this.getApiBaseUrl() + '/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(o)
+          }).catch(() => {});
+        } catch (e) {}
         return true;
       }
-      return false;
     },
 
     // ─── EMAIL DELIVERY ENGINE & GMAIL INTEGRATION ──────────────────────
