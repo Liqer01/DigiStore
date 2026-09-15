@@ -1877,6 +1877,209 @@ pause
       };
     },
 
+    // ─── LIVE SUPPORT (CANLI DESTEK) ENGINE ────────────────────────────
+    getSupportChats() {
+      const raw = localStorage.getItem('digistore_support_chats');
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch (e) { return []; }
+    },
+
+    saveSupportChats(chats) {
+      localStorage.setItem('digistore_support_chats', JSON.stringify(chats));
+      this.broadcastChange('digistore_support_chats');
+    },
+
+    getSupportChat(id) {
+      const chats = this.getSupportChats();
+      return chats.find(c => c.id === id) || null;
+    },
+
+    deleteSupportChat(id) {
+      let chats = this.getSupportChats();
+      chats = chats.filter(c => c.id !== id);
+      this.saveSupportChats(chats);
+    },
+
+    getUserChatSession() {
+      let sessionId = localStorage.getItem('digistore_support_session_id');
+      if (!sessionId) {
+        sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+        localStorage.setItem('digistore_support_session_id', sessionId);
+      }
+
+      const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
+      const userEmail = (user && user.email) ? user.email : '';
+      const userName = (user && user.name) ? user.name : 'Misafir Müşteri';
+
+      let chats = this.getSupportChats();
+      let chat = null;
+
+      if (userEmail) {
+        chat = chats.find(c => c.userEmail && c.userEmail.toLowerCase() === userEmail.toLowerCase());
+      }
+      if (!chat) {
+        chat = chats.find(c => c.sessionId === sessionId);
+      }
+
+      if (!chat) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('tr-TR');
+
+        chat = {
+          id: 'chat_' + Date.now(),
+          sessionId: sessionId,
+          userEmail: userEmail || '',
+          userName: userName,
+          createdAt: dateStr + ' ' + timeStr,
+          lastUpdated: Date.now(),
+          unreadByAdmin: 0,
+          unreadByUser: 0,
+          status: 'active',
+          messages: [
+            {
+              id: 'm_init',
+              sender: 'support',
+              senderName: 'DigiStore Destek',
+              text: 'Merhaba! DigiStore Canlı Destek hattına hoş geldiniz. Size nasıl yardımcı olabiliriz?',
+              time: timeStr
+            }
+          ]
+        };
+        chats.unshift(chat);
+        this.saveSupportChats(chats);
+      } else {
+        if (userEmail && (!chat.userEmail || chat.userName === 'Misafir Müşteri')) {
+          chat.userEmail = userEmail;
+          chat.userName = userName;
+          this.saveSupportChats(chats);
+        }
+      }
+      return chat;
+    },
+
+    sendUserSupportMessage(text) {
+      if (!text || !text.trim()) return null;
+      const cleanText = text.trim();
+      const chat = this.getUserChatSession();
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+      const newMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        sender: 'user',
+        senderName: chat.userName || 'Müşteri',
+        text: cleanText,
+        time: timeStr
+      };
+
+      chat.messages.push(newMsg);
+      chat.lastUpdated = Date.now();
+      chat.unreadByAdmin = (chat.unreadByAdmin || 0) + 1;
+      chat.unreadByUser = 0;
+
+      const chats = this.getSupportChats();
+      const idx = chats.findIndex(c => c.id === chat.id);
+      if (idx !== -1) {
+        chats[idx] = chat;
+      } else {
+        chats.unshift(chat);
+      }
+      this.saveSupportChats(chats);
+
+      // Auto-reply helper
+      setTimeout(() => {
+        this.triggerSupportAutoReply(chat.id, cleanText);
+      }, 700);
+
+      return newMsg;
+    },
+
+    sendAgentSupportMessage(chatId, text) {
+      if (!text || !text.trim()) return null;
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (!chat) return null;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+      const newMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        sender: 'support',
+        senderName: 'Destek Yetkilisi',
+        text: text.trim(),
+        time: timeStr
+      };
+
+      chat.messages.push(newMsg);
+      chat.lastUpdated = Date.now();
+      chat.unreadByUser = (chat.unreadByUser || 0) + 1;
+      chat.unreadByAdmin = 0;
+
+      this.saveSupportChats(chats);
+      return newMsg;
+    },
+
+    markSupportReadByAdmin(chatId) {
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (chat && chat.unreadByAdmin > 0) {
+        chat.unreadByAdmin = 0;
+        this.saveSupportChats(chats);
+      }
+    },
+
+    markSupportReadByUser(chatId) {
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (chat && chat.unreadByUser > 0) {
+        chat.unreadByUser = 0;
+        this.saveSupportChats(chats);
+      }
+    },
+
+    getSupportUnreadAdminCount() {
+      const chats = this.getSupportChats();
+      return chats.reduce((sum, c) => sum + (c.unreadByAdmin || 0), 0);
+    },
+
+    triggerSupportAutoReply(chatId, userText) {
+      const lower = userText.toLowerCase();
+      let reply = null;
+
+      if (lower.includes('siparis') || lower.includes('sipariş') || lower.includes('kargo') || lower.includes('durum')) {
+        reply = 'Sipariş durumunuzu öğrenmek için sipariş kodunuzu iletebilir veya Hesabım sayfasındaki "Siparişlerim" menüsünden kontrol edebilirsiniz. Temsilcimiz de kaydınızı inceliyor.';
+      } else if (lower.includes('lisans') || lower.includes('key') || lower.includes('anahtar') || lower.includes('nerede')) {
+        reply = 'Lisans anahtarlarınız ödeme onayından hemen sonra teslim edilir. E-postanızı kontrol edebilir veya Hesabım > Lisanslarım menüsünden tek tıkla kopyalayabilirsiniz.';
+      } else if (lower.includes('odeme') || lower.includes('ödeme') || lower.includes('kart') || lower.includes('havale') || lower.includes('fatura')) {
+        reply = 'Ödemeleriniz 256-bit SSL ve 3D Secure güvencesiyle işlenir. Sipariş tamamlandığında e-Arşiv faturanız e-posta adresinize anında gönderilir.';
+      } else if (lower.includes('iade') || lower.includes('iptal')) {
+        reply = 'Dijital lisans iade ve değişim talepleriniz için sipariş numaranızı yazmanız yeterlidir. Temsilcimiz birazdan yardımcı olacaktır.';
+      } else if (lower.includes('admin') || lower.includes('yetkili') || lower.includes('temsilci') || lower.includes('canli') || lower.includes('merhaba') || lower.includes('selam')) {
+        reply = 'Merhaba! Talebiniz alındı. Canlı destek yetkilimiz şu anda çevrimiçi, birazdan sohbete katılarak size bilgi verecektir.';
+      }
+
+      if (reply) {
+        const chats = this.getSupportChats();
+        const chat = chats.find(c => c.id === chatId);
+        if (chat) {
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+          chat.messages.push({
+            id: 'bot_' + Date.now(),
+            sender: 'support',
+            senderName: 'DigiStore Akıllı Asistan',
+            text: reply,
+            time: timeStr
+          });
+          chat.lastUpdated = Date.now();
+          chat.unreadByUser = (chat.unreadByUser || 0) + 1;
+          this.saveSupportChats(chats);
+        }
+      }
+    },
+
     // ─── CROSS-TAB BROADCASTING ─────────────────────────────────────────
     listeners: [],
 
@@ -1906,4 +2109,213 @@ pause
   // Expose globally
   window.DigiStoreDB = DigiStoreDB;
 
+  // ─── STOREFRONT LIVE SUPPORT WIDGET (AUTO-MOUNT) ───────────────────
+  function mountStorefrontSupportWidget() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (window.location.pathname.toLowerCase().includes('/admin')) return;
+    if (document.getElementById('digiSupportLauncher')) return;
+
+    // Inject CSS
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      @keyframes supportPulse {
+        0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6); }
+        70% { box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+      }
+      @keyframes supportSlideUp {
+        from { opacity: 0; transform: translateY(16px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      #digiSupportWindow.open {
+        display: flex !important;
+        animation: supportSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    // Floating Button
+    const launcher = document.createElement('div');
+    launcher.id = 'digiSupportLauncher';
+    launcher.setAttribute('style', 'position:fixed;bottom:24px;right:24px;z-index:99980;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#121218 0%,#181824 100%);border:1px solid rgba(168,85,247,0.38);border-radius:9999px;padding:9px 18px 9px 12px;box-shadow:0 12px 36px rgba(0,0,0,0.7),0 0 20px rgba(168,85,247,0.22);cursor:pointer;transition:all .25s ease;user-select:none;');
+    launcher.onmouseover = function() { this.style.transform = 'translateY(-2px) scale(1.02)'; this.style.borderColor = 'rgba(168,85,247,0.6)'; };
+    launcher.onmouseout = function() { this.style.transform = 'translateY(0) scale(1)'; this.style.borderColor = 'rgba(168,85,247,0.38)'; };
+
+    launcher.innerHTML = `
+      <div style="position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.5);color:#ffffff;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;line-height:1.2;">
+        <span style="font-size:13.5px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">Canlı Destek</span>
+        <span style="font-size:10px;color:#34c759;font-weight:600;display:flex;align-items:center;gap:4px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#34c759;animation:supportPulse 2s infinite;display:inline-block;"></span>
+          Çevrimiçi
+        </span>
+      </div>
+      <span id="digiSupportBadge" style="display:none;background:#ff3b30;color:#ffffff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9999px;box-shadow:0 0 8px rgba(255,59,48,0.5);margin-left:2px;">1</span>
+    `;
+
+    // Chat Window
+    const win = document.createElement('div');
+    win.id = 'digiSupportWindow';
+    win.setAttribute('style', 'display:none;position:fixed;bottom:84px;right:24px;width:380px;max-width:calc(100vw - 32px);height:570px;max-height:calc(100vh - 105px);background:#0d0d12;border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,0.85),0 0 35px rgba(168,85,247,0.15);z-index:99981;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,\'Plus Jakarta Sans\',sans-serif;');
+
+    win.innerHTML = `
+      <!-- Header -->
+      <div style="padding:14px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="position:relative;width:34px;height:34px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(168,85,247,0.3);overflow:hidden;">
+            <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#ffffff;display:flex;align-items:center;gap:6px;">
+              <span>DigiStore Destek</span>
+              <span style="font-size:8.5px;color:#a855f7;background:rgba(168,85,247,0.15);padding:1px 5px;border-radius:4px;font-weight:700;">PRO</span>
+            </div>
+            <div style="font-size:11px;color:#34c759;font-weight:500;display:flex;align-items:center;gap:4px;">
+              <span style="width:5px;height:5px;border-radius:50%;background:#34c759;display:inline-block;"></span>
+              Canlı Destek Ekibi Çevrimiçi
+            </div>
+          </div>
+        </div>
+        <button id="digiSupportCloseBtn" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#a1a1a6;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#a1a1a6';this.style.background='rgba(255,255,255,0.06)';">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Quick Action Chips -->
+      <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;">
+        <button type="button" class="digi-quick-chip" data-msg="Siparişimin durumunu öğrenebilir miyim?" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Sipariş Durumu</button>
+        <button type="button" class="digi-quick-chip" data-msg="Lisans anahtarımı nereden görebilirim?" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Lisansım Nerede?</button>
+        <button type="button" class="digi-quick-chip" data-msg="Ödeme ve e-Arşiv faturası hakkında bilgi almak istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Ödeme &amp; Fatura</button>
+        <button type="button" class="digi-quick-chip" data-msg="Müşteri temsilcisi ile görüşmek istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Yetkiliye Bağlan</button>
+      </div>
+
+      <!-- Messages Area -->
+      <div id="digiSupportMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#08080c;">
+        <!-- Filled via JS -->
+      </div>
+
+      <!-- Input Bar -->
+      <form id="digiSupportForm" style="padding:12px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:8px;align-items:center;">
+        <input type="text" id="digiSupportInput" placeholder="Mesajınızı yazın..." autocomplete="off" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;color:#ffffff;outline:none;" />
+        <button type="submit" style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#6366f1);border:none;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 12px rgba(168,85,247,0.4);flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    `;
+
+    document.body.appendChild(launcher);
+    document.body.appendChild(win);
+
+    // Event Handlers
+    launcher.onclick = function() {
+      const isOpen = win.classList.contains('open');
+      if (isOpen) {
+        win.classList.remove('open');
+      } else {
+        win.classList.add('open');
+        const chat = DigiStoreDB.getUserChatSession();
+        DigiStoreDB.markSupportReadByUser(chat.id);
+        renderWidgetMessages();
+        updateWidgetBadge();
+        setTimeout(() => {
+          const inp = document.getElementById('digiSupportInput');
+          if (inp) inp.focus();
+        }, 150);
+      }
+    };
+
+    document.getElementById('digiSupportCloseBtn').onclick = function() {
+      win.classList.remove('open');
+    };
+
+    // Quick chips
+    win.querySelectorAll('.digi-quick-chip').forEach(btn => {
+      btn.onclick = function() {
+        const msg = this.getAttribute('data-msg');
+        if (!msg) return;
+        DigiStoreDB.sendUserSupportMessage(msg);
+        renderWidgetMessages();
+      };
+    });
+
+    // Form submit
+    document.getElementById('digiSupportForm').onsubmit = function(e) {
+      e.preventDefault();
+      const inp = document.getElementById('digiSupportInput');
+      const text = inp.value.trim();
+      if (!text) return;
+      inp.value = '';
+      DigiStoreDB.sendUserSupportMessage(text);
+      renderWidgetMessages();
+    };
+
+    function renderWidgetMessages() {
+      const container = document.getElementById('digiSupportMessages');
+      if (!container) return;
+
+      const chat = DigiStoreDB.getUserChatSession();
+      if (!chat || !chat.messages) return;
+
+      container.innerHTML = chat.messages.map(m => {
+        const isUser = m.sender === 'user';
+        if (isUser) {
+          return `
+            <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
+              <div style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#ffffff;padding:9px 13px;border-radius:14px 14px 2px 14px;font-size:13px;line-height:1.42;box-shadow:0 4px 14px rgba(168,85,247,0.3);word-break:break-word;">
+                ${m.text}
+              </div>
+              <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''}</span>
+            </div>
+          `;
+        } else {
+          return `
+            <div style="align-self:flex-start;max-width:84%;display:flex;flex-direction:column;align-items:flex-start;">
+              <span style="font-size:10.5px;color:#a855f7;font-weight:600;margin-bottom:3px;padding-left:2px;">${m.senderName || 'DigiStore Destek'}</span>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:#f5f5f7;padding:9px 13px;border-radius:14px 14px 14px 2px;font-size:13px;line-height:1.45;word-break:break-word;">
+                ${m.text}
+              </div>
+              <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
+            </div>
+          `;
+        }
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function updateWidgetBadge() {
+      const badge = document.getElementById('digiSupportBadge');
+      if (!badge) return;
+      const chat = DigiStoreDB.getUserChatSession();
+      const count = chat ? (chat.unreadByUser || 0) : 0;
+      if (count > 0 && !win.classList.contains('open')) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Initial render & sync
+    renderWidgetMessages();
+    updateWidgetBadge();
+
+    DigiStoreDB.onUpdate(topic => {
+      if (topic === 'digistore_support_chats') {
+        renderWidgetMessages();
+        updateWidgetBadge();
+      }
+    });
+  }
+
+  // Mount on document ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountStorefrontSupportWidget);
+  } else {
+    mountStorefrontSupportWidget();
+  }
+
 })(window);
+
