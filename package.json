@@ -1,0 +1,11 @@
+{
+  "name": "closydev-store",
+  "version": "2.0.0",
+  "description": "DigiStore - closydev.site Dijital Ürün Mağazası",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}

@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Güvenli Ödeme — DigiStore Checkout</title>
+<script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<script src="store.js?v=2.5"></script>
+<script src="kvkk.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  html, body {
+    background-color: #000000;
+    color: #f5f5f7;
+    font-family: var(--font-sans) !important;
+    min-height: 100vh;
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  button, input, select, textarea, optgroup, label, table, th, td, h1, h2, h3, h4, h5, h6, p, span, a {
+    font-family: var(--font-sans) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code, pre, .font-mono {
+    font-family: var(--font-mono) !important;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: #26262b; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+  /* Premium Apple Glass */
+  .apple-glass {
+    background: rgba(14, 14, 18, 0.72);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .apple-glass-subtle {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* High-fidelity Input Styling */
+  .apple-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .apple-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #86868b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .apple-input {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #ffffff;
+    padding: 13px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    width: 100%;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+  }
+
+  .apple-input::placeholder {
+    color: #48484a;
+    font-weight: 400;
+  }
+
+  .apple-input:focus {
+    border-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.05);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15);
+  }
+
+  /* Pill Buttons */
+  .btn-pill-white {
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+    padding: 14px 28px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    width: 100%;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-pill-white:hover {
+    background: #f0f0f2;
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.28);
+  }
+
+  .btn-pill-white:active {
+    transform: scale(0.99);
+  }
+
+  .btn-pill-dark {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f5f5f7;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 13px 26px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-pill-dark:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
+  }
+
+  /* Step Indicator Circles */
+  .step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .step-active {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  }
+
+  .step-done {
+    background: #34c759;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(52, 199, 89, 0.35);
+  }
+
+  .step-idle {
+    background: rgba(255, 255, 255, 0.08);
+    color: #86868b;
+  }
+
+  /* Payment Method & Invoice Cards */
+  .method-card {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.025);
+    position: relative;
+    user-select: none;
+  }
+
+  .method-card:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
+  }
+
+  .method-card.selected {
+    border-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.08);
+    box-shadow: 0 0 25px -4px rgba(10, 132, 255, 0.25);
+  }
+
+  .radio-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .method-card.selected .radio-indicator {
+    border-color: #0a84ff;
+    background: #0a84ff;
+  }
+
+  .radio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s ease;
+  }
+
+  .method-card.selected .radio-dot {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* iOS Dynamic Island & Modal Alert */
+  .ios-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ios-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ios-alert-box {
+    width: 100%;
+    max-width: 310px;
+    background: rgba(28, 28, 32, 0.92);
+    backdrop-filter: blur(40px) saturate(210%);
+    -webkit-backdrop-filter: blur(40px) saturate(210%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 1px 1px rgba(255, 255, 255, 0.12);
+    text-align: center;
+    overflow: hidden;
+    transform: scale(1.15);
+    transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.25s ease;
+  }
+
+  .ios-backdrop.active .ios-alert-box {
+    transform: scale(1);
+  }
+
+  .ios-alert-content {
+    padding: 24px 22px 18px;
+  }
+
+  .ios-alert-icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255, 69, 58, 0.12);
+    border: 1px solid rgba(255, 69, 58, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+
+  .ios-alert-icon-wrap.warning {
+    background: rgba(255, 159, 10, 0.14);
+    border-color: rgba(255, 159, 10, 0.3);
+  }
+
+  .ios-alert-icon-wrap.success {
+    background: rgba(52, 199, 89, 0.14);
+    border-color: rgba(52, 199, 89, 0.3);
+  }
+
+  .ios-alert-icon-wrap.info {
+    background: rgba(10, 132, 255, 0.14);
+    border-color: rgba(10, 132, 255, 0.3);
+  }
+
+  .ios-alert-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.022em;
+    margin-bottom: 6px;
+  }
+
+  .ios-alert-desc {
+    font-size: 13.5px;
+    color: #a1a1a6;
+    line-height: 1.45;
+  }
+
+  .ios-alert-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    width: 100%;
+  }
+
+  .ios-alert-buttons {
+    display: flex;
+  }
+
+  .ios-btn-primary {
+    flex: 1;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    color: #0a84ff;
+    font-size: 16.5px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: -0.015em;
+    transition: background 0.12s ease;
+  }
+
+  .ios-btn-primary:active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-90px) scale(0.9);
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    z-index: 999998;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  }
+
+  .dynamic-island.active {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .island-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .island-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .island-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .island-sub {
+    font-size: 11.5px;
+    color: #86868b;
+    line-height: 1.2;
+  }
+
+  /* Icon Container Badge */
+  .badge-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Email Preview Modal Backdrop */
+  .mail-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mail-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mail-modal-card {
+    background: #14141a;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.08);
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mail-backdrop.active .mail-modal-card {
+    transform: scale(1);
+  }
+</style>
+</head>
+<body>
+
+<!-- Dynamic Island -->
+<div id="dynamicIsland" class="dynamic-island">
+  <div class="island-icon" id="islandIcon">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+  <div class="island-text">
+    <span class="island-title" id="islandTitle">Bildirim</span>
+    <span class="island-sub" id="islandSub">İşlem tamamlandı</span>
+  </div>
+</div>
+
+
+
+<!-- iOS Alert Modal -->
+<div id="iosAlertBackdrop" class="ios-backdrop" style="display:none;" onclick="handleBackdropClick(event)">
+  <div class="ios-alert-box" id="iosAlertBox">
+    <div class="ios-alert-content">
+      <div id="iosAlertIcon" class="ios-alert-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 class="ios-alert-title" id="iosAlertTitle">E-posta Adresi Gerekli</h3>
+      <p class="ios-alert-desc" id="iosAlertDesc">Lütfen geçerli bir e-posta adresi girin. Lisans bu adrese gönderilecektir.</p>
+    </div>
+    <div class="ios-alert-divider"></div>
+    <div class="ios-alert-buttons">
+      <button type="button" class="ios-btn-primary" id="iosAlertBtn" onclick="closeIosAlert()">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOP NAVIGATION -->
+<nav style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+  
+  <!-- Apple Ultra Premium Brand Logo -->
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;">
+    <div style="position:relative;width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg, #1c1c1e 0%, #0d0d0f 100%);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(10,132,255,0.25);overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 35% 25%, rgba(10,132,255,0.45) 0%, rgba(168,85,247,0.2) 65%, transparent 100%);pointer-events:none;"></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="position:relative;z-index:1;">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#38bdf8"/>
+      </svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif;">Digi<span style="background:linear-gradient(135deg,#38bdf8 0%,#818cf8 50%,#c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span></span>
+      <span style="font-size:9.5px;font-weight:800;letter-spacing:0.06em;color:#38bdf8;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.25);padding:1px 6px;border-radius:6px;text-transform:uppercase;">PRO</span>
+    </div>
+  </a>
+
+  <!-- Right Status Badges -->
+  <div style="display:flex;align-items:center;gap:18px;">
+    
+    <!-- Security Shield Badge -->
+    <div style="font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.24);padding:6px 14px;border-radius:9999px;font-weight:600;display:flex;align-items:center;gap:8px;">
+      <span style="width:7px;height:7px;border-radius:50%;background:#34c759;box-shadow:0 0 10px #34c759;"></span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>DigiGuard AES-256 &amp; WAF Korumalı</span>
+    </div>
+
+    <!-- Back to Store Link -->
+    <a href="index.html" style="font-size:13px;color:#86868b;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s ease;padding:6px 12px;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#86868b';this.style.background='rgba(255,255,255,0.04)'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Mağazaya Dön</span>
+    </a>
+
+  </div>
+</nav>
+
+<!-- MAIN WORKSPACE -->
+<div style="max-width:1160px;margin:40px auto 90px;padding:0 24px;display:grid;grid-template-columns:1fr 400px;gap:36px;">
+
+  <!-- LEFT: Checkout Flow & Form Panels -->
+  <div>
+    
+    <!-- PROGRESS STEP TRACKER -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:34px;background:rgba(255,255,255,0.02);padding:12px 18px;border-radius:20px;border:1px solid rgba(255,255,255,0.06);">
+      
+      <div id="step1" class="step-circle step-active">1</div>
+      <span style="font-size:13px;color:#ffffff;font-weight:700;letter-spacing:-0.2px;">Müşteri &amp; Fatura</span>
+      
+      <div style="flex:1;height:2px;background:rgba(255,255,255,0.08);border-radius:9999px;">
+        <div id="bar1" style="height:100%;width:0%;background:#ffffff;border-radius:9999px;transition:width .35s ease;"></div>
+      </div>
+      
+      <div id="step2" class="step-circle step-idle">2</div>
+      <span style="font-size:13px;color:#86868b;font-weight:600;letter-spacing:-0.2px;" id="step2lbl">Ödeme Yöntemi</span>
+      
+      <div style="flex:1;height:2px;background:rgba(255,255,255,0.08);border-radius:9999px;">
+        <div id="bar2" style="height:100%;width:0%;background:#ffffff;border-radius:9999px;transition:width .35s ease;"></div>
+      </div>
+      
+      <div id="step3" class="step-circle step-idle">3</div>
+      <span style="font-size:13px;color:#86868b;font-weight:600;letter-spacing:-0.2px;" id="step3lbl">Onay &amp; Lisans</span>
+    </div>
+
+    <!-- STEP 1: Müşteri & Fatura Bilgileri -->
+    <div id="panelStep1">
+      
+      <!-- Card 1: Contact Details -->
+      <div class="apple-glass" style="padding:32px;margin-bottom:24px;">
+        
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div class="badge-icon-box" style="background:rgba(10,132,255,0.12);border-color:rgba(10,132,255,0.25);color:#0a84ff;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div>
+            <h2 style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.4px;">
+              Müşteri &amp; Lisans Teslimat Bilgileri
+            </h2>
+            <p style="font-size:13px;color:#86868b;margin-top:2px;">
+              Lisans anahtarınız ve resmi faturanız bu e-posta adresine anında şifrelenerek iletilir.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="apple-input-group">
+            <label class="apple-label" for="fname">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Adınız *
+            </label>
+            <input id="fname" class="apple-input" placeholder="Ahmet" maxlength="35" oninput="this.value=this.value.replace(/[^a-zA-ZçÇğĞıİöÖşŞüÜ\s]/g,'')" required/>
+          </div>
+
+          <div class="apple-input-group">
+            <label class="apple-label" for="lname">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Soyadınız *
+            </label>
+            <input id="lname" class="apple-input" placeholder="Yılmaz" maxlength="35" oninput="this.value=this.value.replace(/[^a-zA-ZçÇğĞıİöÖşŞüÜ\s]/g,'')" required/>
+          </div>
+        </div>
+
+        <div class="apple-input-group" style="margin-bottom:16px;">
+          <label class="apple-label" for="email">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            E-Posta Adresi (Lisans Teslim Edilecek) *
+          </label>
+          <input id="email" type="email" class="apple-input" placeholder="ornek@email.com" required/>
+        </div>
+
+        <div class="apple-input-group">
+          <label class="apple-label" for="phone">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Telefon Numarası (Sadece Rakam) *
+          </label>
+          <input id="phone" class="apple-input" placeholder="05xx xxx xx xx" maxlength="17" oninput="formatPhone(this)" required/>
+        </div>
+
+      </div>
+
+      <!-- Card 2: Official Invoice Selection -->
+      <div class="apple-glass" style="padding:32px;margin-bottom:28px;">
+        
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+          <div class="badge-icon-box" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.25);color:#a855f7;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h2 style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.4px;">
+              Resmi e-Arşiv Fatura Tercihi
+            </h2>
+            <p style="font-size:13px;color:#86868b;margin-top:2px;">
+              T.C. Gelir İdaresi Başkanlığı (GİB) mevzuatına uygun fatura anında düzenlenir.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          
+          <!-- Bireysel Müşteri Card -->
+          <div onclick="selectInvoice('bireysel')" id="inv-bireysel" class="method-card selected">
+            <div class="radio-indicator">
+              <div class="radio-dot"></div>
+            </div>
+            <div class="badge-icon-box" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);color:#fff;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+                <circle cx="9" cy="10" r="2"></circle>
+                <line x1="15" y1="8" x2="17" y2="8"></line>
+                <line x1="15" y1="12" x2="17" y2="12"></line>
+                <line x1="7" y1="16" x2="17" y2="16"></line>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Bireysel Müşteri</div>
+              <div style="font-size:12px;color:#86868b;">T.C. Kimlik Numarası İle</div>
+            </div>
+          </div>
+
+          <!-- Kurumsal Firma Card -->
+          <div onclick="selectInvoice('kurumsal')" id="inv-kurumsal" class="method-card">
+            <div class="radio-indicator">
+              <div class="radio-dot"></div>
+            </div>
+            <div class="badge-icon-box" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);color:#fff;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18"></path>
+                <path d="M5 21V7l8-4v18"></path>
+                <path d="M19 21V11l-6-3"></path>
+                <line x1="9" y1="9" x2="9" y2="9.01"></line>
+                <line x1="9" y1="13" x2="9" y2="13.01"></line>
+                <line x1="9" y1="17" x2="9" y2="17.01"></line>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Kurumsal Firma</div>
+              <div style="font-size:12px;color:#86868b;">Vergi No &amp; Şirket Unvanı</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="bireyselFields">
+          <div class="apple-input-group">
+            <label class="apple-label" for="tcno">T.C. Kimlik Numarası (11 Haneli) *</label>
+            <input id="tcno" class="apple-input" placeholder="11 haneli T.C. Kimlik No girin" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'').slice(0,11)"/>
+          </div>
+        </div>
+
+        <div id="kurumsalFields" style="display:none;gap:14px;flex-direction:column;">
+          <div class="apple-input-group">
+            <label class="apple-label" for="vergino">Vergi Kimlik Numarası (VKN) (10 Haneli) *</label>
+            <input id="vergino" class="apple-input" placeholder="10 haneli VKN girin" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"/>
+          </div>
+          <div class="apple-input-group">
+            <label class="apple-label" for="sirket">Şirket Resmi Ticari Unvanı *</label>
+            <input id="sirket" class="apple-input" placeholder="Örn: Teknoloji Bilişim Ltd. Şti." maxlength="100"/>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Button -->
+      <button class="btn-pill-white" onclick="goStep2()">
+        <span>Ödeme Adımına Devam Et</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- STEP 2: Ödeme Yöntemi -->
+    <div id="panelStep2" style="display:none;">
+      
+      <div class="apple-glass" style="padding:32px;margin-bottom:24px;">
+        
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div class="badge-icon-box" style="background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.25);color:#34c759;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.4px;">
+              Güvenli Ödeme Seçenekleri
+            </h2>
+            <p style="font-size:13px;color:#86868b;margin-top:2px;">
+              Ödeme altyapımız banka düzeyinde 256-bit SSL ve 3D Secure güvencesiyle korunur.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px;">
+          
+          <!-- Method 1: Kredi Kartı (PayTR / 3D Secure) -->
+          <div onclick="selectMethod('card')" id="m-card" class="method-card selected">
+            <div class="radio-indicator">
+              <div class="radio-dot"></div>
+            </div>
+            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:700;color:#fff;">Kredi veya Banka Kartı</div>
+              <div style="font-size:12px;color:#86868b;">Visa, MasterCard, Troy — 3D Secure ile Anında Onay</div>
+            </div>
+            <!-- Card Brand Badges -->
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:0.04em;">VISA</span>
+              <span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#ff5f00;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:0.04em;">MC</span>
+              <span style="background:rgba(10,132,255,0.15);border:1px solid rgba(10,132,255,0.3);color:#60a5fa;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:0.04em;">TROY</span>
+            </div>
+          </div>
+
+          <!-- Method 2: Shopier Express -->
+          <div onclick="selectMethod('shopier')" id="m-shopier" class="method-card">
+            <div class="radio-indicator">
+              <div class="radio-dot"></div>
+            </div>
+            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:700;color:#fff;">Shopier Güvenli Ödeme</div>
+              <div style="font-size:12px;color:#86868b;">Tek tıkla kartla öde, resmi Türk e-ticaret altyapısı</div>
+            </div>
+            <span style="background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.25);color:#34c759;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">KOMİSYONSUZ</span>
+          </div>
+
+          <!-- Method 3: Havale / EFT / FAST -->
+          <div onclick="selectMethod('havale')" id="m-havale" class="method-card">
+            <div class="radio-indicator">
+              <div class="radio-dot"></div>
+            </div>
+            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:700;color:#fff;">FAST / Havale / EFT</div>
+              <div style="font-size:12px;color:#86868b;">7/24 Anında Banka Transferi ile Otomatik Sipariş Onayı</div>
+            </div>
+            <span style="background:rgba(255,255,255,0.08);color:#d1d5db;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">7/24 AKTİF</span>
+          </div>
+
+        </div>
+
+        <!-- Kart Formu -->
+        <div id="cardForm">
+          
+          <div class="apple-input-group" style="margin-bottom:16px;">
+            <label class="apple-label" for="cardno">Kart Numarası *</label>
+            <div style="position:relative;">
+              <input id="cardno" class="apple-input" style="font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;font-size:15px;padding-right:48px;" placeholder="•••• •••• •••• ••••" maxlength="19" oninput="formatCard(this)" required/>
+              <div style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#86868b;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div class="apple-input-group">
+              <label class="apple-label" for="cardmonth">Ay (AA) *</label>
+              <input id="cardmonth" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="AA" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'').slice(0,2)" required/>
+            </div>
+            <div class="apple-input-group">
+              <label class="apple-label" for="cardyear">Yıl (YY) *</label>
+              <input id="cardyear" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="YY" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'').slice(0,2)" required/>
+            </div>
+            <div class="apple-input-group">
+              <label class="apple-label" for="cardcvv">CVV / CVC *</label>
+              <input id="cardcvv" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="•••" maxlength="4" type="password" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" required/>
+            </div>
+          </div>
+
+          <div class="apple-input-group" style="margin-bottom:18px;">
+            <label class="apple-label" for="cardname">Kart Üzerindeki İsim *</label>
+            <input id="cardname" class="apple-input" placeholder="AD SOYAD" maxlength="50" oninput="this.value=this.value.replace(/[^a-zA-ZçÇğĞıİöÖşŞüÜ\s]/g,'').toUpperCase()" required/>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+            <input type="checkbox" id="save3d" style="width:16px;height:16px;accent-color:#0a84ff;cursor:pointer;" checked/>
+            <label for="save3d" style="font-size:12.5px;color:#a1a1a6;cursor:pointer;">
+              <b>3D Secure SMS Şifre Koruması</b> ile güvenli ödeme yap (Önerilen)
+            </label>
+          </div>
+
+        </div>
+
+        <!-- Shopier Bilgi -->
+        <div id="shopierInfo" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <span style="font-size:15px;font-weight:700;color:#fff;">Shopier Güvenli Yönlendirme</span>
+            <span style="background:#22c55e;width:6px;height:6px;border-radius:50%;"></span>
+          </div>
+          <p style="font-size:13px;color:#a1a1a6;line-height:1.6;">
+            <b>"Ödemeyi Tamamla"</b> butonuna tıkladığınızda resmi <b>Shopier SSL</b> korumalı sayfasına aktarılacaksınız. İşlem tamamlandığı an lisansınız panelinize 1 saniye içinde tanımlanır.
+          </p>
+        </div>
+
+        <!-- Havale Bilgi -->
+        <div id="havaleInfo" style="display:none;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.22);border-radius:16px;padding:22px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:rgba(52,199,89,0.2);display:flex;align-items:center;justify-content:center;color:#34c759;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <span style="font-size:14px;color:#34c759;font-weight:700;">Ziraat Bankası FAST / Havale Hesabı</span>
+          </div>
+          <div style="font-size:13px;color:#e2e8f0;line-height:1.9;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.4);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
+            <div style="color:#86868b;font-size:11px;">IBAN NUMARASI</div>
+            <div style="font-weight:700;color:#60a5fa;margin-bottom:8px;">TR00 0000 0000 0000 0000 0000 00</div>
+            <div style="color:#86868b;font-size:11px;">ALICI ÜNVANI</div>
+            <div style="color:#fff;margin-bottom:8px;">DigiStore Bilişim Ticaret A.Ş.</div>
+            <div style="color:#86868b;font-size:11px;">AÇIKLAMA (SİPARİŞ REFERANSI)</div>
+            <div id="havaleRef" style="color:#4ade80;font-weight:700;background:rgba(34,197,94,0.15);padding:2px 8px;border-radius:4px;display:inline-block;">DS-SIPARIS-2026</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KVKK & Mesafeli Satış Sözleşmesi Yasal Onay Kutusu -->
+      <div style="margin-bottom:18px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#c4c7c5;cursor:pointer;line-height:1.5;">
+          <input type="checkbox" id="checkoutKvkkConsent" required checked style="margin-top:3px;accent-color:#0a84ff;width:16px;height:16px;cursor:pointer;">
+          <span>
+            <a href="javascript:void(0)" onclick="openDistanceModal()" style="color:#0a84ff;font-weight:600;text-decoration:underline;">Ön Bilgilendirme Formu</a> ve 
+            <a href="javascript:void(0)" onclick="openDistanceModal()" style="color:#0a84ff;font-weight:600;text-decoration:underline;">Mesafeli Satış Sözleşmesi</a>'ni okudum, onaylıyorum. 
+            29188 sayılı Mesafeli Sözleşmeler Yönetmeliği m.15/1-ğ gereğince anında ifa edilen dijital ürün teslimatlarında cayma hakkımın bulunmadığını kabul ve beyan ederim. 
+            <b style="color:#ff453a;">*</b>
+          </span>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:14px;">
+        <button onclick="goStep1()" class="btn-pill-dark">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Geri</span>
+        </button>
+
+        <button class="btn-pill-white" onclick="processPayment()" style="flex:1;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Güvenli Ödemeyi Onayla &amp; Lisansı Üret</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- STEP 3: Başarı ve Lisans Teslim Ekranı -->
+    <div id="panelStep3" style="display:none;">
+      <div class="apple-glass" style="padding:54px 38px;text-align:center;">
+        
+        <div style="width:72px;height:72px;border-radius:50%;background:rgba(52,199,89,0.14);border:1px solid rgba(52,199,89,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;color:#34c759;box-shadow:0 0 35px rgba(52,199,89,0.25);">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+
+        <h2 style="font-size:28px;font-weight:800;color:#ffffff;margin-bottom:10px;letter-spacing:-0.6px;">
+          Ödemeniz Başarıyla Tamamlandı!
+        </h2>
+        <p style="font-size:14px;color:#a1a1a6;margin-bottom:34px;max-width:540px;margin-left:auto;margin-right:auto;line-height:1.5;">
+          Siparişiniz onaylandı. Lisans anahtarınız ve resmi e-Arşiv faturanız e-posta adresinize iletildi ve hesabınıza anında tanımlandı.
+        </p>
+
+        <div id="orderDetails" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px;margin-bottom:34px;text-align:left;"></div>
+
+        <div style="display:flex;gap:14px;justify-content:center;">
+          <a href="hesabim.html" class="btn-pill-white" style="padding:13px 30px;text-decoration:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Müşteri Panelime Git</span>
+          </a>
+          <a href="index.html" class="btn-pill-dark" style="padding:13px 26px;text-decoration:none;">
+            <span>Alışverişe Devam Et</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Order Summary Sidebar (Sticky) -->
+  <div>
+    <div class="apple-glass" style="padding:28px;position:sticky;top:90px;">
+      
+      <!-- Summary Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:#fff;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </div>
+          <h3 style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.3px;">Sipariş Özeti</h3>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:#86868b;background:rgba(255,255,255,0.05);padding:3px 10px;border-radius:999px;" id="itemCountBadge">0 Ürün</span>
+      </div>
+
+      <!-- Item list container -->
+      <div id="orderSummary" style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;"></div>
+
+      <!-- Price Breakdown -->
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:18px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#86868b;">
+          <span>Ara Toplam</span>
+          <span id="sum-sub" style="color:#fff;font-weight:600;font-family:'JetBrains Mono',monospace;">₺0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#86868b;">
+          <span>Resmi KDV (%20)</span>
+          <span id="sum-kdv" style="color:#fff;font-weight:600;font-family:'JetBrains Mono',monospace;">₺0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);margin-top:4px;">
+          <span style="color:#fff;font-weight:700;font-size:15px;letter-spacing:-0.2px;">Toplam Tutar</span>
+          <span id="sum-total" style="color:#ffffff;font-weight:800;font-size:26px;letter-spacing:-0.7px;font-family:'JetBrains Mono',monospace;">₺0</span>
+        </div>
+      </div>
+
+      <!-- Premium Vector Trust Badges -->
+      <div style="margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:12px;font-size:12.5px;color:#a1a1a6;">
+        
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span>256-Bit SSL Şifreli Uçtan Uca Güvenlik</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span>GİB Uyumlu e-Arşiv Resmi Fatura</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span>7/24 Anında Otomatik Lisans &amp; Kod Teslimi</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span>DigiGuard Katman-7 WAF Savunması</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(52,199,89,0.12);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span>14 Gün Koşulsuz İade &amp; Değişim Güvencesi</span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- APPLICATION LOGIC SCRIPT -->
+<script>
+const cart = JSON.parse(localStorage.getItem('digistore_cart') || '[]');
+
+function initSummary() {
+  const summary = document.getElementById('orderSummary');
+  const countBadge = document.getElementById('itemCountBadge');
+
+  if (!cart.length) {
+    summary.innerHTML = `
+      <div style="text-align:center;padding:32px 10px;color:#86868b;background:rgba(255,255,255,0.02);border-radius:14px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:#86868b;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+        </div>
+        <p style="font-size:14px;color:#fff;font-weight:600;margin-bottom:4px;">Sepetiniz henüz boş</p>
+        <p style="font-size:12px;">Ödemeye devam etmek için bir ürün seçin.</p>
+      </div>`;
+    countBadge.textContent = '0 Ürün';
+    return;
+  }
+
+  const totalCount = cart.reduce((s, p) => s + p.qty, 0);
+  countBadge.textContent = `${totalCount} Dijital Ürün`;
+
+  summary.innerHTML = cart.map(p => `
+    <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:12px;">
+      <div style="width:38px;height:38px;border-radius:10px;background:#14141c;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;color:#ffffff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          ${p.name}
+        </div>
+        <div style="font-size:11.5px;color:#86868b;margin-top:2px;">Adet: ${p.qty} · Otomatik Teslimat</div>
+      </div>
+      <span style="font-size:14px;font-weight:700;color:#ffffff;font-family:'JetBrains Mono',monospace;">
+        ₺${p.price * p.qty}
+      </span>
+    </div>`).join('');
+
+  const sub = cart.reduce((s, p) => s + p.price * p.qty, 0);
+  const kdv = sub * 0.20;
+  document.getElementById('sum-sub').textContent = '₺' + sub.toLocaleString('tr-TR');
+  document.getElementById('sum-kdv').textContent = '₺' + kdv.toFixed(0);
+  document.getElementById('sum-total').textContent = '₺' + (sub + kdv).toFixed(0);
+}
+
+function selectInvoice(type) {
+  document.getElementById('inv-bireysel').classList.toggle('selected', type === 'bireysel');
+  document.getElementById('inv-kurumsal').classList.toggle('selected', type === 'kurumsal');
+  document.getElementById('bireyselFields').style.display = type === 'bireysel' ? 'block' : 'none';
+  document.getElementById('kurumsalFields').style.display = type === 'kurumsal' ? 'flex' : 'none';
+}
+
+function selectMethod(m) {
+  ['card','shopier','havale'].forEach(x => document.getElementById('m-'+x).classList.remove('selected'));
+  document.getElementById('m-'+m).classList.add('selected');
+  document.getElementById('cardForm').style.display = m === 'card' ? 'block' : 'none';
+  document.getElementById('shopierInfo').style.display = m === 'shopier' ? 'block' : 'none';
+  document.getElementById('havaleInfo').style.display = m === 'havale' ? 'block' : 'none';
+}
+
+// ─── DOĞRULAMA VE FORMATLAMA MOTORU (VALIDATION ENGINE) ─────────────
+// T.C. Kimlik Algoritması (Resmi 11 Hane Algoritmik Doğrulama)
+function validateTCKimlik(tc) {
+  tc = String(tc || '').trim();
+  if (!/^\d{11}$/.test(tc)) return false;
+  if (tc[0] === '0') return false;
+  
+  const digits = tc.split('').map(Number);
+  const oddSum = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
+  const evenSum = digits[1] + digits[3] + digits[5] + digits[7];
+  
+  let digit10 = ((oddSum * 7) - evenSum) % 10;
+  if (digit10 < 0) digit10 += 10;
+  if (digit10 !== digits[9]) return false;
+  
+  const first10Sum = digits.slice(0, 10).reduce((a, b) => a + b, 0);
+  if ((first10Sum % 10) !== digits[10]) return false;
+  
+  return true;
+}
+
+// Telefon Numarası Doğrulama (Türkiye Mobil & E.164 Standartı)
+function validatePhone(phone) {
+  if (!phone) return false;
+  let cleaned = String(phone).replace(/[^\d+]/g, '');
+  if (cleaned.startsWith('+90')) cleaned = cleaned.slice(3);
+  else if (cleaned.startsWith('0090')) cleaned = cleaned.slice(4);
+  else if (cleaned.startsWith('90')) cleaned = cleaned.slice(2);
+  else if (cleaned.startsWith('0')) cleaned = cleaned.slice(1);
+  
+  // Türkiye Mobil 10 Hane (5xx xxx xx xx)
+  if (/^5\d{9}$/.test(cleaned)) return true;
+  
+  // Genel geçerli 10-15 haneli telefon
+  const digitsOnly = String(phone).replace(/\D/g, '');
+  return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+}
+
+// Luhn Algoritması (Kredi/Banka Kartı Mod 10 Checksum)
+function validateLuhn(cardNumber) {
+  const cleaned = String(cardNumber || '').replace(/\D/g, '');
+  if (cleaned.length < 15 || cleaned.length > 19) return false;
+  
+  let sum = 0;
+  let shouldDouble = false;
+  for (let i = cleaned.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleaned.charAt(i), 10);
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  return (sum % 10) === 0;
+}
+
+// Telefon Formatlama (Canlı Maske)
+function formatPhone(el) {
+  let val = el.value.replace(/[^\d+]/g, '');
+  if (val.startsWith('+90')) {
+    let digits = val.slice(3).replace(/\D/g, '').slice(0, 10);
+    let res = '+90 ';
+    if (digits.length > 0) res += digits.slice(0, 3);
+    if (digits.length > 3) res += ' ' + digits.slice(3, 6);
+    if (digits.length > 6) res += ' ' + digits.slice(6, 8);
+    if (digits.length > 8) res += ' ' + digits.slice(8, 10);
+    el.value = res.trim();
+  } else {
+    let digits = val.replace(/\D/g, '').slice(0, 11);
+    if (digits.startsWith('0')) digits = digits.slice(1);
+    let res = '0';
+    if (digits.length > 0) res += digits.slice(0, 3);
+    if (digits.length > 3) res += ' ' + digits.slice(3, 6);
+    if (digits.length > 6) res += ' ' + digits.slice(6, 8);
+    if (digits.length > 8) res += ' ' + digits.slice(8, 10);
+    el.value = res.trim();
+  }
+}
+
+// Kart Formatlama
+function formatCard(el) {
+  let val = el.value.replace(/\D/g, '').slice(0, 16);
+  el.value = val.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function goStep2() {
+  const fnameEl = document.getElementById('fname');
+  const fname = (fnameEl?.value || '').trim();
+  if (!fname || fname.length < 2 || !/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$/.test(fname)) {
+    showIosAlert({
+      title: 'Geçersiz Ad',
+      message: 'Lütfen adınızı girin (en az 2 harf, sayı veya anlamsız karakter girilemez).',
+      type: 'error',
+      confirmText: 'Düzelt'
+    });
+    fnameEl?.focus();
+    return;
+  }
+
+  const lnameEl = document.getElementById('lname');
+  const lname = (lnameEl?.value || '').trim();
+  if (!lname || lname.length < 2 || !/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$/.test(lname)) {
+    showIosAlert({
+      title: 'Geçersiz Soyad',
+      message: 'Lütfen soyadınızı girin (en az 2 harf, sayı veya anlamsız karakter girilemez).',
+      type: 'error',
+      confirmText: 'Düzelt'
+    });
+    lnameEl?.focus();
+    return;
+  }
+
+  const emailEl = document.getElementById('email');
+  const email = (emailEl?.value || '').trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showIosAlert({
+      title: 'Geçersiz E-Posta Adresi',
+      message: 'Lütfen lisans anahtarınız ve faturanızın teslim edileceği gerçek bir e-posta adresi girin.',
+      type: 'error',
+      confirmText: 'Düzelt'
+    });
+    emailEl?.focus();
+    return;
+  }
+
+  const phoneEl = document.getElementById('phone');
+  const phone = (phoneEl?.value || '').trim();
+  if (!phone || !validatePhone(phone)) {
+    showIosAlert({
+      title: 'Geçersiz Telefon Numarası',
+      message: 'Lütfen geçerli bir cep telefonu numarası girin (Örn: 05xx xxx xx xx). Harf veya rastgele karakter girilemez.',
+      type: 'error',
+      confirmText: 'Düzelt'
+    });
+    phoneEl?.focus();
+    return;
+  }
+
+  // Fatura Kontrolü
+  const isKurumsal = document.getElementById('inv-kurumsal')?.classList.contains('selected');
+  if (isKurumsal) {
+    const vknEl = document.getElementById('vergino');
+    const vkn = (vknEl?.value || '').trim();
+    if (!/^\d{10}$/.test(vkn)) {
+      showIosAlert({
+        title: 'Geçersiz Vergi Numarası (VKN)',
+        message: 'Lütfen şirketinizin 10 haneli resmi Vergi Kimlik Numarasını girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      vknEl?.focus();
+      return;
+    }
+
+    const sirketEl = document.getElementById('sirket');
+    const sirket = (sirketEl?.value || '').trim();
+    if (!sirket || sirket.length < 3) {
+      showIosAlert({
+        title: 'Şirket Unvanı Gerekli',
+        message: 'Lütfen faturada yer alacak resmi şirket ticari unvanını girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      sirketEl?.focus();
+      return;
+    }
+  } else {
+    // Bireysel TC Kimlik Kontrolü
+    const tcEl = document.getElementById('tcno');
+    const tc = (tcEl?.value || '').trim();
+    if (!tc) {
+      showIosAlert({
+        title: 'T.C. Kimlik Numarası Gerekli',
+        message: 'GİB resmi e-Arşiv fatura düzenleme mevzuatı gereğince 11 haneli T.C. Kimlik Numaranızı girmeniz zorunludur.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      tcEl?.focus();
+      return;
+    }
+
+    if (!validateTCKimlik(tc)) {
+      showIosAlert({
+        title: 'Geçersiz T.C. Kimlik Numarası',
+        message: 'Girdiğiniz T.C. Kimlik Numarası sistem algoritması tarafından doğrulanamadı. "sasas" vb. rastgele değerler kabul edilmez; lütfen 11 haneli resmi T.C. Kimlik Numaranızı girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      tcEl?.focus();
+      return;
+    }
+  }
+
+  // Başarılı: 2. Adıma Geç
+  document.getElementById('panelStep1').style.display = 'none';
+  document.getElementById('panelStep2').style.display = 'block';
+
+  document.getElementById('step1').className = 'step-circle step-done';
+  document.getElementById('step1').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  document.getElementById('bar1').style.width = '100%';
+  document.getElementById('step2').className = 'step-circle step-active';
+  document.getElementById('step2lbl').style.color = '#ffffff';
+
+  const orderNum = 'DS-' + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('havaleRef').textContent = orderNum;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goStep1() {
+  document.getElementById('panelStep2').style.display = 'none';
+  document.getElementById('panelStep1').style.display = 'block';
+
+  document.getElementById('step1').className = 'step-circle step-active';
+  document.getElementById('step1').innerHTML = '1';
+  document.getElementById('bar1').style.width = '0%';
+  document.getElementById('step2').className = 'step-circle step-idle';
+  document.getElementById('step2lbl').style.color = '#86868b';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function processPayment() {
+  const isCard = document.getElementById('m-card')?.classList.contains('selected');
+  
+  if (isCard) {
+    const cardnoEl = document.getElementById('cardno');
+    const cardno = (cardnoEl?.value || '').replace(/\s+/g, '');
+    
+    if (!cardno || !validateLuhn(cardno)) {
+      showIosAlert({
+        title: 'Geçersiz Kart Numarası',
+        message: 'Girdiğiniz kart numarası banka algoritması (Luhn) tarafından onaylanmadı. "sasasa" veya rastgele sayılar kabul edilmez; lütfen 16 haneli geçerli kart numaranızı kontrol edin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      cardnoEl?.focus();
+      return;
+    }
+
+    const monthEl = document.getElementById('cardmonth');
+    const monthStr = (monthEl?.value || '').trim();
+    const month = parseInt(monthStr, 10);
+    if (!monthStr || isNaN(month) || month < 1 || month > 12) {
+      showIosAlert({
+        title: 'Geçersiz Son Kullanma Ayı',
+        message: 'Lütfen 01 ile 12 arasında geçerli bir son kullanma ayı girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      monthEl?.focus();
+      return;
+    }
+
+    const yearEl = document.getElementById('cardyear');
+    const yearStr = (yearEl?.value || '').trim();
+    const yearNum = parseInt(yearStr, 10);
+    const currentYearShort = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+
+    if (!yearStr || isNaN(yearNum) || yearNum < currentYearShort || yearNum > (currentYearShort + 20)) {
+      showIosAlert({
+        title: 'Geçersiz Son Kullanma Yılı',
+        message: `Lütfen geçerli bir son kullanma yılı girin (kartın süresi ${currentYearShort} yılından küçük olamaz).`,
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      yearEl?.focus();
+      return;
+    }
+
+    if (yearNum === currentYearShort && month < currentMonth) {
+      showIosAlert({
+        title: 'Kartın Süresi Dolmuş',
+        message: 'Girdiğiniz kartın son kullanma tarihi geçmiş. Lütfen geçerli bir kart kullanın.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      monthEl?.focus();
+      return;
+    }
+
+    const cvvEl = document.getElementById('cardcvv');
+    const cvv = (cvvEl?.value || '').trim();
+    if (!cvv || !/^\d{3,4}$/.test(cvv)) {
+      showIosAlert({
+        title: 'Geçersiz CVV / CVC',
+        message: 'Lütfen kartınızın arkasındaki 3 veya 4 haneli güvenlik kodunu girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      cvvEl?.focus();
+      return;
+    }
+
+    const nameEl = document.getElementById('cardname');
+    const cardname = (nameEl?.value || '').trim();
+    if (!cardname || cardname.length < 3 || !/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$/.test(cardname)) {
+      showIosAlert({
+        title: 'Kart Üzerindeki İsim Gerekli',
+        message: 'Lütfen kart üzerinde yer alan ad ve soyadı eksiksiz girin.',
+        type: 'error',
+        confirmText: 'Düzelt'
+      });
+      nameEl?.focus();
+      return;
+    }
+  }
+
+  const consent = document.getElementById('checkoutKvkkConsent');
+  if (consent && !consent.checked) {
+    showIosAlert({
+      title: 'Yasal Onay Gerekli',
+      message: 'Lütfen devam etmek için Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi onay kutusunu işaretleyin.',
+      type: 'warning'
+    });
+    return;
+  }
+
+  document.getElementById('panelStep2').style.display = 'none';
+  document.getElementById('panelStep3').style.display = 'block';
+
+  document.getElementById('step2').className = 'step-circle step-done';
+  document.getElementById('step2').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  document.getElementById('bar2').style.width = '100%';
+  document.getElementById('step3').className = 'step-circle step-done';
+  document.getElementById('step3').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  document.getElementById('step3lbl').style.color = '#ffffff';
+
+  const email = document.getElementById('email').value.trim() || 'erenzeybek01@gmail.com';
+  const name = (document.getElementById('fname')?.value || 'Eren').trim();
+  const surname = (document.getElementById('lname')?.value || 'Zeybek').trim();
+  const fullName = (name + ' ' + surname).trim() || 'Eren Zeybek';
+  const phone = document.getElementById('phone').value.trim();
+
+  const orderId = 'DS-' + Math.floor(100000 + Math.random() * 900000);
+
+  const licenseKeys = cart.map(p => ({
+    name: p.name,
+    key: 'DS-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
+  }));
+
+  const subtotal = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const total = subtotal * 1.20;
+
+  const paymentMethod = document.getElementById('m-shopier')?.classList.contains('selected') ? 'Shopier Express' : (document.getElementById('m-havale')?.classList.contains('selected') ? 'FAST / Havale' : 'Kredi Kartı (PayTR 3D Secure)');
+
+  const isKurumsal = document.getElementById('inv-kurumsal')?.classList.contains('selected');
+  const tcVal = isKurumsal ? null : (document.getElementById('tcno')?.value || '').trim();
+  const vknVal = isKurumsal ? (document.getElementById('vergino')?.value || '').trim() : null;
+  const sirketVal = isKurumsal ? (document.getElementById('sirket')?.value || '').trim() : null;
+
+  const invoiceInfo = isKurumsal 
+    ? `Kurumsal (${sirketVal} / VKN: ${vknVal})`
+    : `Bireysel (TC: ${tcVal})`;
+
+  // SAVE TO SHARED STORE
+  let newOrder = null;
+  if (typeof DigiStoreDB !== 'undefined') {
+    newOrder = DigiStoreDB.addOrder({
+      id: orderId,
+      customer: fullName,
+      email: email,
+      phone: phone,
+      tcKimlik: tcVal,
+      vkn: vknVal,
+      company: sirketVal,
+      product: cart.map(c => c.name).join(', '),
+      items: cart,
+      amount: total,
+      status: 'completed',
+      date: 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      method: paymentMethod,
+      licenseKeys: licenseKeys.map(l => l.key),
+      invoiceType: invoiceInfo
+    });
+  }
+
+  const orderEmail = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getEmailById(orderId) : null;
+  const gmailUrl = orderEmail ? orderEmail.gmailUrl : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent('Siparişiniz ve Lisanslarınız: #' + orderId)}&body=${encodeURIComponent('Sipariş No: #' + orderId)}`;
+
+  document.getElementById('orderDetails').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div>
+        <div style="font-size:11px;color:#86868b;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">SİPARİŞ NUMARASI</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fff;margin-top:2px;">#${orderId}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:#86868b;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">TESLİMAT E-POSTASI</div>
+        <div style="font-size:14px;color:#34c759;font-weight:600;margin-top:2px;">${email}</div>
+      </div>
+    </div>
+
+    <!-- E-posta Teslimat Merkezi Bildirimi -->
+    <div style="background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.25);border-radius:14px;padding:16px 18px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#34c759;box-shadow:0 0 10px #34c759;"></span>
+          <span style="font-size:13px;font-weight:700;color:#34c759;">E-posta Teslimatı Hazırlandı (Canlı)</span>
+        </div>
+        <span style="font-size:11.5px;color:#86868b;font-family:'JetBrains Mono',monospace;">Alıcı: ${email}</span>
+      </div>
+      <p style="font-size:12.5px;color:#a1a1a6;line-height:1.5;margin:0 0 14px;">
+        Lisans anahtarlarınız, e-Arşiv faturanız ve ürün erişim linkiniz doğrudan <b style="color:#fff;">${email}</b> adresinize iletildi. Aşağıdaki butona tıklayarak doğrudan kendi Gmail gelen kutunuzda açabilirsiniz.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:#0a84ff;border:none;color:#fff;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(10,132,255,0.35);transition:all .15s ease;">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
+          <span>Gmail Gelen Kutusunda Doğrudan Aç</span>
+        </a>
+
+        <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;padding:10px 16px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>Gelen Kutuma Git</span>
+        </a>
+
+        <button type="button" onclick="resendOrderEmail('${orderId}')" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:#86868b;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          <span>Tekrar Gönder</span>
+        </button>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;margin-bottom:12px;letter-spacing:0.05em;">ÜRETİLEN LİSANS ANAHTARLARINIZ</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+      ${licenseKeys.map(l => `
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);padding:12px 16px;border-radius:12px;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${l.name}</div>
+            <code style="color:#60a5fa;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;">${l.key}</code>
+          </div>
+          <button onclick="navigator.clipboard.writeText('${l.key}');showDynamicIsland('Kopyalandı','Lisans panoya kopyalandı','copy')" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;">
+            Kopyala
+          </button>
+        </div>`).join('')}
+    </div>
+
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:#86868b;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+      <span>Ödeme Yöntemi: <b style="color:#fff;">${paymentMethod}</b></span>
+      <span>Toplam: <b style="color:#fff;font-family:'JetBrains Mono',monospace;">₺${total.toFixed(0)}</b></span>
+    </div>
+  `;
+
+  // Clear cart
+  localStorage.removeItem('digistore_cart');
+
+  showDynamicIsland('Sipariş Onaylandı', `Sipariş #${orderId} başarıyla teslim edildi.`, 'success');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── IOS ALERT & MODAL POPUP ─────────────────────────────────────────
+let iosAlertCallback = null;
+
+function showIosAlert(options) {
+  let title = 'Dikkat';
+  let message = '';
+  let type = 'error';
+  let confirmText = 'Tamam';
+  let onConfirm = null;
+
+  if (typeof options === 'string') {
+    message = options;
+  } else if (typeof options === 'object') {
+    title = options.title || title;
+    message = options.message || '';
+    type = options.type || type;
+    confirmText = options.confirmText || confirmText;
+    onConfirm = options.onConfirm || null;
+  }
+
+  iosAlertCallback = onConfirm;
+  document.getElementById('iosAlertTitle').textContent = title;
+  document.getElementById('iosAlertDesc').textContent = message;
+
+  const iconWrap = document.getElementById('iosAlertIcon');
+  iconWrap.className = 'ios-alert-icon-wrap ' + type;
+
+  let iconSvg = '';
+  if (type === 'error') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  } else if (type === 'warning') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+  } else if (type === 'success') {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12l3 3 5-5"/></svg>`;
+  } else {
+    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+  }
+  iconWrap.innerHTML = iconSvg;
+
+  const btn = document.getElementById('iosAlertBtn');
+  if (btn) btn.textContent = confirmText;
+
+  const backdrop = document.getElementById('iosAlertBackdrop');
+  backdrop.style.display = 'flex';
+  requestAnimationFrame(() => {
+    backdrop.classList.add('active');
+  });
+}
+
+function closeIosAlert() {
+  const backdrop = document.getElementById('iosAlertBackdrop');
+  backdrop.classList.remove('active');
+  setTimeout(() => {
+    backdrop.style.display = 'none';
+    if (typeof iosAlertCallback === 'function') {
+      const cb = iosAlertCallback;
+      iosAlertCallback = null;
+      cb();
+    }
+  }, 220);
+}
+
+function handleBackdropClick(e) {
+  if (e.target.id === 'iosAlertBackdrop') {
+    closeIosAlert();
+  }
+}
+
+// ─── DYNAMIC ISLAND NOTIFICATION ─────────────────────────────────────
+let islandTimeout = null;
+function showDynamicIsland(title, sub, type = 'success') {
+  const island = document.getElementById('dynamicIsland');
+  if (!island) return;
+
+  document.getElementById('islandTitle').textContent = title;
+  document.getElementById('islandSub').textContent = sub;
+
+  const icon = document.getElementById('islandIcon');
+  if (type === 'success') {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  } else if (type === 'copy') {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  } else {
+    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  }
+
+  island.classList.add('active');
+  if (islandTimeout) clearTimeout(islandTimeout);
+  islandTimeout = setTimeout(() => {
+    island.classList.remove('active');
+  }, 3200);
+}
+
+// Global alert interceptor
+window.alert = function(msg) {
+  showIosAlert({
+    title: 'Bilgilendirme',
+    message: msg,
+    type: 'warning'
+  });
+};
+
+function populateFromUserProfile() {
+  if (typeof DigiStoreDB === 'undefined') return;
+  const p = DigiStoreDB.getUserProfile();
+  if (!p) return;
+
+  const emailInput = document.getElementById('email');
+  const fnameInput = document.getElementById('fname') || document.getElementById('name');
+  const lnameInput = document.getElementById('lname') || document.getElementById('surname');
+  const phoneInput = document.getElementById('phone');
+
+  if (p.name) {
+    const parts = p.name.trim().split(' ');
+    const firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : parts[0];
+    const lastName = parts.length > 1 ? parts[parts.length - 1] : '';
+    if (fnameInput && !fnameInput.value) fnameInput.value = firstName;
+    if (lnameInput && !lnameInput.value) lnameInput.value = lastName;
+  }
+  if (emailInput && !emailInput.value && p.email) emailInput.value = p.email;
+  if (phoneInput && !phoneInput.value && p.phone) phoneInput.value = p.phone;
+  const tcInput = document.getElementById('tcno');
+  if (tcInput && !tcInput.value && p.tcKimlik) tcInput.value = p.tcKimlik;
+}
+
+// Initialize on page load
+initSummary();
+populateFromUserProfile();
+
+if (typeof DigiStoreDB !== 'undefined') {
+  DigiStoreDB.onUpdate((topic) => {
+    if (topic === 'profile' || topic === 'auth') {
+      populateFromUserProfile();
+    }
+  });
+}
+
+
+
+function resendOrderEmail(orderId) {
+  if (typeof DigiStoreDB !== 'undefined') {
+    const order = DigiStoreDB.getOrderById(orderId);
+    if (order) {
+      const email = DigiStoreDB.sendOrderEmail(order);
+      showDynamicIsland('E-posta Yeniden İletildi', `${email.to} adresine teslimat yapıldı.`, 'success');
+      return;
+    }
+  }
+  showDynamicIsland('E-posta Gönderildi', 'Teslimat e-postası başarıyla kuyruğa alındı.', 'success');
+}
+</script>
+</body>
+</html>
