@@ -29,8 +29,8 @@
     setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
   } catch(e) {}
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v3';
-  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v3';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v4';
+  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
   const STORAGE_KEY_USERS = 'digistore_users_v3';
@@ -56,96 +56,94 @@
 
   const DEFAULT_CATEGORIES = [
     { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
-    { id: 'yazilim', name: 'Yazılım & Bot', slug: 'yazilim', icon: '' },
-    { id: 'template', name: 'Web & Tema', slug: 'template', icon: '' },
-    { id: 'kurs', name: 'Eğitim & Kurs', slug: 'kurs', icon: '' },
-    { id: 'lisans', name: 'Lisans Anahtarı', slug: 'lisans', icon: '' },
-    { id: 'tasarim', name: 'Tasarım & UI', slug: 'tasarim', icon: '' }
+    { id: 'ticket', name: 'Ticket & Destek', slug: 'ticket', icon: '' },
+    { id: 'moderasyon', name: 'Moderasyon & Guard', slug: 'moderasyon', icon: '' },
+    { id: 'topluluk', name: 'Topluluk & Kayıt', slug: 'topluluk', icon: '' }
   ];
 
   const DEFAULT_PRODUCTS = [
     {
       id: 1,
-      name: 'Pro Discord Bot v4.0',
-      category: 'yazilim',
-      price: 149,
-      oldPrice: 299,
-      rating: 4.9,
-      reviews: 342,
+      name: 'Yeni Nesil Discord Ticket Botu v14',
+      category: 'ticket',
+      price: 99,
+      oldPrice: 199,
+      rating: 5.0,
+      reviews: 284,
       badge: 'hot',
-      desc: 'Türkçe sesli destek, Spotify senkronu, moderasyon ve biletleme altyapısıyla hazır 7/24 Discord botu. Kaynak kodları dahil.',
-      features: ['Spotify & YouTube ses desteği', 'Auto-mod & küfür engelleme', 'Web dashboard paneli', 'Ömür boyu güncelleme'],
-      downloads: 1240,
+      desc: 'Yeni nesil butonlu ve açılır menülü ticket sistemi, HTML otomatik transkript kayıtları, form (modal) desteği ve yetkili claim altyapısı.',
+      features: ['Butonlu & Açılır Menülü Ticket', 'HTML Otomatik Sohbet Transkripti', 'Bilet Üstlenme (Claim) & Puanlama', 'Kolay config.json Kurulumu'],
+      downloads: 1840,
       active: true
     },
     {
       id: 2,
-      name: 'Next.js 14 E-Ticaret Suite',
-      category: 'template',
-      price: 299,
-      oldPrice: 499,
-      rating: 4.8,
-      reviews: 128,
+      name: 'Pro Discord Ticket Botu (Web Entegre)',
+      category: 'ticket',
+      price: 149,
+      oldPrice: 249,
+      rating: 4.9,
+      reviews: 142,
       badge: 'sale',
-      desc: 'TypeScript, Tailwind ve Shopier/iyzico entegrasyonuyla hazırlanmış uçtan uca modern dijital pazaryeri.',
-      features: ['Hazır ödeme webhookları', 'Admin paneli & istatistikler', 'SEO uyumlu SSR altyapısı', 'Vercel tek tıkla kurulum'],
-      downloads: 567,
+      desc: 'Gelişmiş web yönetim paneli entegrasyonuyla sunucu yöneticilerine özel bilet istatistikleri, log dökümü ve canlı bilet kontrolü.',
+      features: ['Web Dashboard Yönetimi', 'Kategori Bazlı Özel Modallar', 'Otomatik DM Transkript Teslimi', 'Discord.js v14 & Slash Komutlar'],
+      downloads: 720,
       active: true
     },
     {
       id: 3,
-      name: 'Python Otomasyon Kursu',
-      category: 'kurs',
-      price: 199,
-      oldPrice: null,
-      rating: 4.7,
-      reviews: 89,
+      name: 'Discord Gelişmiş Guard & Moderasyon Botu',
+      category: 'moderasyon',
+      price: 129,
+      oldPrice: 199,
+      rating: 4.9,
+      reviews: 198,
       badge: 'new',
-      desc: 'Sıfırdan ileri seviyeye otomasyon, Selenium ve REST API entegrasyonlarını içeren kapsamlı Türkçe eğitim.',
-      features: ['14 saat video içerik', '35+ gerçek hayat projesi', 'Özel Discord çalışma grubu', 'Sertifika'],
-      downloads: 320,
+      desc: 'Raid ve saldırı koruması, otomatik küfür/reklam filtreleme, ceza puanı (jail, timeout, ban) ve görsel denetim logu.',
+      features: ['Gelişmiş Guard & Raid Kalkanı', 'Otomatik Ceza & Timeout Sistemi', 'Görsel & Metin Loglama', 'Hızlı Slash Komut Altyapısı'],
+      downloads: 980,
       active: true
     },
     {
       id: 4,
-      name: 'Windows 11 Pro Orijinal Lisans',
-      category: 'lisans',
-      price: 89,
-      oldPrice: 120,
-      rating: 4.6,
-      reviews: 1205,
+      name: 'Discord Ses Kayıt & İstatistik Botu',
+      category: 'topluluk',
+      price: 119,
+      oldPrice: 169,
+      rating: 4.8,
+      reviews: 85,
       badge: null,
-      desc: 'Microsoft sunucularından anında etkinleşen dijital lisans anahtarı. Ömür boyu geçerli ve e-posta ile anında teslim edilir.',
-      features: ['Orijinal Microsoft aktivasyon', '32/64 Bit tüm sürümler', 'Ömür boyu geçerli', 'e-Arşiv faturalı'],
-      downloads: 4521,
+      desc: 'Ses kanallarında aktiflik takibi, kullanıcı konuşma süreleri, otomatik özel oda (özel ses kanalı) oluşturma ve istatistik paneli.',
+      features: ['Özel Ses Kanalı (Private Room)', 'Detaylı Ses & Sohbet İstatistikleri', 'Haftalık Liderlik Tablosu', 'Özelleştirilebilir Rozetler'],
+      downloads: 540,
       active: true
     },
     {
       id: 5,
-      name: 'Figma UI Kit 2026',
-      category: 'tasarim',
-      price: 129,
-      oldPrice: 199,
-      rating: 4.9,
-      reviews: 215,
+      name: 'Discord Otomatik Kayıt & Hoş Geldin Botu',
+      category: 'topluluk',
+      price: 89,
+      oldPrice: 139,
+      rating: 4.8,
+      reviews: 112,
       badge: null,
-      desc: 'Modern mobil ve masaüstü arayüz tasarımları, 500+ bileşen, otomatik düzen (auto-layout) ve karanlık mod desteği.',
-      features: ['500+ Hazır bileşen', 'iOS & Web varyantları', 'Tam dokümantasyon', 'Ücretsiz ömür boyu güncelleme'],
-      downloads: 892,
+      desc: 'Butonlu ve formlu üye kayıt altyapısı, Canvas dinamik hoş geldin görseli, yaş ve isim doğrulama ve şüpheli hesap filtresi.',
+      features: ['Butonlu / Modal Formlu Kayıt', 'Otomatik Canvas Hoş Geldin Kartı', 'Şüpheli Hesap & Sahte Üye Filtresi', 'Yetkili Kayıt Sayacı'],
+      downloads: 680,
       active: true
     },
     {
       id: 6,
-      name: 'Discord Ses Kayıt & Analiz Botu',
-      category: 'yazilim',
-      price: 179,
-      oldPrice: 249,
-      rating: 4.8,
-      reviews: 74,
+      name: 'Full Discord Sunucu Bot Paketi (Mega Paket)',
+      category: 'ticket',
+      price: 249,
+      oldPrice: 449,
+      rating: 5.0,
+      reviews: 310,
       badge: 'hot',
-      desc: 'Discord ses kanallarında kim nerede, ne kadar süre konuştu? Detaylı ses kaydı, loglama ve web panel entegrasyonu.',
-      features: ['Yüksek kaliteli ses kayıt', 'Web panelinden dinleme', 'Kanal istatistik dökümü', 'Çoklu sunucu desteği'],
-      downloads: 410,
+      desc: 'Ticket, moderasyon guard, kayıt, çekiliş ve istatistik sistemlerinin tamamını tek bir güçlü botta birleştiren eksiksiz paket.',
+      features: ['Tüm Bot Sistemleri Dahil', 'Öncelikli 7/24 Teknik Destek', 'Tek Tıkla Kurulum & Doküman', 'Ömür Boyu Güncelleme'],
+      downloads: 1450,
       active: true
     }
   ];
@@ -157,7 +155,7 @@
     init() {
       // Purge any legacy test storage from user browsers
       try {
-        ['digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
+        ['digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
       } catch(e) {}
 
       const savedCats = this.getCategories();
