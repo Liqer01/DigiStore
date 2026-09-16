@@ -748,7 +748,7 @@
 
         <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px;">
           
-          <!-- Method 1: Kredi Kartı (PayTR / 3D Secure) -->
+          <!-- Method 1: Kredi veya Banka Kartı (Shopier 3D Secure) -->
           <div onclick="selectMethod('card')" id="m-card" class="method-card selected">
             <div class="radio-indicator">
               <div class="radio-dot"></div>
@@ -790,97 +790,49 @@
             <span style="background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.25);color:#34c759;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">KOMİSYONSUZ</span>
           </div>
 
-          <!-- Method 3: Havale / EFT / FAST -->
-          <div onclick="selectMethod('havale')" id="m-havale" class="method-card">
-            <div class="radio-indicator">
-              <div class="radio-dot"></div>
-            </div>
-            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"></line>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-              </svg>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:14px;font-weight:700;color:#fff;">FAST / Havale / EFT</div>
-              <div style="font-size:12px;color:#86868b;">7/24 Anında Banka Transferi ile Otomatik Sipariş Onayı</div>
-            </div>
-            <span style="background:rgba(255,255,255,0.08);color:#d1d5db;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">7/24 AKTİF</span>
-          </div>
-
         </div>
 
-        <!-- Kart Formu -->
-        <div id="cardForm">
-          
-          <div class="apple-input-group" style="margin-bottom:16px;">
-            <label class="apple-label" for="cardno">Kart Numarası *</label>
-            <div style="position:relative;">
-              <input id="cardno" class="apple-input" style="font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;font-size:15px;padding-right:48px;" placeholder="•••• •••• •••• ••••" maxlength="19" oninput="formatCard(this)" required/>
-              <div style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#86868b;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-              </div>
+        <!-- Kart Formu (3D Secure Bilgi) -->
+        <div id="cardForm" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(10,132,255,0.15);border:1px solid rgba(10,132,255,0.3);display:flex;align-items:center;justify-content:center;color:#60a5fa;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">3D Secure Kart Güvenliği</div>
+              <div style="font-size:12px;color:#86868b;">Visa, MasterCard, Troy Kartlar Desteklenir</div>
             </div>
           </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
-            <div class="apple-input-group">
-              <label class="apple-label" for="cardmonth">Ay (AA) *</label>
-              <input id="cardmonth" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="AA" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'').slice(0,2)" required/>
-            </div>
-            <div class="apple-input-group">
-              <label class="apple-label" for="cardyear">Yıl (YY) *</label>
-              <input id="cardyear" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="YY" maxlength="2" oninput="this.value=this.value.replace(/\D/g,'').slice(0,2)" required/>
-            </div>
-            <div class="apple-input-group">
-              <label class="apple-label" for="cardcvv">CVV / CVC *</label>
-              <input id="cardcvv" class="apple-input" style="text-align:center;font-family:'JetBrains Mono',monospace;" placeholder="•••" maxlength="4" type="password" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" required/>
-            </div>
+          <p style="font-size:13px;color:#a1a1a6;line-height:1.6;margin-bottom:14px;">
+            Ödemeniz BDDK ve Merkez Bankası lisanslı <b>Shopier SSL altyapısı</b> üzerinden 3D Secure SMS şifresi ile güvenle tahsil edilir. Kart bilgileriniz kesinlikle sunucularımızda saklanmaz.
+          </p>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);padding:8px 12px;border-radius:10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>256-Bit Banka Düzeyinde SSL Koruması Aktif</span>
           </div>
-
-          <div class="apple-input-group" style="margin-bottom:18px;">
-            <label class="apple-label" for="cardname">Kart Üzerindeki İsim *</label>
-            <input id="cardname" class="apple-input" placeholder="AD SOYAD" maxlength="50" oninput="this.value=this.value.replace(/[^a-zA-ZçÇğĞıİöÖşŞüÜ\s]/g,'').toUpperCase()" required/>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
-            <input type="checkbox" id="save3d" style="width:16px;height:16px;accent-color:#0a84ff;cursor:pointer;" checked/>
-            <label for="save3d" style="font-size:12.5px;color:#a1a1a6;cursor:pointer;">
-              <b>3D Secure SMS Şifre Koruması</b> ile güvenli ödeme yap (Önerilen)
-            </label>
-          </div>
-
         </div>
 
         <!-- Shopier Bilgi -->
-        <div id="shopierInfo" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-            <span style="font-size:15px;font-weight:700;color:#fff;">Shopier Güvenli Yönlendirme</span>
-            <span style="background:#22c55e;width:6px;height:6px;border-radius:50%;"></span>
-          </div>
-          <p style="font-size:13px;color:#a1a1a6;line-height:1.6;">
-            <b>"Ödemeyi Tamamla"</b> butonuna tıkladığınızda resmi <b>Shopier SSL</b> korumalı sayfasına aktarılacaksınız. İşlem tamamlandığı an lisansınız panelinize 1 saniye içinde tanımlanır.
-          </p>
-        </div>
-
-        <!-- Havale Bilgi -->
-        <div id="havaleInfo" style="display:none;background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.22);border-radius:16px;padding:22px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-            <div style="width:26px;height:26px;border-radius:50%;background:rgba(52,199,89,0.2);display:flex;align-items:center;justify-content:center;color:#34c759;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div id="shopierInfo" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(52,199,89,0.15);border:1px solid rgba(52,199,89,0.3);display:flex;align-items:center;justify-content:center;color:#34c759;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
             </div>
-            <span style="font-size:14px;color:#34c759;font-weight:700;">Ziraat Bankası FAST / Havale Hesabı</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">Shopier Güvenli Ödeme</div>
+              <div style="font-size:12px;color:#86868b;">Resmi Türk E-Ticaret Altyapısı</div>
+            </div>
           </div>
-          <div style="font-size:13px;color:#e2e8f0;line-height:1.9;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.4);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);">
-            <div style="color:#86868b;font-size:11px;">IBAN NUMARASI</div>
-            <div style="font-weight:700;color:#60a5fa;margin-bottom:8px;">TR00 0000 0000 0000 0000 0000 00</div>
-            <div style="color:#86868b;font-size:11px;">ALICI ÜNVANI</div>
-            <div style="color:#fff;margin-bottom:8px;">DigiStore Bilişim Ticaret A.Ş.</div>
-            <div style="color:#86868b;font-size:11px;">AÇIKLAMA (SİPARİŞ REFERANSI)</div>
-            <div id="havaleRef" style="color:#4ade80;font-weight:700;background:rgba(34,197,94,0.15);padding:2px 8px;border-radius:4px;display:inline-block;">DS-SIPARIS-2026</div>
+          <p style="font-size:13px;color:#a1a1a6;line-height:1.6;margin-bottom:14px;">
+            <b>"Ödemeyi Tamamla"</b> butonuna tıkladığınızda resmi <b>Shopier SSL</b> sayfasına aktarılacaksınız. Ödemeniz tamamlandığı an lisansınız e-postanıza ve hesabınıza 1 saniye içinde otomatik teslim edilir.
+          </p>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);padding:8px 12px;border-radius:10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Sıfır Ek Komisyon &amp; Anında Sipariş Onayı</span>
           </div>
         </div>
 
+        </div>
       </div>
 
       <!-- KVKK & Mesafeli Satış Sözleşmesi Yasal Onay Kutusu -->
@@ -1091,11 +1043,14 @@ function selectInvoice(type) {
 }
 
 function selectMethod(m) {
-  ['card','shopier','havale'].forEach(x => document.getElementById('m-'+x).classList.remove('selected'));
-  document.getElementById('m-'+m).classList.add('selected');
+  ['card','shopier'].forEach(x => {
+    const el = document.getElementById('m-'+x);
+    if (el) el.classList.remove('selected');
+  });
+  const target = document.getElementById('m-'+m);
+  if (target) target.classList.add('selected');
   document.getElementById('cardForm').style.display = m === 'card' ? 'block' : 'none';
   document.getElementById('shopierInfo').style.display = m === 'shopier' ? 'block' : 'none';
-  document.getElementById('havaleInfo').style.display = m === 'havale' ? 'block' : 'none';
 }
 
 // ─── DOĞRULAMA VE FORMATLAMA MOTORU (VALIDATION ENGINE) ─────────────
@@ -1320,92 +1275,6 @@ function goStep1() {
 }
 
 function processPayment() {
-  const isCard = document.getElementById('m-card')?.classList.contains('selected');
-  
-  if (isCard) {
-    const cardnoEl = document.getElementById('cardno');
-    const cardno = (cardnoEl?.value || '').replace(/\s+/g, '');
-    
-    if (!cardno || !validateLuhn(cardno)) {
-      showIosAlert({
-        title: 'Geçersiz Kart Numarası',
-        message: 'Girdiğiniz kart numarası banka algoritması (Luhn) tarafından onaylanmadı. "sasasa" veya rastgele sayılar kabul edilmez; lütfen 16 haneli geçerli kart numaranızı kontrol edin.',
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      cardnoEl?.focus();
-      return;
-    }
-
-    const monthEl = document.getElementById('cardmonth');
-    const monthStr = (monthEl?.value || '').trim();
-    const month = parseInt(monthStr, 10);
-    if (!monthStr || isNaN(month) || month < 1 || month > 12) {
-      showIosAlert({
-        title: 'Geçersiz Son Kullanma Ayı',
-        message: 'Lütfen 01 ile 12 arasında geçerli bir son kullanma ayı girin.',
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      monthEl?.focus();
-      return;
-    }
-
-    const yearEl = document.getElementById('cardyear');
-    const yearStr = (yearEl?.value || '').trim();
-    const yearNum = parseInt(yearStr, 10);
-    const currentYearShort = new Date().getFullYear() % 100;
-    const currentMonth = new Date().getMonth() + 1;
-
-    if (!yearStr || isNaN(yearNum) || yearNum < currentYearShort || yearNum > (currentYearShort + 20)) {
-      showIosAlert({
-        title: 'Geçersiz Son Kullanma Yılı',
-        message: `Lütfen geçerli bir son kullanma yılı girin (kartın süresi ${currentYearShort} yılından küçük olamaz).`,
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      yearEl?.focus();
-      return;
-    }
-
-    if (yearNum === currentYearShort && month < currentMonth) {
-      showIosAlert({
-        title: 'Kartın Süresi Dolmuş',
-        message: 'Girdiğiniz kartın son kullanma tarihi geçmiş. Lütfen geçerli bir kart kullanın.',
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      monthEl?.focus();
-      return;
-    }
-
-    const cvvEl = document.getElementById('cardcvv');
-    const cvv = (cvvEl?.value || '').trim();
-    if (!cvv || !/^\d{3,4}$/.test(cvv)) {
-      showIosAlert({
-        title: 'Geçersiz CVV / CVC',
-        message: 'Lütfen kartınızın arkasındaki 3 veya 4 haneli güvenlik kodunu girin.',
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      cvvEl?.focus();
-      return;
-    }
-
-    const nameEl = document.getElementById('cardname');
-    const cardname = (nameEl?.value || '').trim();
-    if (!cardname || cardname.length < 3 || !/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$/.test(cardname)) {
-      showIosAlert({
-        title: 'Kart Üzerindeki İsim Gerekli',
-        message: 'Lütfen kart üzerinde yer alan ad ve soyadı eksiksiz girin.',
-        type: 'error',
-        confirmText: 'Düzelt'
-      });
-      nameEl?.focus();
-      return;
-    }
-  }
-
   const consent = document.getElementById('checkoutKvkkConsent');
   if (consent && !consent.checked) {
     showIosAlert({
@@ -1416,52 +1285,41 @@ function processPayment() {
     return;
   }
 
-  document.getElementById('panelStep2').style.display = 'none';
-  document.getElementById('panelStep3').style.display = 'block';
-
-  document.getElementById('step2').className = 'step-circle step-done';
-  document.getElementById('step2').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-  document.getElementById('bar2').style.width = '100%';
-  document.getElementById('step3').className = 'step-circle step-done';
-  document.getElementById('step3').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-  document.getElementById('step3lbl').style.color = '#ffffff';
-
-  const email = document.getElementById('email').value.trim();
+  const email = (document.getElementById('email')?.value || '').trim();
   const name = (document.getElementById('fname')?.value || '').trim();
   const surname = (document.getElementById('lname')?.value || '').trim();
   const fullName = (name + ' ' + surname).trim();
+  const phone = (document.getElementById('phone')?.value || '').trim();
 
   if (!email || !fullName) {
-    showIosAlert({ title: 'Eksik Bilgi', message: 'L?tfen ad, soyad ve ge?erli e-posta adresinizi girin.', type: 'error' });
+    showIosAlert({ title: 'Eksik Bilgi', message: 'Lütfen ad, soyad ve geçerli e-posta adresinizi girin.', type: 'error' });
     return;
   }
-  const phone = document.getElementById('phone').value.trim();
+
+  const isCard = document.getElementById('m-card')?.classList.contains('selected');
+  const paymentMethod = isCard ? 'Kredi / Banka Kartı (Shopier 3D Secure)' : 'Shopier Express';
 
   const orderId = 'DS-' + Math.floor(100000 + Math.random() * 900000);
-
-  const licenseKeys = cart.map(p => ({
-    name: p.name,
-    key: 'DS-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
-  }));
-
   const subtotal = cart.reduce((s, x) => s + x.price * x.qty, 0);
   const total = subtotal * 1.20;
-
-  const paymentMethod = document.getElementById('m-shopier')?.classList.contains('selected') ? 'Shopier Express' : (document.getElementById('m-havale')?.classList.contains('selected') ? 'FAST / Havale' : 'Kredi Kartı (PayTR 3D Secure)');
 
   const isKurumsal = document.getElementById('inv-kurumsal')?.classList.contains('selected');
   const tcVal = isKurumsal ? null : (document.getElementById('tcno')?.value || '').trim();
   const vknVal = isKurumsal ? (document.getElementById('vergino')?.value || '').trim() : null;
   const sirketVal = isKurumsal ? (document.getElementById('sirket')?.value || '').trim() : null;
-
   const invoiceInfo = isKurumsal 
     ? `Kurumsal (${sirketVal} / VKN: ${vknVal})`
-    : `Bireysel (TC: ${tcVal})`;
+    : `Bireysel (TC: ${tcVal || 'Belirtilmedi'})`;
 
-  // SAVE TO SHARED STORE
-  let newOrder = null;
+  // Lisans anahtarları DB için rezerve edilir, FAKAT ödeme onaylanana kadar müşteriye ASLA teslim edilmez!
+  const licenseKeys = cart.map(p => ({
+    name: p.name,
+    key: 'DS-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
+  }));
+
+  // Siparişi 'pending' (ÖDEME BEKLENİYOR) durumuyla veritabanına kaydet
   if (typeof DigiStoreDB !== 'undefined') {
-    newOrder = DigiStoreDB.addOrder({
+    DigiStoreDB.addOrder({
       id: orderId,
       customer: fullName,
       email: email,
@@ -1472,7 +1330,7 @@ function processPayment() {
       product: cart.map(c => c.name).join(', '),
       items: cart,
       amount: total,
-      status: 'completed',
+      status: 'pending', // ÖDEME ONAYI BEKLENİYOR
       date: 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       method: paymentMethod,
       licenseKeys: licenseKeys.map(l => l.key),
@@ -1480,76 +1338,70 @@ function processPayment() {
     });
   }
 
-  const orderEmail = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getEmailById(orderId) : null;
-  const gmailUrl = orderEmail ? orderEmail.gmailUrl : `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(orderId)}`;
+  // Shopier Güvenli Ödeme Sayfası
+  const shopierStoreUrl = 'https://www.shopier.com/closydev';
+
+  document.getElementById('panelStep2').style.display = 'none';
+  document.getElementById('panelStep3').style.display = 'block';
+
+  document.getElementById('step2').className = 'step-circle step-done';
+  document.getElementById('step2').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  document.getElementById('bar2').style.width = '100%';
+  document.getElementById('step3').className = 'step-circle step-active';
+  document.getElementById('step3').innerHTML = '3';
+  document.getElementById('step3lbl').style.color = '#ffffff';
 
   document.getElementById('orderDetails').innerHTML = `
-    <div style="display:flex;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <div>
-        <div style="font-size:11px;color:#86868b;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">SİPARİŞ NUMARASI</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fff;margin-top:2px;">#${orderId}</div>
+    <div style="text-align:center;padding:10px 0 20px;">
+      <div style="width:68px;height:68px;border-radius:50%;background:rgba(234,179,8,0.15);border:1px solid rgba(234,179,8,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#eab308;box-shadow:0 0 25px rgba(234,179,8,0.2);">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
       </div>
-      <div style="text-align:right;">
-        <div style="font-size:11px;color:#86868b;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">TESLİMAT E-POSTASI</div>
-        <div style="font-size:14px;color:#34c759;font-weight:600;margin-top:2px;">${email}</div>
-      </div>
-    </div>
 
-    <!-- E-posta Teslimat Merkezi Bildirimi -->
-    <div style="background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.25);border-radius:14px;padding:16px 18px;margin-bottom:20px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#34c759;box-shadow:0 0 10px #34c759;"></span>
-          <span style="font-size:13px;font-weight:700;color:#34c759;">E-posta Teslimatı Hazırlandı (Canlı)</span>
-        </div>
-        <span style="font-size:11.5px;color:#86868b;font-family:'JetBrains Mono',monospace;">Alıcı: ${email}</span>
-      </div>
-      <p style="font-size:12.5px;color:#a1a1a6;line-height:1.5;margin:0 0 14px;">
-        Lisans anahtarlarınız, e-Arşiv faturanız ve ürün erişim linkiniz doğrudan <b style="color:#fff;">${email}</b> adresinize iletildi. Aşağıdaki butona tıklayarak doğrudan kendi Gmail gelen kutunuzda açabilirsiniz.
+      <h3 style="font-size:24px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.4px;">Sipariş Kaydedildi — Ödeme Bekleniyor</h3>
+      <p style="font-size:14px;color:#a1a1a6;margin:0 0 20px;line-height:1.6;">
+        Sipariş Numaranız: <b style="color:#60a5fa;font-family:'JetBrains Mono',monospace;">#${orderId}</b> | Toplam: <b style="color:#34c759;font-weight:700;">₺${total.toFixed(0)}</b><br>
+        Ödemenizi 3D Secure ile tamamlamak için resmi <b>Shopier</b> sayfasına aktarılıyorsunuz.
       </p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:#0a84ff;border:none;color:#fff;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(10,132,255,0.35);transition:all .15s ease;">
-          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
-          <span>Gmail Gelen Kutusunda Doğrudan Aç</span>
-        </a>
 
-        <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;padding:10px 16px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          <span>Gelen Kutuma Git</span>
-        </a>
-
-        <button type="button" onclick="resendOrderEmail('${orderId}')" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:#86868b;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-          <span>Tekrar Gönder</span>
-        </button>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#eab308;font-weight:700;margin-bottom:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>LİSANS TESLİMAT KOŞULU</span>
+        </div>
+        <p style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:0;">
+          Güvenlik protokolümüz gereğince dijital lisans anahtarlarınız, ödemeniz <b>Shopier</b> üzerinden onaylandığı an otomatik olarak <b style="color:#fff;">${email}</b> adresinize ve müşteri panelinize iletilecektir.
+        </p>
       </div>
-    </div>
 
-    <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;margin-bottom:12px;letter-spacing:0.05em;">ÜRETİLEN LİSANS ANAHTARLARINIZ</div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
-      ${licenseKeys.map(l => `
-        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);padding:12px 16px;border-radius:12px;">
-          <div>
-            <div style="font-size:13px;font-weight:600;color:#fff;">${l.name}</div>
-            <code style="color:#60a5fa;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;">${l.key}</code>
-          </div>
-          <button onclick="navigator.clipboard.writeText('${l.key}');showDynamicIsland('Kopyalandı','Lisans panoya kopyalandı','copy')" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;">
-            Kopyala
-          </button>
-        </div>`).join('')}
-    </div>
-
-    <div style="display:flex;justify-content:space-between;font-size:13px;color:#86868b;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
-      <span>Ödeme Yöntemi: <b style="color:#fff;">${paymentMethod}</b></span>
-      <span>Toplam: <b style="color:#fff;font-family:'JetBrains Mono',monospace;">₺${total.toFixed(0)}</b></span>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <a href="${shopierStoreUrl}" target="_blank" rel="noopener noreferrer" class="btn-pill-white" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:15px 36px;font-size:14px;font-weight:700;width:100%;max-width:400px;justify-content:center;box-shadow:0 10px 30px rgba(255,255,255,0.2);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <span>Shopier ile Güvenli Öde (₺${total.toFixed(0)})</span>
+        </a>
+        
+        <div style="font-size:12px;color:#86868b;display:flex;align-items:center;gap:6px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#eab308;"></span>
+          <span>Ödeme sayfasına yönlendiriliyorsunuz (<span id="countdown">3</span> saniye)...</span>
+        </div>
+      </div>
     </div>
   `;
 
   // Clear cart
   localStorage.removeItem('digistore_cart');
-
-  showDynamicIsland('Sipariş Onaylandı', `Sipariş #${orderId} başarıyla teslim edildi.`, 'success');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // 3 saniye geri sayım ve otomatik yönlendirme
+  let seconds = 3;
+  const countEl = document.getElementById('countdown');
+  const timer = setInterval(() => {
+    seconds--;
+    if (countEl) countEl.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      window.location.href = shopierStoreUrl;
+    }
+  }, 1000);
 }
 
 // ─── IOS ALERT & MODAL POPUP ─────────────────────────────────────────

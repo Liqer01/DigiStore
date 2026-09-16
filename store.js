@@ -1023,7 +1023,7 @@
 
     getUserLicenses(userEmail) {
       if (!userEmail) return [];
-      const userOrders = this.getUserOrders(userEmail);
+      const userOrders = this.getUserOrders(userEmail).filter(o => o.status === 'completed');
       const licenses = [];
       userOrders.forEach(o => {
         (o.licenseKeys || []).forEach(k => {

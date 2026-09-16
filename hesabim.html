@@ -1471,21 +1471,32 @@ function renderUserOrders() {
       </div>
 
       <!-- Action Buttons -->
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
-        <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>İndir (ZIP)</span>
-        </button>
-        
-        <button onclick="showTab('lisanslar')" class="btn-action-glass">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
-          <span>Lisans Gör</span>
-        </button>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;">
+        ${o.status === 'completed' ? `
+          <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>İndir (ZIP)</span>
+          </button>
+          
+          <button onclick="showTab('lisanslar')" class="btn-action-glass">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
+            <span>Lisans Gör</span>
+          </button>
 
-        <button onclick="downloadInvoice('${o.id}')" class="btn-action-glass">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          <span>e-Arşiv Fatura</span>
-        </button>
+          <button onclick="downloadInvoice('${o.id}')" class="btn-action-glass">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>e-Arşiv Fatura</span>
+          </button>
+        ` : `
+          <a href="https://www.shopier.com/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Ödemeyi Tamamla (Shopier)</span>
+          </a>
+          <span style="font-size:12px;color:#eab308;background:rgba(234,179,8,0.1);padding:6px 14px;border-radius:8px;border:1px solid rgba(234,179,8,0.25);display:inline-flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#eab308;"></span>
+            <span>Ödeme Onayı Bekleniyor</span>
+          </span>
+        `}
       </div>
 
     </div>
@@ -1861,6 +1872,18 @@ function createZipBlob(files) {
 // ─── REAL PRODUCT ARCHIVE DOWNLOAD ──────────────────────────────────
 function downloadProductArchive(productName, orderId, btn) {
   const originalHtml = btn ? btn.innerHTML : '';
+  const orders = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrders() : [];
+  const order = orders.find(o => String(o.id) === String(orderId)) || {};
+
+  if (order.status !== 'completed') {
+    showIosAlert({
+      title: 'Ödeme Onayı Bekleniyor',
+      message: 'Bu ürünün indirme bağlantısı ve lisansı, ödemeniz Shopier üzerinden onaylandıktan sonra aktif olacaktır.',
+      type: 'warning'
+    });
+    return;
+  }
+
   if (btn) {
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-spin"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
@@ -1870,8 +1893,6 @@ function downloadProductArchive(productName, orderId, btn) {
 
   setTimeout(() => {
     try {
-      const orders = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrders() : [];
-      const order = orders.find(o => String(o.id) === String(orderId)) || {};
       const user = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getUserProfile() : { name: 'Müşteri' };
       const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('DS-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
 
