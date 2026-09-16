@@ -7,6 +7,28 @@
 (function(window) {
   'use strict';
 
+  // DigiGuard Anti-DevTools & Source Protection
+  try {
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, { capture: true, passive: false });
+    window.addEventListener('keydown', function(e) {
+      if (e.keyCode === 123 || e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+      const ctrlOrMeta = e.ctrlKey || e.metaKey;
+      if (ctrlOrMeta && e.shiftKey) {
+        const k = (e.key || '').toUpperCase();
+        if (k === 'I' || k === 'J' || k === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67) { e.preventDefault(); e.stopPropagation(); return false; }
+      }
+      if (ctrlOrMeta) {
+        const k = (e.key || '').toUpperCase();
+        if (k === 'U' || k === 'S' || e.keyCode === 85 || e.keyCode === 83) { e.preventDefault(); e.stopPropagation(); return false; }
+      }
+    }, { capture: true, passive: false });
+    const noop = function() {};
+    const methods = ['log', 'debug', 'info', 'warn', 'error', 'table', 'trace'];
+    for (let i = 0; i < methods.length; i++) { try { window.console[methods[i]] = noop; } catch(err) {} }
+    setInterval(function() { try { console.clear(); } catch(e) {} }, 1000);
+    setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
+  } catch(e) {}
+
   const STORAGE_KEY_PRODUCTS = 'digistore_products_v3';
   const STORAGE_KEY_CATEGORIES = 'digistore_categories_v3';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';

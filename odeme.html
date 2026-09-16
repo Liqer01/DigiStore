@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta property="og:image" content="logo.png">
+<script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
 <script src="kvkk.js"></script>
@@ -460,8 +461,17 @@
     transform: scale(0.95);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .mail-backdrop.active .mail-modal-card {
-    transform: scale(1);
+  .checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .checkout-grid {
+      grid-template-columns: 1fr !important;
+      gap: 24px;
+    }
   }
 </style>
 </head>
@@ -540,7 +550,7 @@
 </nav>
 
 <!-- MAIN WORKSPACE -->
-<div style="max-width:1160px;margin:40px auto 90px;padding:0 24px;display:grid;grid-template-columns:1fr 400px;gap:36px;">
+<div class="checkout-grid" style="max-width:1160px;margin:40px auto 90px;padding:0 24px;">
 
   <!-- LEFT: Checkout Flow & Form Panels -->
   <div>
@@ -832,7 +842,6 @@
           </div>
         </div>
 
-        </div>
       </div>
 
       <!-- KVKK & Mesafeli Satış Sözleşmesi Yasal Onay Kutusu -->
