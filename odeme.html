@@ -740,7 +740,7 @@
       <div class="apple-glass" style="padding:32px;margin-bottom:24px;">
         
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
-          <div class="badge-icon-box" style="background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.25);color:#34c759;">
+          <div class="badge-icon-box" style="background:rgba(10,132,255,0.12);border-color:rgba(10,132,255,0.25);color:#0a84ff;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
               <line x1="1" y1="10" x2="23" y2="10"></line>
@@ -748,7 +748,7 @@
           </div>
           <div>
             <h2 style="font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.4px;">
-              Güvenli Ödeme Seçenekleri
+              Güvenli Ödeme Yöntemi
             </h2>
             <p style="font-size:13px;color:#86868b;margin-top:2px;">
               Ödeme altyapımız banka düzeyinde 256-bit SSL ve 3D Secure güvencesiyle korunur.
@@ -756,22 +756,24 @@
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:26px;">
-          
-          <!-- Method 1: Kredi veya Banka Kartı (Shopier 3D Secure) -->
-          <div onclick="selectMethod('card')" id="m-card" class="method-card selected">
-            <div class="radio-indicator">
-              <div class="radio-dot"></div>
+        <!-- Tek ve Güçlü Ödeme Kartı -->
+        <div style="margin-bottom:22px;">
+          <div id="m-card" class="method-card selected" style="cursor:default;">
+            <div class="radio-indicator" style="border-color:#0a84ff;background:#0a84ff;">
+              <div class="radio-dot" style="opacity:1;transform:scale(1);"></div>
             </div>
-            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
+            <div class="badge-icon-box" style="background:rgba(10,132,255,0.15);color:#60a5fa;border-color:rgba(10,132,255,0.3);">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="5" width="20" height="14" rx="2"></rect>
                 <line x1="2" y1="10" x2="22" y2="10"></line>
               </svg>
             </div>
             <div style="flex:1;">
-              <div style="font-size:14px;font-weight:700;color:#fff;">Kredi veya Banka Kartı</div>
-              <div style="font-size:12px;color:#86868b;">Visa, MasterCard, Troy — 3D Secure ile Anında Onay</div>
+              <div style="font-size:14.5px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;">
+                <span>Kredi veya Banka Kartı</span>
+                <span style="background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.25);color:#34c759;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;">KOMİSYONSUZ</span>
+              </div>
+              <div style="font-size:12px;color:#86868b;margin-top:2px;">Visa, MasterCard, Troy — Shopier 3D Secure Güvencesiyle</div>
             </div>
             <!-- Card Brand Badges -->
             <div style="display:flex;align-items:center;gap:6px;">
@@ -780,65 +782,25 @@
               <span style="background:rgba(10,132,255,0.15);border:1px solid rgba(10,132,255,0.3);color:#60a5fa;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:0.04em;">TROY</span>
             </div>
           </div>
-
-          <!-- Method 2: Shopier Express -->
-          <div onclick="selectMethod('shopier')" id="m-shopier" class="method-card">
-            <div class="radio-indicator">
-              <div class="radio-dot"></div>
-            </div>
-            <div class="badge-icon-box" style="background:rgba(255,255,255,0.06);color:#fff;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:14px;font-weight:700;color:#fff;">Shopier Güvenli Ödeme</div>
-              <div style="font-size:12px;color:#86868b;">Tek tıkla kartla öde, resmi Türk e-ticaret altyapısı</div>
-            </div>
-            <span style="background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.25);color:#34c759;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;">KOMİSYONSUZ</span>
-          </div>
-
         </div>
 
-        <!-- Kart Formu (3D Secure Bilgi) -->
+        <!-- 3D Secure Güvenlik Detay Kartı -->
         <div id="cardForm" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:20px;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <div style="width:36px;height:36px;border-radius:10px;background:rgba(10,132,255,0.15);border:1px solid rgba(10,132,255,0.3);display:flex;align-items:center;justify-content:center;color:#60a5fa;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
             </div>
             <div>
-              <div style="font-size:14px;font-weight:700;color:#fff;">3D Secure Kart Güvenliği</div>
-              <div style="font-size:12px;color:#86868b;">Visa, MasterCard, Troy Kartlar Desteklenir</div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">3D Secure SMS Korumalı Tahsilat</div>
+              <div style="font-size:12px;color:#86868b;">Tüm Banka ve Kredi Kartları Desteklenir</div>
             </div>
           </div>
           <p style="font-size:13px;color:#a1a1a6;line-height:1.6;margin-bottom:14px;">
-            Ödemeniz BDDK ve Merkez Bankası lisanslı <b>Shopier SSL altyapısı</b> üzerinden 3D Secure SMS şifresi ile güvenle tahsil edilir. Kart bilgileriniz kesinlikle sunucularımızda saklanmaz.
+            <b>"Güvenli Ödemeyi Onayla &amp; Lisansı Üret"</b> butonuna tıkladığınızda BDDK ve Merkez Bankası lisanslı <b>Shopier 256-Bit SSL</b> ödeme sayfasına yönlendirileceksiniz. Ödemeniz onaylandığı an dijital lisansınız ve resmi faturanız otomatik teslim edilir.
           </p>
           <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);padding:8px 12px;border-radius:10px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>256-Bit Banka Düzeyinde SSL Koruması Aktif</span>
-          </div>
-        </div>
-
-        <!-- Shopier Bilgi -->
-        <div id="shopierInfo" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:20px;">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(52,199,89,0.15);border:1px solid rgba(52,199,89,0.3);display:flex;align-items:center;justify-content:center;color:#34c759;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-            </div>
-            <div>
-              <div style="font-size:14px;font-weight:700;color:#fff;">Shopier Güvenli Ödeme</div>
-              <div style="font-size:12px;color:#86868b;">Resmi Türk E-Ticaret Altyapısı</div>
-            </div>
-          </div>
-          <p style="font-size:13px;color:#a1a1a6;line-height:1.6;margin-bottom:14px;">
-            <b>"Ödemeyi Tamamla"</b> butonuna tıkladığınızda resmi <b>Shopier SSL</b> sayfasına aktarılacaksınız. Ödemeniz tamamlandığı an lisansınız e-postanıza ve hesabınıza 1 saniye içinde otomatik teslim edilir.
-          </p>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);padding:8px 12px;border-radius:10px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>Sıfır Ek Komisyon &amp; Anında Sipariş Onayı</span>
+            <span>256-Bit Banka Düzeyinde SSL Koruması &amp; Sıfır Komisyon Aktif</span>
           </div>
         </div>
 
@@ -1267,7 +1229,8 @@ function goStep2() {
   document.getElementById('step2lbl').style.color = '#ffffff';
 
   const orderNum = 'DS-' + Math.floor(100000 + Math.random() * 900000);
-  document.getElementById('havaleRef').textContent = orderNum;
+  const href = document.getElementById('havaleRef');
+  if (href) href.textContent = orderNum;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
