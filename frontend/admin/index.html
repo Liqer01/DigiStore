@@ -9,7 +9,22 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta property="og:image" content="logo.png">
+<script src="../security.js"></script>
 <script>
+// Auto-Redirect: Eger bu dosya yanlislikla ana sayfada veya admin disinda acildiysa hemen magazaya don
+(function() {
+  try {
+    const currentPath = (window.location.pathname || '').toLowerCase();
+    if (!currentPath.includes('admin')) {
+      if (window.location.hostname.includes('closydev.site')) {
+        window.location.replace('/frontend/index.html');
+      } else {
+        window.location.replace('../index.html');
+      }
+      return;
+    }
+  } catch(e) {}
+})();
 (async function() {
   const currentPath = (window.location.pathname || '').toLowerCase();
   if (!currentPath.includes('admin')) return;
@@ -30,7 +45,7 @@
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:12px;font-size:12px;font-family:monospace;color:#a1a1a6;margin-bottom:24px;">
               Tespit Edilen IP: <span style="color:#ff453a;font-weight:700;">${data.clientIp || 'Yetkisiz IP'}</span>
             </div>
-            <a href="/" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Magazaya Don</a>
+            <a href="/frontend/index.html" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Magazaya Don</a>
           </div>
         </body>`;
       window.stop();
@@ -46,7 +61,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="../store.js"></script>
+<script src="/store.js" onerror="this.onerror=null;this.src='../store.js';"></script>
 <script>
 // Admin Account Verification (Strictly requires admin@digistore.com login)
 (function() {
@@ -63,7 +78,7 @@
             </div>
             <h2 style="font-size:20px;font-weight:800;margin:0 0 8px;color:#fff;letter-spacing:-0.3px;">Yonetici Girisi Gerekli</h2>
             <p style="font-size:13.5px;color:#86868b;line-height:1.6;margin:0 0 20px;">Bu panele erismek icin yonetici hesabiyla (admin@digistore.com) giris yapmis olmaniz gerekmektedir.</p>
-            <a href="../hesabim.html" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Yonetici Girisi Yap</a>
+            <a href="/hesabim.html" style="display:inline-block;background:#ffffff;color:#000000;font-size:13px;font-weight:700;padding:11px 26px;border-radius:9999px;text-decoration:none;">Yonetici Girisi Yap</a>
           </div>
         </body>`;
       window.stop();
@@ -549,7 +564,7 @@
 <aside class="sidebar">
   
   <!-- Sidebar Brand -->
-  <div style="padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;" onclick="returnToStore()" title="Mağazaya Dön">
     <div style="position:relative;width:34px;height:34px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.3);overflow:hidden;">
       <img src="logo-icon.png" alt="DigiStore Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
     </div>
@@ -618,7 +633,7 @@
       Ayarlar
     </div>
 
-    <div class="nav-item" style="color:#ef4444;" onclick="window.location='../index.html'">
+    <div class="nav-item" style="color:#ef4444;cursor:pointer;" onclick="returnToStore()">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
       Mağazaya Dön
     </div>
@@ -651,6 +666,11 @@
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="font-size:12px;color:#86868b;font-family:'JetBrains Mono',monospace;" id="liveTime">--:--:--</span>
       
+      <button class="btn-pill-dark" onclick="returnToStore()" style="display:inline-flex;align-items:center;gap:6px;color:#a5b4fc;border-color:rgba(165,180,252,0.3);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Mağazayı Gör</span>
+      </button>
+
       <button class="btn-pill-dark" onclick="openCategoryModal()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
         <span>Kategoriler</span>
@@ -2098,6 +2118,15 @@ window.alert = function(msg) {
 DigiStoreDB.onUpdate(() => {
   renderAll();
 });
+
+// Return to Storefront
+function returnToStore() {
+  if (window.location.hostname.includes('closydev.site')) {
+    window.location.href = '/frontend/index.html';
+  } else {
+    window.location.href = '../index.html';
+  }
+}
 
 // Real-time clock
 function updateLiveClock() {

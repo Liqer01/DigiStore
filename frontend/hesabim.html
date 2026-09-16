@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta property="og:image" content="logo.png">
+<script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
 <script src="kvkk.js"></script>
@@ -686,7 +687,36 @@
   </div>
 </div>
 
-
+<!-- E-POSTA CANLI GORUNTULEME MODALI -->
+<div id="emailViewBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111116;border:1px solid rgba(255,255,255,0.14);border-radius:20px;max-width:850px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,0.8);overflow:hidden;">
+    <!-- Header -->
+    <div style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(52,199,89,0.12);border:1px solid rgba(52,199,89,0.3);display:flex;align-items:center;justify-content:center;color:#34c759;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div>
+          <div id="emailModalSubject" style="font-size:15px;font-weight:700;color:#fff;">Siparis Teslimat E-postasi</div>
+          <div id="emailModalMeta" style="font-size:12px;color:#86868b;margin-top:2px;">Alici: -</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a id="emailModalGmailLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;font-size:12px;padding:7px 14px;">
+          <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
+          <span>Gmail'de Ara</span>
+        </a>
+        <button onclick="closeEmailModal()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:50%;color:#fff;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,69,58,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Body / iframe container -->
+    <div style="flex:1;overflow-y:auto;background:#0d0d12;padding:16px;">
+      <iframe id="emailModalIframe" style="width:100%;height:540px;border:none;border-radius:12px;background:#ffffff;" sandbox="allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
 
 <!-- TOP NAV -->
 <nav style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
@@ -706,7 +736,7 @@
   <div style="display:flex;align-items:center;gap:14px;">
     <div id="topNavUserAction"></div>
 
-    <a id="navAdminBtn" href="admin/index.html" style="display:none;font-size:12.5px;color:#a5b4fc;text-decoration:none;font-weight:600;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:7px 14px;border-radius:9999px;transition:all .2s ease;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">
+    <a id="navAdminBtn" href="/admin/" style="display:none;font-size:12.5px;color:#a5b4fc;text-decoration:none;font-weight:600;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:7px 14px;border-radius:9999px;transition:all .2s ease;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -733,12 +763,15 @@
     <!-- User Profile Identity Card -->
     <div class="apple-glass" style="padding:24px 20px;margin-bottom:18px;text-align:center;">
       <div style="position:relative;width:72px;height:72px;margin:0 auto 14px;">
-        <div id="sidebarAvatar" style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0a84ff 0%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;box-shadow:0 0 25px rgba(10,132,255,0.3);border:2px solid rgba(255,255,255,0.2);">
+        <div id="sidebarAvatar" onclick="triggerAvatarUpload()" style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0a84ff 0%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;box-shadow:0 0 25px rgba(10,132,255,0.3);border:2px solid rgba(255,255,255,0.2);overflow:hidden;cursor:pointer;transition:transform 0.2s ease;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'" title="Logoyu / Fotoğrafı Değiştir">
           Z
         </div>
         <div id="sidebarAvatarOnline" style="position:absolute;bottom:0;right:2px;width:18px;height:18px;border-radius:50%;background:#34c759;border:2px solid #000;display:flex;align-items:center;justify-content:center;" title="Çevrimiçi & Aktif">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
+        <button onclick="triggerAvatarUpload()" type="button" style="position:absolute;bottom:-2px;left:-2px;width:22px;height:22px;border-radius:50%;background:rgba(10,132,255,0.9);border:2px solid #000;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.5);" title="Logo / Fotoğraf Değiştir">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+        </button>
       </div>
       
       <div id="sidebarName" style="font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.4px;">Misafir</div>
@@ -811,7 +844,7 @@
       </div>
 
       <!-- Admin Paneli (Sadece admin@digistore.com) -->
-      <a id="sidebarAdminBtn" href="admin/index.html" class="sidebar-item" style="display:none;color:#a5b4fc;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:12px;text-decoration:none;margin-top:2px;">
+      <a id="sidebarAdminBtn" href="/admin/" class="sidebar-item" style="display:none;color:#a5b4fc;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:12px;text-decoration:none;margin-top:2px;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -856,8 +889,8 @@
         Siparişlerinizi görüntülemek, lisans anahtarlarınızı kopyalamak ve faturalarınızı indirmek için lütfen giriş yapın.
       </p>
 
-      <div style="display:flex;flex-direction:column;gap:12px;max-width:320px;margin:0 auto;">
-        <button type="button" class="btn-google-auth" onclick="handleGoogleAuth()">
+      <div style="display:flex;flex-direction:column;gap:10px;max-width:340px;margin:0 auto;">
+        <button type="button" class="btn-google-auth" onclick="handleGoogleAuth()" style="border-radius:14px;padding:12px 18px;">
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -866,6 +899,26 @@
           </svg>
           <span>Google ile Giriş Yap</span>
         </button>
+
+        <button type="button" onclick="handleDiscordAuth()" class="btn-oauth-provider btn-oauth-discord" style="border-radius:14px;height:45px;font-size:14px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          <span>Discord ile Giriş Yap</span>
+        </button>
+
+        <button type="button" onclick="handleGithubAuth()" class="btn-oauth-provider btn-oauth-github" style="border-radius:14px;height:45px;font-size:14px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub ile Giriş Yap</span>
+        </button>
+
+        <div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+          <span style="font-size:11.5px;color:#86868b;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">veya</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+        </div>
 
         <button type="button" class="btn-action-primary" onclick="openAuthModal('login')" style="padding:12px;justify-content:center;font-size:14px;border-radius:14px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -950,6 +1003,46 @@
         </div>
       </div>
       
+      <!-- Hidden File Input for Avatar / Logo Upload -->
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarFileSelect(event)">
+
+      <!-- 0. Profil Logosu & Avatar Yönetimi -->
+      <div class="apple-glass" style="padding:28px;margin-bottom:20px;">
+        <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>Profil Logosu &amp; Hesap Görseli</span>
+        </h3>
+
+        <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+          <!-- Avatar Preview -->
+          <div style="position:relative;width:82px;height:82px;flex-shrink:0;">
+            <div id="settingsAvatarPreview" onclick="triggerAvatarUpload()" style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0a84ff,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;box-shadow:0 0 25px rgba(168,85,247,0.35);border:2px solid rgba(255,255,255,0.2);overflow:hidden;cursor:pointer;transition:transform 0.2s ease;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'" title="Fotoğraf Yüklemek İçin Tıklayın">
+              Z
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div style="flex:1;min-width:240px;">
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;">Özel Logo / Profil Resmi</div>
+            <p style="font-size:12.5px;color:#86868b;line-height:1.5;margin-bottom:14px;">
+              PNG, JPG veya GIF formatında istediğiniz logoyu yükleyin. Sol menüde ve üst gezinme çubuğunda anında aktif olur.
+            </p>
+
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <button type="button" onclick="triggerAvatarUpload()" class="btn-action-primary" style="padding:9px 18px;font-size:13px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <span>Yeni Logo Yükle</span>
+              </button>
+
+              <button type="button" onclick="handleRemoveAvatar()" class="btn-action-glass" style="padding:9px 16px;font-size:13px;border-radius:10px;color:#ff453a;border-color:rgba(255,69,58,0.25);display:inline-flex;align-items:center;gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Logoyu Kaldır</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Kişisel Bilgiler Formu -->
       <div class="apple-glass" style="padding:28px;margin-bottom:20px;">
         <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px;">
@@ -1164,12 +1257,33 @@ function renderUserProfile() {
 
   const initial = p.name ? p.name.trim().charAt(0).toUpperCase() : 'Z';
   const av = document.getElementById('sidebarAvatar');
-  if (p.provider === 'google') {
-    av.style.background = 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)';
+  const setAv = document.getElementById('settingsAvatarPreview');
+
+  if (p.avatar) {
+    av.innerHTML = `<img src="${p.avatar}" alt="${p.name || 'Profil'}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+    av.style.background = 'transparent';
+    if (setAv) {
+      setAv.innerHTML = `<img src="${p.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+      setAv.style.background = 'transparent';
+    }
   } else {
-    av.style.background = 'linear-gradient(135deg, #0a84ff 0%, #8b5cf6 100%)';
+    av.innerHTML = '';
+    av.textContent = initial;
+    if (p.provider === 'google') {
+      av.style.background = 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)';
+    } else if (p.provider === 'discord') {
+      av.style.background = 'linear-gradient(135deg, #5865F2 0%, #3b82f6 100%)';
+    } else if (p.provider === 'github') {
+      av.style.background = 'linear-gradient(135deg, #24292F 0%, #4b5563 100%)';
+    } else {
+      av.style.background = 'linear-gradient(135deg, #0a84ff 0%, #8b5cf6 100%)';
+    }
+    if (setAv) {
+      setAv.innerHTML = '';
+      setAv.textContent = initial;
+      setAv.style.background = av.style.background;
+    }
   }
-  av.textContent = initial;
 
   document.getElementById('sidebarName').textContent = p.name || 'Kullanıcı';
   document.getElementById('sidebarEmail').textContent = p.email || '';
@@ -1179,10 +1293,17 @@ function renderUserProfile() {
   `;
 
   if (topNavUserAction) {
+    const avatarBadgeHtml = p.avatar
+      ? `<img src="${p.avatar}" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;">`
+      : `<div style="width:22px;height:22px;border-radius:50%;background:${av.style.background};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">${initial}</div>`;
+
     topNavUserAction.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:13px;font-weight:600;color:#f5f5f7;">${p.name || 'Hesabım'}</span>
-        <button onclick="confirmLogout()" class="btn-action-glass" style="padding:5px 12px;font-size:12px;color:#ff453a;border-color:rgba(255,69,58,0.25);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:9999px;">
+          ${avatarBadgeHtml}
+          <span style="font-size:13px;font-weight:600;color:#f5f5f7;">${p.name || 'Hesabım'}</span>
+        </div>
+        <button onclick="confirmLogout()" class="btn-action-glass" style="padding:6px 14px;font-size:12.5px;color:#ff453a;border-color:rgba(255,69,58,0.25);">
           <span>Çıkış Yap</span>
         </button>
       </div>
@@ -1195,6 +1316,66 @@ function renderUserProfile() {
   if (pe && document.activeElement !== pe) pe.value = p.email || '';
   const pp = document.getElementById('profilePhone');
   if (pp && document.activeElement !== pp) pp.value = p.phone || '';
+}
+
+function triggerAvatarUpload() {
+  const input = document.getElementById('avatarFileInput');
+  if (input) input.click();
+}
+
+function handleAvatarFileSelect(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    showIosAlert({ title: 'Geçersiz Dosya', message: 'Lütfen bir görsel dosyası (PNG, JPG, WebP veya GIF) seçin.', type: 'error' });
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showIosAlert({ title: 'Dosya Çok Büyük', message: 'Lütfen 5 MB\'tan küçük bir logo/resim dosyası seçin.', type: 'error' });
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxDim = 256;
+      let w = img.width;
+      let h = img.height;
+      if (w > h) {
+        if (w > maxDim) {
+          h = Math.round(h * maxDim / w);
+          w = maxDim;
+        }
+      } else {
+        if (h > maxDim) {
+          w = Math.round(w * maxDim / h);
+          h = maxDim;
+        }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/png', 0.92);
+
+      DigiStoreDB.updateUserAvatar(dataUrl);
+      renderUserProfile();
+      showDynamicIsland('Logo Güncellendi', 'Profil logonuz başarıyla kaydedildi ve tüm menülere yansıtıldı.', 'success');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function handleRemoveAvatar() {
+  DigiStoreDB.updateUserAvatar(null);
+  renderUserProfile();
+  showDynamicIsland('Logo Kaldırıldı', 'Profil logonuz kaldırıldı, varsayılan harf ikonuna dönüldü.', 'info');
 }
 
 function handleSaveProfile() {
@@ -1291,21 +1472,32 @@ function renderUserOrders() {
       </div>
 
       <!-- Action Buttons -->
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
-        <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>İndir (ZIP)</span>
-        </button>
-        
-        <button onclick="showTab('lisanslar')" class="btn-action-glass">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
-          <span>Lisans Gör</span>
-        </button>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;">
+        ${o.status === 'completed' ? `
+          <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>İndir (ZIP)</span>
+          </button>
+          
+          <button onclick="showTab('lisanslar')" class="btn-action-glass">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path></svg>
+            <span>Lisans Gör</span>
+          </button>
 
-        <button onclick="downloadInvoice('${o.id}')" class="btn-action-glass">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          <span>e-Arşiv Fatura</span>
-        </button>
+          <button onclick="downloadInvoice('${o.id}')" class="btn-action-glass">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>e-Arşiv Fatura</span>
+          </button>
+        ` : `
+          <a href="https://www.shopier.com/closydev/50891803" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Ödemeyi Tamamla (Shopier)</span>
+          </a>
+          <span style="font-size:12px;color:#eab308;background:rgba(234,179,8,0.1);padding:6px 14px;border-radius:8px;border:1px solid rgba(234,179,8,0.25);display:inline-flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#eab308;"></span>
+            <span>Ödeme Onayı Bekleniyor</span>
+          </span>
+        `}
       </div>
 
     </div>
@@ -1505,9 +1697,14 @@ function renderUserEmails() {
 
       <!-- Action Buttons -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="${e.gmailUrl || 'https://mail.google.com/mail/u/0/#inbox'}" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="text-decoration:none;">
+        <button onclick="viewEmailDetail('${e.id}')" class="btn-action-primary" style="cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span>E-postayı Canlı Oku</span>
+        </button>
+
+        <a href="${e.gmailUrl || ('https://mail.google.com/mail/u/0/#search/' + encodeURIComponent(e.orderId || ''))}" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;">
           <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/></svg>
-          <span>Gmail Gelen Kutumda Aç</span>
+          <span>Gmail'de Aç & Ara</span>
         </a>
 
         <a href="${e.mailtoUrl || ('mailto:' + e.to)}" class="btn-action-glass" style="text-decoration:none;">
@@ -1523,6 +1720,44 @@ function renderUserEmails() {
 
     </div>
   `).join('');
+}
+
+function viewEmailDetail(id) {
+  const mail = (typeof DigiStoreDB !== 'undefined' && DigiStoreDB.getEmailById)
+    ? DigiStoreDB.getEmailById(id)
+    : null;
+  if (!mail) return;
+
+  if (typeof DigiStoreDB !== 'undefined' && DigiStoreDB.markEmailAsRead) {
+    DigiStoreDB.markEmailAsRead(id);
+    renderUserEmails();
+  }
+
+  const backdrop = document.getElementById('emailViewBackdrop');
+  const subjEl = document.getElementById('emailModalSubject');
+  const metaEl = document.getElementById('emailModalMeta');
+  const iframe = document.getElementById('emailModalIframe');
+  const gmailLink = document.getElementById('emailModalGmailLink');
+
+  if (subjEl) subjEl.textContent = mail.subject || 'Sipariş Teslimat E-postası';
+  if (metaEl) metaEl.textContent = 'Alıcı: ' + (mail.to || '') + ' · ' + (mail.date || '');
+  if (gmailLink) {
+    gmailLink.href = mail.gmailUrl || ('https://mail.google.com/mail/u/0/#search/' + encodeURIComponent(mail.orderId || ''));
+  }
+
+  if (iframe) {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(mail.html || ('<div style="font-family:sans-serif;padding:24px;color:#fff;background:#111;"><h3>' + (mail.subject || '') + '</h3><p>' + (mail.preview || '') + '</p></div>'));
+    doc.close();
+  }
+
+  if (backdrop) backdrop.style.display = 'flex';
+}
+
+function closeEmailModal() {
+  const backdrop = document.getElementById('emailViewBackdrop');
+  if (backdrop) backdrop.style.display = 'none';
 }
 
 function renderAllData() {
@@ -1638,6 +1873,18 @@ function createZipBlob(files) {
 // ─── REAL PRODUCT ARCHIVE DOWNLOAD ──────────────────────────────────
 function downloadProductArchive(productName, orderId, btn) {
   const originalHtml = btn ? btn.innerHTML : '';
+  const orders = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrders() : [];
+  const order = orders.find(o => String(o.id) === String(orderId)) || {};
+
+  if (order.status !== 'completed') {
+    showIosAlert({
+      title: 'Ödeme Onayı Bekleniyor',
+      message: 'Bu ürünün indirme bağlantısı ve lisansı, ödemeniz Shopier üzerinden onaylandıktan sonra aktif olacaktır.',
+      type: 'warning'
+    });
+    return;
+  }
+
   if (btn) {
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-spin"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
@@ -1647,8 +1894,6 @@ function downloadProductArchive(productName, orderId, btn) {
 
   setTimeout(() => {
     try {
-      const orders = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrders() : [];
-      const order = orders.find(o => String(o.id) === String(orderId)) || {};
       const user = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getUserProfile() : { name: 'Müşteri' };
       const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('DS-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
 

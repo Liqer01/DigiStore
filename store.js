@@ -1932,6 +1932,21 @@ pause
       } catch (e) {}
     },
 
+    getSupportApiEndpoint() {
+      const base = (typeof this.getApiBaseUrl === 'function') ? this.getApiBaseUrl() : '';
+      return (base || '') + '/api/support';
+    },
+
+    broadcastSupportRealtime(data) {
+      if (typeof BroadcastChannel !== 'undefined') {
+        try {
+          const bus = new BroadcastChannel('digistore_support_bus');
+          bus.postMessage(data);
+          bus.close();
+        } catch (e) {}
+      }
+    },
+
     getUserChatSession() {
       let sessionId = localStorage.getItem('digistore_support_session_id');
       if (!sessionId) {
@@ -1940,14 +1955,14 @@ pause
       }
 
       const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
-      const userEmail = (user && user.email) ? user.email : '';
-      const userName = (user && user.name) ? user.name : 'Müşteri';
+      const userEmail = (user && user.email) ? user.email.toLowerCase().trim() : '';
+      const userName = (user && user.name) ? user.name.trim() : 'Müşteri';
 
       let chats = this.getSupportChats();
       let chat = null;
 
-      if (userEmail && userEmail.toLowerCase() !== 'admin@digistore.com') {
-        chat = chats.find(c => c.userEmail && c.userEmail.toLowerCase() === userEmail.toLowerCase());
+      if (userEmail && userEmail !== 'admin@digistore.com') {
+        chat = chats.find(c => c.userEmail && c.userEmail.toLowerCase().trim() === userEmail);
       }
       if (!chat) {
         chat = chats.find(c => c.sessionId === sessionId);
@@ -1982,9 +1997,16 @@ pause
         chats.unshift(chat);
         this.saveSupportChats(chats);
       } else {
-        if (userEmail && (!chat.userEmail || chat.userName === 'Müşteri')) {
+        let changed = false;
+        if (userEmail && (!chat.userEmail || chat.userEmail.toLowerCase() !== userEmail)) {
           chat.userEmail = userEmail;
+          changed = true;
+        }
+        if (userName && userName !== 'Müşteri' && chat.userName !== userName) {
           chat.userName = userName;
+          changed = true;
+        }
+        if (changed) {
           this.saveSupportChats(chats);
         }
       }
@@ -1992,6 +2014,10 @@ pause
     },
 
     async sendUserSupportMessage(text) {
+      if (!this.isLoggedIn()) {
+        console.warn('Canlı desteğe mesaj göndermek için kullanıcı girişi yapılmalıdır.');
+        return null;
+      }
       if (!text || !text.trim()) return null;
       const cleanText = text.trim();
       const chat = this.getUserChatSession();
@@ -2017,9 +2043,19 @@ pause
       if (idx !== -1) chats[idx] = chat; else chats.unshift(chat);
       this.saveSupportChats(chats);
 
-      // Serverless senkronizasyonu
+      // Anlık sekme/panel yayını (0ms gecikme ile admin ekranına iletir)
+      this.broadcastSupportRealtime({
+        type: 'new_message',
+        sender: 'user',
+        chatId: chat.id,
+        userName: chat.userName,
+        userEmail: chat.userEmail,
+        message: newMsg
+      });
+
+      // Sunucu senkronizasyonu
       try {
-        fetch('/api/support', {
+        fetch(this.getSupportApiEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2068,9 +2104,17 @@ pause
 
       this.saveSupportChats(chats);
 
-      // Serverless senkronizasyonu
+      // Anlık sekme/panel yayını
+      this.broadcastSupportRealtime({
+        type: 'new_message',
+        sender: 'admin',
+        chatId: chat.id,
+        message: newMsg
+      });
+
+      // Sunucu senkronizasyonu
       try {
-        fetch('/api/support', {
+        fetch(this.getSupportApiEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2111,7 +2155,7 @@ pause
 
     async syncSupportWithServer() {
       try {
-        const res = await fetch('/api/support');
+        const res = await fetch(this.getSupportApiEndpoint());
         if (!res.ok) return;
         const data = await res.json();
         if (data && data.success && Array.isArray(data.chats)) {
@@ -2124,12 +2168,14 @@ pause
             if (!local) {
               chatMap.set(serverChat.id, serverChat);
             } else {
-              // Merge messages
+              // Mesajları birleştir
               const msgMap = new Map();
               (local.messages || []).forEach(m => msgMap.set(m.id, m));
               (serverChat.messages || []).forEach(m => msgMap.set(m.id, m));
               local.messages = Array.from(msgMap.values());
               local.lastUpdated = Math.max(local.lastUpdated || 0, serverChat.lastUpdated || 0);
+              if (serverChat.userName) local.userName = serverChat.userName;
+              if (serverChat.userEmail) local.userEmail = serverChat.userEmail;
               chatMap.set(local.id, local);
             }
           });
@@ -2140,7 +2186,7 @@ pause
           this.broadcastChange('digistore_support_chats');
         }
       } catch (err) {
-        // Fallback to local storage if running static
+        // Ağ veya statik çalıştırma toleransı
       }
     },
 
@@ -2320,6 +2366,29 @@ pause
 
     // Event Handlers
     launcher.onclick = function() {
+      // 1. KURAL: Canlı Destek Giriş Yapmadan Asla Çalışmaz
+      if (!DigiStoreDB.isLoggedIn()) {
+        if (typeof openAuthModal === 'function') {
+          openAuthModal('login');
+        } else if (typeof showIosAlert === 'function') {
+          showIosAlert({
+            title: 'Giriş Yapmalısınız',
+            message: 'Canlı destek hattına bağlanmak için lütfen önce hesabınıza giriş yapınız.',
+            type: 'warning',
+            confirmText: 'Giriş Yap',
+            onConfirm: () => {
+              const target = window.location.pathname.includes('/frontend/') ? '/frontend/hesabim.html' : 'hesabim.html';
+              window.location.href = target;
+            }
+          });
+        } else {
+          alert('Canlı destek hattına bağlanmak için lütfen önce hesabınıza giriş yapınız.');
+          const target = window.location.pathname.includes('/frontend/') ? '/frontend/hesabim.html' : 'hesabim.html';
+          window.location.href = target;
+        }
+        return;
+      }
+
       const isOpen = win.classList.contains('open');
       if (isOpen) {
         win.classList.remove('open');
@@ -2363,6 +2432,10 @@ pause
     // Quick chips (puts text into input and sends to admin directly)
     win.querySelectorAll('.digi-quick-chip').forEach(btn => {
       btn.onclick = function() {
+        if (!DigiStoreDB.isLoggedIn()) {
+          if (typeof openAuthModal === 'function') openAuthModal('login');
+          return;
+        }
         const msg = this.getAttribute('data-msg');
         if (!msg) return;
         DigiStoreDB.sendUserSupportMessage(msg);
@@ -2397,6 +2470,10 @@ pause
     // Form submit
     document.getElementById('digiSupportForm').onsubmit = function(e) {
       e.preventDefault();
+      if (!DigiStoreDB.isLoggedIn()) {
+        if (typeof openAuthModal === 'function') openAuthModal('login');
+        return;
+      }
       const inp = document.getElementById('digiSupportInput');
       const text = inp.value.trim();
       if (!text) return;
@@ -2418,6 +2495,20 @@ pause
     function renderWidgetMessages() {
       const container = document.getElementById('digiSupportMessages');
       if (!container) return;
+
+      if (!DigiStoreDB.isLoggedIn()) {
+        container.innerHTML = `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:12px;">
+            <div style="width:46px;height:46px;border-radius:50%;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;color:#c084fc;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#ffffff;">Giriş Yapmalısınız</div>
+            <div style="font-size:12px;color:#86868b;line-height:1.5;">Canlı destek sistemini kullanabilmek için lütfen hesabınıza giriş yapınız.</div>
+            <button type="button" onclick="if(typeof openAuthModal==='function'){openAuthModal('login');}else{window.location.href=window.location.pathname.includes('/frontend/')?'/frontend/hesabim.html':'hesabim.html';}" style="background:#ffffff;color:#000000;border:none;padding:8px 20px;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;">Giriş Yap</button>
+          </div>
+        `;
+        return;
+      }
 
       const isOperator = DigiStoreDB.isAdminOperator();
       let chat = null;
@@ -2513,12 +2604,28 @@ pause
       }
     }
 
+    // Realtime BroadcastChannel Dinleyicisi
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const liveSupportBus = new BroadcastChannel('digistore_support_bus');
+        liveSupportBus.onmessage = function(ev) {
+          if (ev.data && (ev.data.type === 'new_message' || ev.data.type === 'sync')) {
+            renderWidgetMessages();
+            updateWidgetBadge();
+            if (DigiStoreDB.isAdminOperator()) {
+              populateOperatorCustomerSelect();
+            }
+          }
+        };
+      } catch (e) {}
+    }
+
     // Initial render & sync
     renderWidgetMessages();
     updateWidgetBadge();
 
     DigiStoreDB.onUpdate(topic => {
-      if (topic === 'digistore_support_chats') {
+      if (topic === 'digistore_support_chats' || topic === 'auth' || topic === 'session' || topic === 'profile') {
         renderWidgetMessages();
         updateWidgetBadge();
         if (DigiStoreDB.isAdminOperator()) {

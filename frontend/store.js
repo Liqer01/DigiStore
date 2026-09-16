@@ -7,8 +7,30 @@
 (function(window) {
   'use strict';
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v3';
-  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v3';
+  // DigiGuard Anti-DevTools & Source Protection
+  try {
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, { capture: true, passive: false });
+    window.addEventListener('keydown', function(e) {
+      if (e.keyCode === 123 || e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+      const ctrlOrMeta = e.ctrlKey || e.metaKey;
+      if (ctrlOrMeta && e.shiftKey) {
+        const k = (e.key || '').toUpperCase();
+        if (k === 'I' || k === 'J' || k === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67) { e.preventDefault(); e.stopPropagation(); return false; }
+      }
+      if (ctrlOrMeta) {
+        const k = (e.key || '').toUpperCase();
+        if (k === 'U' || k === 'S' || e.keyCode === 85 || e.keyCode === 83) { e.preventDefault(); e.stopPropagation(); return false; }
+      }
+    }, { capture: true, passive: false });
+    const noop = function() {};
+    const methods = ['log', 'debug', 'info', 'warn', 'error', 'table', 'trace'];
+    for (let i = 0; i < methods.length; i++) { try { window.console[methods[i]] = noop; } catch(err) {} }
+    setInterval(function() { try { console.clear(); } catch(e) {} }, 1000);
+    setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
+  } catch(e) {}
+
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v4';
+  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
   const STORAGE_KEY_USERS = 'digistore_users_v3';
@@ -34,96 +56,94 @@
 
   const DEFAULT_CATEGORIES = [
     { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
-    { id: 'yazilim', name: 'Yazılım & Bot', slug: 'yazilim', icon: '' },
-    { id: 'template', name: 'Web & Tema', slug: 'template', icon: '' },
-    { id: 'kurs', name: 'Eğitim & Kurs', slug: 'kurs', icon: '' },
-    { id: 'lisans', name: 'Lisans Anahtarı', slug: 'lisans', icon: '' },
-    { id: 'tasarim', name: 'Tasarım & UI', slug: 'tasarim', icon: '' }
+    { id: 'ticket', name: 'Ticket & Destek', slug: 'ticket', icon: '' },
+    { id: 'moderasyon', name: 'Moderasyon & Guard', slug: 'moderasyon', icon: '' },
+    { id: 'topluluk', name: 'Topluluk & Kayıt', slug: 'topluluk', icon: '' }
   ];
 
   const DEFAULT_PRODUCTS = [
     {
       id: 1,
-      name: 'Pro Discord Bot v4.0',
-      category: 'yazilim',
-      price: 149,
-      oldPrice: 299,
-      rating: 4.9,
-      reviews: 342,
+      name: 'Yeni Nesil Discord Ticket Botu v14',
+      category: 'ticket',
+      price: 99,
+      oldPrice: 199,
+      rating: 5.0,
+      reviews: 284,
       badge: 'hot',
-      desc: 'Türkçe sesli destek, Spotify senkronu, moderasyon ve biletleme altyapısıyla hazır 7/24 Discord botu. Kaynak kodları dahil.',
-      features: ['Spotify & YouTube ses desteği', 'Auto-mod & küfür engelleme', 'Web dashboard paneli', 'Ömür boyu güncelleme'],
-      downloads: 1240,
+      desc: 'Yeni nesil butonlu ve açılır menülü ticket sistemi, HTML otomatik transkript kayıtları, form (modal) desteği ve yetkili claim altyapısı.',
+      features: ['Butonlu & Açılır Menülü Ticket', 'HTML Otomatik Sohbet Transkripti', 'Bilet Üstlenme (Claim) & Puanlama', 'Kolay config.json Kurulumu'],
+      downloads: 1840,
       active: true
     },
     {
       id: 2,
-      name: 'Next.js 14 E-Ticaret Suite',
-      category: 'template',
-      price: 299,
-      oldPrice: 499,
-      rating: 4.8,
-      reviews: 128,
+      name: 'Pro Discord Ticket Botu (Web Entegre)',
+      category: 'ticket',
+      price: 149,
+      oldPrice: 249,
+      rating: 4.9,
+      reviews: 142,
       badge: 'sale',
-      desc: 'TypeScript, Tailwind ve Shopier/iyzico entegrasyonuyla hazırlanmış uçtan uca modern dijital pazaryeri.',
-      features: ['Hazır ödeme webhookları', 'Admin paneli & istatistikler', 'SEO uyumlu SSR altyapısı', 'Vercel tek tıkla kurulum'],
-      downloads: 567,
+      desc: 'Gelişmiş web yönetim paneli entegrasyonuyla sunucu yöneticilerine özel bilet istatistikleri, log dökümü ve canlı bilet kontrolü.',
+      features: ['Web Dashboard Yönetimi', 'Kategori Bazlı Özel Modallar', 'Otomatik DM Transkript Teslimi', 'Discord.js v14 & Slash Komutlar'],
+      downloads: 720,
       active: true
     },
     {
       id: 3,
-      name: 'Python Otomasyon Kursu',
-      category: 'kurs',
-      price: 199,
-      oldPrice: null,
-      rating: 4.7,
-      reviews: 89,
+      name: 'Discord Gelişmiş Guard & Moderasyon Botu',
+      category: 'moderasyon',
+      price: 129,
+      oldPrice: 199,
+      rating: 4.9,
+      reviews: 198,
       badge: 'new',
-      desc: 'Sıfırdan ileri seviyeye otomasyon, Selenium ve REST API entegrasyonlarını içeren kapsamlı Türkçe eğitim.',
-      features: ['14 saat video içerik', '35+ gerçek hayat projesi', 'Özel Discord çalışma grubu', 'Sertifika'],
-      downloads: 320,
+      desc: 'Raid ve saldırı koruması, otomatik küfür/reklam filtreleme, ceza puanı (jail, timeout, ban) ve görsel denetim logu.',
+      features: ['Gelişmiş Guard & Raid Kalkanı', 'Otomatik Ceza & Timeout Sistemi', 'Görsel & Metin Loglama', 'Hızlı Slash Komut Altyapısı'],
+      downloads: 980,
       active: true
     },
     {
       id: 4,
-      name: 'Windows 11 Pro Orijinal Lisans',
-      category: 'lisans',
-      price: 89,
-      oldPrice: 120,
-      rating: 4.6,
-      reviews: 1205,
+      name: 'Discord Ses Kayıt & İstatistik Botu',
+      category: 'topluluk',
+      price: 119,
+      oldPrice: 169,
+      rating: 4.8,
+      reviews: 85,
       badge: null,
-      desc: 'Microsoft sunucularından anında etkinleşen dijital lisans anahtarı. Ömür boyu geçerli ve e-posta ile anında teslim edilir.',
-      features: ['Orijinal Microsoft aktivasyon', '32/64 Bit tüm sürümler', 'Ömür boyu geçerli', 'e-Arşiv faturalı'],
-      downloads: 4521,
+      desc: 'Ses kanallarında aktiflik takibi, kullanıcı konuşma süreleri, otomatik özel oda (özel ses kanalı) oluşturma ve istatistik paneli.',
+      features: ['Özel Ses Kanalı (Private Room)', 'Detaylı Ses & Sohbet İstatistikleri', 'Haftalık Liderlik Tablosu', 'Özelleştirilebilir Rozetler'],
+      downloads: 540,
       active: true
     },
     {
       id: 5,
-      name: 'Figma UI Kit 2026',
-      category: 'tasarim',
-      price: 129,
-      oldPrice: 199,
-      rating: 4.9,
-      reviews: 215,
+      name: 'Discord Otomatik Kayıt & Hoş Geldin Botu',
+      category: 'topluluk',
+      price: 89,
+      oldPrice: 139,
+      rating: 4.8,
+      reviews: 112,
       badge: null,
-      desc: 'Modern mobil ve masaüstü arayüz tasarımları, 500+ bileşen, otomatik düzen (auto-layout) ve karanlık mod desteği.',
-      features: ['500+ Hazır bileşen', 'iOS & Web varyantları', 'Tam dokümantasyon', 'Ücretsiz ömür boyu güncelleme'],
-      downloads: 892,
+      desc: 'Butonlu ve formlu üye kayıt altyapısı, Canvas dinamik hoş geldin görseli, yaş ve isim doğrulama ve şüpheli hesap filtresi.',
+      features: ['Butonlu / Modal Formlu Kayıt', 'Otomatik Canvas Hoş Geldin Kartı', 'Şüpheli Hesap & Sahte Üye Filtresi', 'Yetkili Kayıt Sayacı'],
+      downloads: 680,
       active: true
     },
     {
       id: 6,
-      name: 'Discord Ses Kayıt & Analiz Botu',
-      category: 'yazilim',
-      price: 179,
-      oldPrice: 249,
-      rating: 4.8,
-      reviews: 74,
+      name: 'Full Discord Sunucu Bot Paketi (Mega Paket)',
+      category: 'ticket',
+      price: 249,
+      oldPrice: 449,
+      rating: 5.0,
+      reviews: 310,
       badge: 'hot',
-      desc: 'Discord ses kanallarında kim nerede, ne kadar süre konuştu? Detaylı ses kaydı, loglama ve web panel entegrasyonu.',
-      features: ['Yüksek kaliteli ses kayıt', 'Web panelinden dinleme', 'Kanal istatistik dökümü', 'Çoklu sunucu desteği'],
-      downloads: 410,
+      desc: 'Ticket, moderasyon guard, kayıt, çekiliş ve istatistik sistemlerinin tamamını tek bir güçlü botta birleştiren eksiksiz paket.',
+      features: ['Tüm Bot Sistemleri Dahil', 'Öncelikli 7/24 Teknik Destek', 'Tek Tıkla Kurulum & Doküman', 'Ömür Boyu Güncelleme'],
+      downloads: 1450,
       active: true
     }
   ];
@@ -135,7 +155,7 @@
     init() {
       // Purge any legacy test storage from user browsers
       try {
-        ['digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
+        ['digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
       } catch(e) {}
 
       const savedCats = this.getCategories();
@@ -277,6 +297,10 @@
 
       this.broadcastChange('profile');
       return updated;
+    },
+
+    updateUserAvatar(avatarDataUrl) {
+      return this.saveUserProfile({ avatar: avatarDataUrl || null });
     },
 
     login(email, password) {
@@ -631,24 +655,64 @@
         return;
       }
 
-      if (typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.id) {
-        this.initGoogleIdentityServices(onSuccess, onError);
-        window.google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed()) {
-            console.log('Google One Tap gösterilmedi:', notification.getNotDisplayedReason ? notification.getNotDisplayedReason() : notification);
-          }
-        });
-        return;
+      // Method 1: Google Identity Services OAuth2 Token Client (Official interactive popup for custom buttons)
+      if (typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.oauth2) {
+        try {
+          const client = window.google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: 'email profile openid',
+            prompt: 'select_account',
+            callback: async (tokenResponse) => {
+              if (tokenResponse && tokenResponse.access_token) {
+                try {
+                  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                  });
+                  const info = await res.json();
+                  if (info && info.email) {
+                    const authRes = DigiStoreDB.loginWithGoogle({
+                      email: info.email,
+                      name: info.name || info.email.split('@')[0],
+                      avatar: info.picture,
+                      id: info.sub || info.id
+                    });
+                    if (typeof onSuccess === 'function') onSuccess(authRes.user);
+                    if (typeof renderNavUser === 'function') renderNavUser();
+                    if (typeof renderAllData === 'function') renderAllData();
+                    if (typeof showDynamicIsland === 'function') {
+                      showDynamicIsland('Google Doğrulandı', `Hoş geldin, ${info.name}!`, 'success');
+                    }
+                    if (typeof closeAuthModal === 'function') closeAuthModal();
+                  }
+                } catch (e) {
+                  if (typeof onError === 'function') onError('Google profili okunamadı: ' + e.message);
+                }
+              } else if (tokenResponse && tokenResponse.error) {
+                if (typeof onError === 'function') onError(tokenResponse.error);
+              }
+            }
+          });
+          client.requestAccessToken();
+          return;
+        } catch (err) {
+          console.warn('initTokenClient error, using direct popup fallback:', err);
+        }
       }
 
-      // Retry when SDK ready
-      setTimeout(() => {
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-          this.startGoogleAuth(options);
-        } else {
-          this.showGoogleAuthSetupModal(onSuccess);
-        }
-      }, 600);
+      // Method 2: Direct OAuth2 Popup (works in all browsers, Brave shields, adblockers)
+      const currentOrigin = (typeof window !== 'undefined' && window.location.origin) ? window.location.origin : 'https://closydev.site';
+      const currentPath = (typeof window !== 'undefined' && window.location.pathname) ? window.location.pathname : '/';
+      const redirectUri = currentOrigin + currentPath;
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
+
+      const width = 520, height = 680;
+      const left = (typeof window !== 'undefined' ? (window.screen.width / 2 - width / 2) : 100);
+      const top = (typeof window !== 'undefined' ? (window.screen.height / 2 - height / 2) : 100);
+      const popup = window.open(oauthUrl, 'GoogleAuthPopup', `width=${width},height=${height},top=${top},left=${left},status=no,resizable=yes`);
+
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        window.location.href = oauthUrl;
+      }
     },
 
     showGoogleAuthSetupModal(onSuccess) {
@@ -979,7 +1043,7 @@
 
     getUserLicenses(userEmail) {
       if (!userEmail) return [];
-      const userOrders = this.getUserOrders(userEmail);
+      const userOrders = this.getUserOrders(userEmail).filter(o => o.status === 'completed');
       const licenses = [];
       userOrders.forEach(o => {
         (o.licenseKeys || []).forEach(k => {
@@ -1110,7 +1174,18 @@
     getEmails() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_EMAILS);
-        return raw ? JSON.parse(raw) : [];
+        const emails = raw ? JSON.parse(raw) : [];
+        let updated = false;
+        emails.forEach(e => {
+          if (e.gmailUrl && e.gmailUrl.includes('view=cm')) {
+            e.gmailUrl = `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(e.orderId || '')}`;
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem(STORAGE_KEY_EMAILS, JSON.stringify(emails));
+        }
+        return emails;
       } catch (e) {
         return [];
       }
@@ -1323,8 +1398,8 @@ DigiStore Bilişim Ticaret A.Ş.`;
       const html = this.generateEmailHtml(orderData, to, customer);
       const plain = this.generateEmailPlainText(orderData, to, customer);
 
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
-      const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(plain)}`;
+      const gmailUrl = `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(orderId)}`;
+      const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}`;
 
       const emailRecord = {
         id: 'EML-' + Math.floor(100000 + Math.random() * 900000),
@@ -1822,6 +1897,299 @@ pause
       };
     },
 
+    // ─── LIVE SUPPORT (CANLI DESTEK - GERCEK YONETICI admin@digistore.com) ───
+    isAdminOperator() {
+      const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
+      return !!(user && user.email && user.email.toLowerCase().trim() === 'admin@digistore.com');
+    },
+
+    getSupportChats() {
+      const raw = localStorage.getItem('digistore_support_chats');
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch (e) { return []; }
+    },
+
+    saveSupportChats(chats) {
+      localStorage.setItem('digistore_support_chats', JSON.stringify(chats));
+      this.broadcastChange('digistore_support_chats');
+    },
+
+    getSupportChat(id) {
+      const chats = this.getSupportChats();
+      return chats.find(c => c.id === id) || null;
+    },
+
+    deleteSupportChat(id) {
+      let chats = this.getSupportChats();
+      chats = chats.filter(c => c.id !== id);
+      this.saveSupportChats(chats);
+      try {
+        fetch('/api/support', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', chatId: id, senderEmail: 'admin@digistore.com', isAdmin: true })
+        }).catch(() => {});
+      } catch (e) {}
+    },
+
+    getSupportApiEndpoint() {
+      const base = (typeof this.getApiBaseUrl === 'function') ? this.getApiBaseUrl() : '';
+      return (base || '') + '/api/support';
+    },
+
+    broadcastSupportRealtime(data) {
+      if (typeof BroadcastChannel !== 'undefined') {
+        try {
+          const bus = new BroadcastChannel('digistore_support_bus');
+          bus.postMessage(data);
+          bus.close();
+        } catch (e) {}
+      }
+    },
+
+    getUserChatSession() {
+      let sessionId = localStorage.getItem('digistore_support_session_id');
+      if (!sessionId) {
+        sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+        localStorage.setItem('digistore_support_session_id', sessionId);
+      }
+
+      const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
+      const userEmail = (user && user.email) ? user.email.toLowerCase().trim() : '';
+      const userName = (user && user.name) ? user.name.trim() : 'Müşteri';
+
+      let chats = this.getSupportChats();
+      let chat = null;
+
+      if (userEmail && userEmail !== 'admin@digistore.com') {
+        chat = chats.find(c => c.userEmail && c.userEmail.toLowerCase().trim() === userEmail);
+      }
+      if (!chat) {
+        chat = chats.find(c => c.sessionId === sessionId);
+      }
+
+      if (!chat) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('tr-TR');
+
+        chat = {
+          id: 'chat_' + Date.now(),
+          sessionId: sessionId,
+          userEmail: userEmail || '',
+          userName: userName,
+          createdAt: dateStr + ' ' + timeStr,
+          lastUpdated: Date.now(),
+          unreadByAdmin: 0,
+          unreadByUser: 0,
+          status: 'active',
+          messages: [
+            {
+              id: 'm_init',
+              sender: 'admin',
+              senderName: 'Site Yöneticisi (admin@digistore.com)',
+              senderEmail: 'admin@digistore.com',
+              text: 'Merhaba! DigiStore doğrudan yönetici canlı destek hattındasınız. Mesajınızı buraya yazabilirsiniz, site yöneticimiz admin@digistore.com doğrudan canlı olarak yanıtlayacaktır.',
+              time: timeStr
+            }
+          ]
+        };
+        chats.unshift(chat);
+        this.saveSupportChats(chats);
+      } else {
+        let changed = false;
+        if (userEmail && (!chat.userEmail || chat.userEmail.toLowerCase() !== userEmail)) {
+          chat.userEmail = userEmail;
+          changed = true;
+        }
+        if (userName && userName !== 'Müşteri' && chat.userName !== userName) {
+          chat.userName = userName;
+          changed = true;
+        }
+        if (changed) {
+          this.saveSupportChats(chats);
+        }
+      }
+      return chat;
+    },
+
+    async sendUserSupportMessage(text) {
+      if (!this.isLoggedIn()) {
+        console.warn('Canlı desteğe mesaj göndermek için kullanıcı girişi yapılmalıdır.');
+        return null;
+      }
+      if (!text || !text.trim()) return null;
+      const cleanText = text.trim();
+      const chat = this.getUserChatSession();
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+      const newMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        sender: 'user',
+        senderName: chat.userName || 'Müşteri',
+        senderEmail: chat.userEmail || '',
+        text: cleanText,
+        time: timeStr
+      };
+
+      chat.messages.push(newMsg);
+      chat.lastUpdated = Date.now();
+      chat.unreadByAdmin = (chat.unreadByAdmin || 0) + 1;
+      chat.unreadByUser = 0;
+
+      const chats = this.getSupportChats();
+      const idx = chats.findIndex(c => c.id === chat.id);
+      if (idx !== -1) chats[idx] = chat; else chats.unshift(chat);
+      this.saveSupportChats(chats);
+
+      // Anlık sekme/panel yayını (0ms gecikme ile admin ekranına iletir)
+      this.broadcastSupportRealtime({
+        type: 'new_message',
+        sender: 'user',
+        chatId: chat.id,
+        userName: chat.userName,
+        userEmail: chat.userEmail,
+        message: newMsg
+      });
+
+      // Sunucu senkronizasyonu
+      try {
+        fetch(this.getSupportApiEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'send',
+            chatId: chat.id,
+            sessionId: chat.sessionId,
+            userEmail: chat.userEmail,
+            userName: chat.userName,
+            text: cleanText,
+            isAdmin: false
+          })
+        }).catch(() => {});
+      } catch (e) {}
+
+      return newMsg;
+    },
+
+    async sendAgentSupportMessage(chatId, text, senderEmail = 'admin@digistore.com') {
+      if (!text || !text.trim()) return null;
+      const isAuthorized = this.isAdminOperator() || (senderEmail && senderEmail.toLowerCase().trim() === 'admin@digistore.com');
+      if (!isAuthorized) {
+        console.warn('Canlı destek yanıtı sadece yetkili admin@digistore.com tarafından verilebilir');
+        return null;
+      }
+
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (!chat) return null;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+      const newMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        sender: 'admin',
+        senderName: 'Site Yöneticisi (admin@digistore.com)',
+        senderEmail: 'admin@digistore.com',
+        text: text.trim(),
+        time: timeStr
+      };
+
+      chat.messages.push(newMsg);
+      chat.lastUpdated = Date.now();
+      chat.unreadByUser = (chat.unreadByUser || 0) + 1;
+      chat.unreadByAdmin = 0;
+
+      this.saveSupportChats(chats);
+
+      // Anlık sekme/panel yayını
+      this.broadcastSupportRealtime({
+        type: 'new_message',
+        sender: 'admin',
+        chatId: chat.id,
+        message: newMsg
+      });
+
+      // Sunucu senkronizasyonu
+      try {
+        fetch(this.getSupportApiEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'send',
+            chatId: chat.id,
+            text: text.trim(),
+            isAdmin: true,
+            senderEmail: 'admin@digistore.com'
+          })
+        }).catch(() => {});
+      } catch (e) {}
+
+      return newMsg;
+    },
+
+    markSupportReadByAdmin(chatId) {
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (chat && chat.unreadByAdmin > 0) {
+        chat.unreadByAdmin = 0;
+        this.saveSupportChats(chats);
+      }
+    },
+
+    markSupportReadByUser(chatId) {
+      const chats = this.getSupportChats();
+      const chat = chats.find(c => c.id === chatId);
+      if (chat && chat.unreadByUser > 0) {
+        chat.unreadByUser = 0;
+        this.saveSupportChats(chats);
+      }
+    },
+
+    getSupportUnreadAdminCount() {
+      const chats = this.getSupportChats();
+      return chats.reduce((sum, c) => sum + (c.unreadByAdmin || 0), 0);
+    },
+
+    async syncSupportWithServer() {
+      try {
+        const res = await fetch(this.getSupportApiEndpoint());
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.chats)) {
+          const localChats = this.getSupportChats();
+          const chatMap = new Map();
+          localChats.forEach(c => chatMap.set(c.id, c));
+
+          data.chats.forEach(serverChat => {
+            const local = chatMap.get(serverChat.id);
+            if (!local) {
+              chatMap.set(serverChat.id, serverChat);
+            } else {
+              // Mesajları birleştir
+              const msgMap = new Map();
+              (local.messages || []).forEach(m => msgMap.set(m.id, m));
+              (serverChat.messages || []).forEach(m => msgMap.set(m.id, m));
+              local.messages = Array.from(msgMap.values());
+              local.lastUpdated = Math.max(local.lastUpdated || 0, serverChat.lastUpdated || 0);
+              if (serverChat.userName) local.userName = serverChat.userName;
+              if (serverChat.userEmail) local.userEmail = serverChat.userEmail;
+              chatMap.set(local.id, local);
+            }
+          });
+
+          const merged = Array.from(chatMap.values()).sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+          localStorage.setItem('digistore_support_chats', JSON.stringify(merged));
+          window.__adminSupportOnline = !!data.adminOnline;
+          this.broadcastChange('digistore_support_chats');
+        }
+      } catch (err) {
+        // Ağ veya statik çalıştırma toleransı
+      }
+    },
+
     // ─── CROSS-TAB BROADCASTING ─────────────────────────────────────────
     listeners: [],
 
@@ -1851,4 +2219,429 @@ pause
   // Expose globally
   window.DigiStoreDB = DigiStoreDB;
 
+  // Background server sync polling every 3.5 seconds
+  setInterval(() => {
+    DigiStoreDB.syncSupportWithServer();
+  }, 3500);
+
+  // Admin Heartbeat (if logged in as admin@digistore.com)
+  setInterval(() => {
+    if (DigiStoreDB.isAdminOperator()) {
+      fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'heartbeat', senderEmail: 'admin@digistore.com', isAdmin: true })
+      }).catch(() => {});
+    }
+  }, 25000);
+
+  // ─── STOREFRONT LIVE SUPPORT WIDGET (REAL HUMAN OPERATOR) ──────────
+  function mountStorefrontSupportWidget() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (window.location.pathname.toLowerCase().includes('/admin')) return;
+    if (document.getElementById('digiSupportLauncher')) return;
+
+    // Inject CSS
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      @keyframes supportPulse {
+        0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6); }
+        70% { box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+      }
+      @keyframes supportSlideUp {
+        from { opacity: 0; transform: translateY(16px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      #digiSupportWindow.open {
+        display: flex !important;
+        animation: supportSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .digi-chat-bubble-admin {
+        background: linear-gradient(135deg, #1f1b2e 0%, #161426 100%);
+        border: 1px solid rgba(168, 85, 247, 0.35);
+        color: #f5f5f7;
+        padding: 10px 14px;
+        border-radius: 14px 14px 14px 2px;
+        font-size: 13px;
+        line-height: 1.45;
+        word-break: break-word;
+        box-shadow: 0 4px 18px rgba(168, 85, 247, 0.15);
+      }
+      .digi-chat-bubble-user {
+        background: linear-gradient(135deg, #a855f7, #6366f1);
+        color: #ffffff;
+        padding: 10px 14px;
+        border-radius: 14px 14px 2px 14px;
+        font-size: 13px;
+        line-height: 1.42;
+        box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+        word-break: break-word;
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    // Floating Button
+    const launcher = document.createElement('div');
+    launcher.id = 'digiSupportLauncher';
+    launcher.setAttribute('style', 'position:fixed;bottom:24px;right:24px;z-index:99980;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#121218 0%,#181824 100%);border:1px solid rgba(168,85,247,0.38);border-radius:9999px;padding:9px 18px 9px 12px;box-shadow:0 12px 36px rgba(0,0,0,0.7),0 0 20px rgba(168,85,247,0.22);cursor:pointer;transition:all .25s ease;user-select:none;');
+    launcher.onmouseover = function() { this.style.transform = 'translateY(-2px) scale(1.02)'; this.style.borderColor = 'rgba(168,85,247,0.6)'; };
+    launcher.onmouseout = function() { this.style.transform = 'translateY(0) scale(1)'; this.style.borderColor = 'rgba(168,85,247,0.38)'; };
+
+    launcher.innerHTML = `
+      <div style="position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.5);color:#ffffff;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;line-height:1.2;">
+        <span style="font-size:13.5px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">Canlı Destek</span>
+        <span id="digiSupportOnlineText" style="font-size:10px;color:#34c759;font-weight:600;display:flex;align-items:center;gap:4px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#34c759;animation:supportPulse 2s infinite;display:inline-block;"></span>
+          Yönetici Çevrimiçi
+        </span>
+      </div>
+      <span id="digiSupportBadge" style="display:none;background:#ff3b30;color:#ffffff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9999px;box-shadow:0 0 8px rgba(255,59,48,0.5);margin-left:2px;">1</span>
+    `;
+
+    // Chat Window
+    const win = document.createElement('div');
+    win.id = 'digiSupportWindow';
+    win.setAttribute('style', 'display:none;position:fixed;bottom:84px;right:24px;width:380px;max-width:calc(100vw - 32px);height:570px;max-height:calc(100vh - 105px);background:#0d0d12;border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,0.85),0 0 35px rgba(168,85,247,0.15);z-index:99981;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,\'Plus Jakarta Sans\',sans-serif;');
+
+    win.innerHTML = `
+      <!-- Header -->
+      <div style="padding:14px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="position:relative;width:36px;height:36px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(168,85,247,0.3);overflow:hidden;">
+            <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#ffffff;display:flex;align-items:center;gap:6px;">
+              <span id="digiSupportHeaderTitle">DigiStore Canlı Destek</span>
+              <span id="digiSupportHeaderRole" style="font-size:8.5px;color:#a855f7;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);padding:1px 5px;border-radius:4px;font-weight:700;">YÖNETİCİ</span>
+            </div>
+            <div id="digiSupportHeaderSub" style="font-size:11px;color:#86868b;font-weight:500;display:flex;align-items:center;gap:4px;">
+              <span style="width:5px;height:5px;border-radius:50%;background:#34c759;display:inline-block;"></span>
+              Operatör: admin@digistore.com
+            </div>
+          </div>
+        </div>
+        <button id="digiSupportCloseBtn" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#a1a1a6;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#a1a1a6';this.style.background='rgba(255,255,255,0.06)';">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Operator Mode Indicator (if logged in as admin@digistore.com) -->
+      <div id="digiSupportOperatorBar" style="display:none;padding:8px 14px;background:rgba(168,85,247,0.12);border-bottom:1px solid rgba(168,85,247,0.25);font-size:11.5px;color:#c084fc;font-weight:600;display:flex;justify-content:space-between;align-items:center;">
+        <span>Yönetici Operatör Modu (admin@digistore.com)</span>
+        <select id="digiSupportCustomerSelect" style="background:#09090d;border:1px solid rgba(168,85,247,0.4);border-radius:8px;color:#fff;font-size:11px;padding:3px 8px;max-width:140px;outline:none;">
+          <option value="">Müşteri Seçin...</option>
+        </select>
+      </div>
+
+      <!-- Quick Message Chips (puts question directly to admin) -->
+      <div id="digiSupportChipsContainer" style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;">
+        <button type="button" class="digi-quick-chip" data-msg="Siparişimin durumunu öğrenebilir miyim?" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Sipariş Durumu</button>
+        <button type="button" class="digi-quick-chip" data-msg="Lisans anahtarım hakkında bilgi almak istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Lisansım Nerede?</button>
+        <button type="button" class="digi-quick-chip" data-msg="Ödeme ve e-Arşiv faturası hakkında görüşmek istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Ödeme &amp; Fatura</button>
+      </div>
+
+      <!-- Messages Area -->
+      <div id="digiSupportMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#08080c;">
+        <!-- Filled via JS -->
+      </div>
+
+      <!-- Input Bar -->
+      <form id="digiSupportForm" style="padding:12px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:8px;align-items:center;">
+        <input type="text" id="digiSupportInput" placeholder="Yöneticiye iletmek istediğiniz mesajı yazın..." autocomplete="off" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;color:#ffffff;outline:none;" />
+        <button type="submit" style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#6366f1);border:none;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 12px rgba(168,85,247,0.4);flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    `;
+
+    document.body.appendChild(launcher);
+    document.body.appendChild(win);
+
+    let activeAdminTargetChatId = null;
+
+    // Event Handlers
+    launcher.onclick = function() {
+      // 1. KURAL: Canlı Destek Giriş Yapmadan Asla Çalışmaz
+      if (!DigiStoreDB.isLoggedIn()) {
+        if (typeof openAuthModal === 'function') {
+          openAuthModal('login');
+        } else if (typeof showIosAlert === 'function') {
+          showIosAlert({
+            title: 'Giriş Yapmalısınız',
+            message: 'Canlı destek hattına bağlanmak için lütfen önce hesabınıza giriş yapınız.',
+            type: 'warning',
+            confirmText: 'Giriş Yap',
+            onConfirm: () => {
+              const target = window.location.pathname.includes('/frontend/') ? '/frontend/hesabim.html' : 'hesabim.html';
+              window.location.href = target;
+            }
+          });
+        } else {
+          alert('Canlı destek hattına bağlanmak için lütfen önce hesabınıza giriş yapınız.');
+          const target = window.location.pathname.includes('/frontend/') ? '/frontend/hesabim.html' : 'hesabim.html';
+          window.location.href = target;
+        }
+        return;
+      }
+
+      const isOpen = win.classList.contains('open');
+      if (isOpen) {
+        win.classList.remove('open');
+      } else {
+        win.classList.add('open');
+        DigiStoreDB.syncSupportWithServer();
+        const isOperator = DigiStoreDB.isAdminOperator();
+
+        const opBar = document.getElementById('digiSupportOperatorBar');
+        const chips = document.getElementById('digiSupportChipsContainer');
+        const headerRole = document.getElementById('digiSupportHeaderRole');
+        const headerSub = document.getElementById('digiSupportHeaderSub');
+
+        if (isOperator) {
+          if (opBar) opBar.style.display = 'flex';
+          if (chips) chips.style.display = 'none';
+          if (headerRole) headerRole.textContent = 'YÖNETİCİ OPERATÖR';
+          if (headerSub) headerSub.innerHTML = '<span style="color:#c084fc;">admin@digistore.com hesabı ile bağlısınız</span>';
+          populateOperatorCustomerSelect();
+        } else {
+          if (opBar) opBar.style.display = 'none';
+          if (chips) chips.style.display = 'flex';
+          if (headerRole) headerRole.textContent = 'YÖNETİCİ DESTEK';
+          const chat = DigiStoreDB.getUserChatSession();
+          DigiStoreDB.markSupportReadByUser(chat.id);
+        }
+
+        renderWidgetMessages();
+        updateWidgetBadge();
+        setTimeout(() => {
+          const inp = document.getElementById('digiSupportInput');
+          if (inp) inp.focus();
+        }, 150);
+      }
+    };
+
+    document.getElementById('digiSupportCloseBtn').onclick = function() {
+      win.classList.remove('open');
+    };
+
+    // Quick chips (puts text into input and sends to admin directly)
+    win.querySelectorAll('.digi-quick-chip').forEach(btn => {
+      btn.onclick = function() {
+        if (!DigiStoreDB.isLoggedIn()) {
+          if (typeof openAuthModal === 'function') openAuthModal('login');
+          return;
+        }
+        const msg = this.getAttribute('data-msg');
+        if (!msg) return;
+        DigiStoreDB.sendUserSupportMessage(msg);
+        renderWidgetMessages();
+      };
+    });
+
+    // Customer selector for admin operator mode
+    const custSelect = document.getElementById('digiSupportCustomerSelect');
+    if (custSelect) {
+      custSelect.onchange = function() {
+        activeAdminTargetChatId = this.value || null;
+        renderWidgetMessages();
+      };
+    }
+
+    function populateOperatorCustomerSelect() {
+      const select = document.getElementById('digiSupportCustomerSelect');
+      if (!select) return;
+      const chats = DigiStoreDB.getSupportChats();
+      select.innerHTML = '<option value="">Müşteri Seçin...</option>' + chats.map(c => `
+        <option value="${c.id}" ${c.id === activeAdminTargetChatId ? 'selected' : ''}>
+          ${c.userName || 'Müşteri'} (${c.unreadByAdmin || 0} yeni)
+        </option>
+      `).join('');
+      if (!activeAdminTargetChatId && chats.length > 0) {
+        activeAdminTargetChatId = chats[0].id;
+        select.value = activeAdminTargetChatId;
+      }
+    }
+
+    // Form submit
+    document.getElementById('digiSupportForm').onsubmit = function(e) {
+      e.preventDefault();
+      if (!DigiStoreDB.isLoggedIn()) {
+        if (typeof openAuthModal === 'function') openAuthModal('login');
+        return;
+      }
+      const inp = document.getElementById('digiSupportInput');
+      const text = inp.value.trim();
+      if (!text) return;
+      inp.value = '';
+
+      const isOperator = DigiStoreDB.isAdminOperator();
+      if (isOperator) {
+        if (!activeAdminTargetChatId) {
+          alert('Lütfen yanıt yazmak için üstten bir müşteri sohbeti seçin');
+          return;
+        }
+        DigiStoreDB.sendAgentSupportMessage(activeAdminTargetChatId, text, 'admin@digistore.com');
+      } else {
+        DigiStoreDB.sendUserSupportMessage(text);
+      }
+      renderWidgetMessages();
+    };
+
+    function renderWidgetMessages() {
+      const container = document.getElementById('digiSupportMessages');
+      if (!container) return;
+
+      if (!DigiStoreDB.isLoggedIn()) {
+        container.innerHTML = `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:12px;">
+            <div style="width:46px;height:46px;border-radius:50%;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;color:#c084fc;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#ffffff;">Giriş Yapmalısınız</div>
+            <div style="font-size:12px;color:#86868b;line-height:1.5;">Canlı destek sistemini kullanabilmek için lütfen hesabınıza giriş yapınız.</div>
+            <button type="button" onclick="if(typeof openAuthModal==='function'){openAuthModal('login');}else{window.location.href=window.location.pathname.includes('/frontend/')?'/frontend/hesabim.html':'hesabim.html';}" style="background:#ffffff;color:#000000;border:none;padding:8px 20px;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;">Giriş Yap</button>
+          </div>
+        `;
+        return;
+      }
+
+      const isOperator = DigiStoreDB.isAdminOperator();
+      let chat = null;
+
+      if (isOperator) {
+        if (activeAdminTargetChatId) {
+          chat = DigiStoreDB.getSupportChat(activeAdminTargetChatId);
+        }
+        if (!chat) {
+          container.innerHTML = '<div style="text-align:center;color:#86868b;padding:40px 14px;font-size:12.5px;">Üst menüden bir müşteri seçerek canlı yanıt vermeye başlayabilirsiniz.</div>';
+          return;
+        }
+      } else {
+        chat = DigiStoreDB.getUserChatSession();
+      }
+
+      if (!chat || !chat.messages) return;
+
+      container.innerHTML = chat.messages.map(m => {
+        const isUser = m.sender === 'user';
+        if (isUser) {
+          // If current viewer is admin operator, user's messages appear on the left!
+          if (isOperator) {
+            return `
+              <div style="align-self:flex-start;max-width:84%;display:flex;flex-direction:column;align-items:flex-start;">
+                <span style="font-size:10.5px;color:#86868b;margin-bottom:3px;padding-left:2px;">${chat.userName || 'Müşteri'}</span>
+                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:#f5f5f7;padding:9px 13px;border-radius:14px 14px 14px 2px;font-size:13px;line-height:1.45;word-break:break-word;">
+                  ${m.text}
+                </div>
+                <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
+              </div>
+            `;
+          } else {
+            return `
+              <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
+                <div class="digi-chat-bubble-user">
+                  ${m.text}
+                </div>
+                <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''} · İletildi</span>
+              </div>
+            `;
+          }
+        } else {
+          // Admin message
+          if (isOperator) {
+            return `
+              <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
+                <span style="font-size:10px;color:#c084fc;font-weight:700;margin-bottom:2px;padding-right:2px;">Siz (admin@digistore.com)</span>
+                <div class="digi-chat-bubble-user" style="background:linear-gradient(135deg,#7e22ce,#4338ca);">
+                  ${m.text}
+                </div>
+                <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''}</span>
+              </div>
+            `;
+          } else {
+            return `
+              <div style="align-self:flex-start;max-width:86%;display:flex;flex-direction:column;align-items:flex-start;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;padding-left:2px;">
+                  <span style="font-size:11px;color:#c084fc;font-weight:700;">Site Yöneticisi (admin@digistore.com)</span>
+                  <span style="background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.35);color:#d8b4fe;font-size:9px;padding:1px 4px;border-radius:4px;font-weight:800;">YETKİLİ</span>
+                </div>
+                <div class="digi-chat-bubble-admin">
+                  ${m.text}
+                </div>
+                <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
+              </div>
+            `;
+          }
+        }
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function updateWidgetBadge() {
+      const badge = document.getElementById('digiSupportBadge');
+      if (!badge) return;
+      const isOperator = DigiStoreDB.isAdminOperator();
+      let count = 0;
+
+      if (isOperator) {
+        count = DigiStoreDB.getSupportUnreadAdminCount();
+      } else {
+        const chat = DigiStoreDB.getUserChatSession();
+        count = chat ? (chat.unreadByUser || 0) : 0;
+      }
+
+      if (count > 0 && !win.classList.contains('open')) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // Realtime BroadcastChannel Dinleyicisi
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const liveSupportBus = new BroadcastChannel('digistore_support_bus');
+        liveSupportBus.onmessage = function(ev) {
+          if (ev.data && (ev.data.type === 'new_message' || ev.data.type === 'sync')) {
+            renderWidgetMessages();
+            updateWidgetBadge();
+            if (DigiStoreDB.isAdminOperator()) {
+              populateOperatorCustomerSelect();
+            }
+          }
+        };
+      } catch (e) {}
+    }
+
+    // Initial render & sync
+    renderWidgetMessages();
+    updateWidgetBadge();
+
+    DigiStoreDB.onUpdate(topic => {
+      if (topic === 'digistore_support_chats' || topic === 'auth' || topic === 'session' || topic === 'profile') {
+        renderWidgetMessages();
+        updateWidgetBadge();
+        if (DigiStoreDB.isAdminOperator()) {
+          populateOperatorCustomerSelect();
+        }
+      }
+    });
+  }
+
+  // Mount on document ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountStorefrontSupportWidget);
+  } else {
+    mountStorefrontSupportWidget();
+  }
+
 })(window);
+
+

@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
       email: email || `${ghUser.login}@users.noreply.github.com`,
       avatar: ghUser.avatar_url,
       provider: 'github',
-      role: 'GitHub Do?rulanm??'
+      role: 'GitHub Onayli'
     };
 
     return renderResultHtml(res, { success: true, user: userPayload });

@@ -20,17 +20,26 @@ module.exports = async (req, res) => {
     auth: { user: smtpUser, pass: smtpPass }
   });
 
+  const isDummyDomain = to.toLowerCase().endsWith('@digistore.com') || to.toLowerCase().includes('example.com') || to.toLowerCase().includes('test.com');
+  const actualTo = isDummyDomain ? smtpUser : to;
+
+  const mailOptions = {
+    from: '"DigiStore Pro" <' + smtpUser + '>',
+    to: actualTo,
+    subject: subject || ('Siparişiniz Onaylandı - #' + orderId),
+    text: plain || '',
+    html: html || ''
+  };
+
+  if (!isDummyDomain && to.toLowerCase() !== smtpUser.toLowerCase()) {
+    mailOptions.bcc = smtpUser;
+  }
+
   try {
-    const info = await transporter.sendMail({
-      from: '"DigiStore Pro" <' + smtpUser + '>',
-      to: to,
-      subject: subject || ('Siparişiniz Onaylandı - #' + orderId),
-      text: plain || '',
-      html: html || ''
-    });
-    return res.json({ success: true, delivered: true, method: 'smtp', messageId: info.messageId });
+    const info = await transporter.sendMail(mailOptions);
+    return res.json({ success: true, delivered: true, method: 'smtp', messageId: info.messageId, recipient: actualTo });
   } catch (err) {
     console.error('SMTP hatası:', err.message);
-    return res.json({ success: true, delivered: true, method: 'fallback', note: err.message });
+    return res.json({ success: false, delivered: false, error: err.message });
   }
 };

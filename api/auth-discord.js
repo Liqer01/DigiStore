@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
       email: discordUser.email || `${discordUser.username}@discord.user`,
       avatar: avatarUrl,
       provider: 'discord',
-      role: 'Discord Do?rulanm??'
+      role: 'Discord Onayli'
     };
 
     return renderResultHtml(res, { success: true, user: userPayload });
