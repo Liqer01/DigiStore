@@ -29,7 +29,7 @@
     setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
   } catch(e) {}
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v4';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v5';
   const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
@@ -71,8 +71,8 @@
       rating: 5.0,
       reviews: 284,
       badge: 'hot',
-      desc: 'Yeni nesil butonlu ve açılır menülü ticket sistemi, HTML otomatik transkript kayıtları, form (modal) desteği ve yetkili claim altyapısı.',
-      features: ['Butonlu & Açılır Menülü Ticket', 'HTML Otomatik Sohbet Transkripti', 'Bilet Üstlenme (Claim) & Puanlama', 'Kolay config.json Kurulumu'],
+      desc: 'Yeni nesil butonlu ve açılır menülü ticket sistemi. İsteyene tam açık kaynak kod teslimi! Kurulumu bilmeyen müşterilerimize sunucusuna bizzat biz kuruyoruz.',
+      features: ['İsteyene Açık Kaynak Kod', 'Bilmeyene Ücretsiz Birebir Kurulum', 'Butonlu & Açılır Menülü Ticket', 'HTML Otomatik Sohbet Transkripti'],
       downloads: 1840,
       active: true
     },
@@ -85,8 +85,8 @@
       rating: 4.9,
       reviews: 142,
       badge: 'sale',
-      desc: 'Gelişmiş web yönetim paneli entegrasyonuyla sunucu yöneticilerine özel bilet istatistikleri, log dökümü ve canlı bilet kontrolü.',
-      features: ['Web Dashboard Yönetimi', 'Kategori Bazlı Özel Modallar', 'Otomatik DM Transkript Teslimi', 'Discord.js v14 & Slash Komutlar'],
+      desc: 'Gelişmiş web paneli entegrasyonlu ticket altyapısı. İsteyene açık kaynak kod teslimi, kurmayı bilmeyene anahtar teslim kurulum desteği.',
+      features: ['İsteyene Açık Kaynak Kod', 'Birebir Sunucu Kurulum Desteği', 'Web Dashboard Yönetimi', 'Kategori Bazlı Özel Modallar'],
       downloads: 720,
       active: true
     },
@@ -99,8 +99,8 @@
       rating: 4.9,
       reviews: 198,
       badge: 'new',
-      desc: 'Raid ve saldırı koruması, otomatik küfür/reklam filtreleme, ceza puanı (jail, timeout, ban) ve görsel denetim logu.',
-      features: ['Gelişmiş Guard & Raid Kalkanı', 'Otomatik Ceza & Timeout Sistemi', 'Görsel & Metin Loglama', 'Hızlı Slash Komut Altyapısı'],
+      desc: 'Raid kalkanı, küfür/reklam filtreleme ve ceza sistemi. Açık kaynak kod seçeneği mevcuttur, kurmayı bilmeyene sunucusuna bizzat kurulur.',
+      features: ['İsteyene Açık Kaynak Kod', 'Bilmeyene Birebir Kurulum', 'Gelişmiş Guard & Raid Kalkanı', 'Otomatik Ceza & Timeout'],
       downloads: 980,
       active: true
     },
@@ -113,8 +113,8 @@
       rating: 4.8,
       reviews: 85,
       badge: null,
-      desc: 'Ses kanallarında aktiflik takibi, kullanıcı konuşma süreleri, otomatik özel oda (özel ses kanalı) oluşturma ve istatistik paneli.',
-      features: ['Özel Ses Kanalı (Private Room)', 'Detaylı Ses & Sohbet İstatistikleri', 'Haftalık Liderlik Tablosu', 'Özelleştirilebilir Rozetler'],
+      desc: 'Ses kanallarında aktiflik takibi ve otomatik özel oda sistemi. İsteyene tam açık kaynak kod, bilmeyene bizzat kurulum desteğiyle.',
+      features: ['İsteyene Açık Kaynak Kod', 'Bizzat Sunucu Kurulum Desteği', 'Özel Ses Kanalı (Private Room)', 'Haftalık Liderlik Tablosu'],
       downloads: 540,
       active: true
     },
@@ -127,8 +127,8 @@
       rating: 4.8,
       reviews: 112,
       badge: null,
-      desc: 'Butonlu ve formlu üye kayıt altyapısı, Canvas dinamik hoş geldin görseli, yaş ve isim doğrulama ve şüpheli hesap filtresi.',
-      features: ['Butonlu / Modal Formlu Kayıt', 'Otomatik Canvas Hoş Geldin Kartı', 'Şüpheli Hesap & Sahte Üye Filtresi', 'Yetkili Kayıt Sayacı'],
+      desc: 'Butonlu/formlu üye kayıt altyapısı ve Canvas hoş geldin kartı. İsteyene açık kaynak verilir, kurmayı bilmeyene bizzat biz kuruyoruz.',
+      features: ['İsteyene Açık Kaynak Kod', 'Bilmeyene Birebir Kurulum', 'Butonlu / Modal Formlu Kayıt', 'Canvas Dinamik Hoş Geldin'],
       downloads: 680,
       active: true
     },
@@ -141,8 +141,8 @@
       rating: 5.0,
       reviews: 310,
       badge: 'hot',
-      desc: 'Ticket, moderasyon guard, kayıt, çekiliş ve istatistik sistemlerinin tamamını tek bir güçlü botta birleştiren eksiksiz paket.',
-      features: ['Tüm Bot Sistemleri Dahil', 'Öncelikli 7/24 Teknik Destek', 'Tek Tıkla Kurulum & Doküman', 'Ömür Boyu Güncelleme'],
+      desc: 'Ticket, guard moderasyon, kayıt ve istatistik sistemlerinin tümü tek pakette! İsteyene tam açık kaynak, kurmayı bilmeyene sunucusuna bizzat biz kuruyoruz.',
+      features: ['Tam Açık Kaynak Kod Teslimi', 'Sunucunuza Bizzat Kurulum Dahil', 'Tüm Sistemler Tek Botta', '7/24 Öncelikli Ticket Desteği'],
       downloads: 1450,
       active: true
     }
@@ -155,7 +155,7 @@
     init() {
       // Purge any legacy test storage from user browsers
       try {
-        ['digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
+        ['digistore_products_v4','digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
       } catch(e) {}
 
       const savedCats = this.getCategories();
@@ -1303,10 +1303,16 @@
         <div style="font-size:12px;font-weight:700;color:#5865F2;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">DISCORD BOT KURULUM &amp; TICKET TALEBI</div>
         <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;">Hızlı Teslimat İçin Ticket Açınız</div>
         <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
-          Satın aldığınız Discord Ticket botunun sunucunuza tanımlanması, token yapılandırması ve siparişinizin hemen onaylanması için lütfen resmi Discord adreslerimize katılıp Ticket açınız:
+          Satın aldığınız Discord botunun sunucunuza tanımlanması, token yapılandırması ve siparişinizin onaylanması için lütfen resmi Discord adreslerimize katılıp Ticket açınız:
         </div>
         <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
         <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
+        
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-top:14px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
+          <b style="color:#38bdf8;">Açık Kaynak Kod &amp; Kurulum Desteği:</b><br/>
+          • İsteyen tüm müşterilerimize botun açık kaynak (Open Source) kodları eksiksiz teslim edilir.<br/>
+          • Bot kurmayı bilmeyen veya sunucuyla uğraşmak istemeyen müşterilerimizin botunu sunucularına bizzat biz kuruyoruz.
+        </div>
       </div>
 
       <!-- Lisans Bekleme Kutusu -->
@@ -1380,6 +1386,11 @@ Toplam Tutar      : ${total} (KDV Dahil)
 -------------------------------------------------------
 Durum: YÖNETİCİ ONAYI BEKLİYOR (KİLİTLİ)
 Lisans Kodu: DS-••••-••••-•••• (Yönetici admin panelinden onayladıktan sonra açılacaktır)
+
+[AÇIK KAYNAK KOD & BİREBİR KURULUM DESTEĞİ]
+-------------------------------------------------------
+* Açık kaynak kod istiyorsanız Ticket üzerinden talep etmeniz yeterlidir.
+* Bot kurulumunu bilmiyorsanız ekibimiz botu Discord sunucunuza bizzat kurmaktadır.
 
 [BOT KURULUMU & HIZLI ONAY İÇİN TICKET AÇIN]
 -------------------------------------------------------
@@ -1476,12 +1487,18 @@ DigiStore Bilişim Ticaret A.Ş.`;
       <!-- Discord Destek & Ticket -->
       <div class="discord-box">
         <div style="font-size:12px;font-weight:700;color:#5865F2;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">DISCORD DESTEK &amp; BOT KURULUM KANALI</div>
-        <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;">Teknik Destek &amp; Güncellemeler</div>
+        <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;">Teknik Destek &amp; Kurulum Hizmeti</div>
         <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
-          Botunuzun token girişi, sunucu yetkilendirmesi ve güncellemeler için Discord kanallarımızdan Ticket açarak 7/24 destek alabilirsiniz:
+          Botunuzun token girişi, sunucu yetkilendirmesi ve açık kaynak kod talepleriniz için Discord kanallarımızdan Ticket açabilirsiniz:
         </div>
         <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
         <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
+        
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-top:14px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
+          <b style="color:#38bdf8;">Açık Kaynak Kod &amp; Kurulum Desteği:</b><br/>
+          • Açık kaynak dosyaları talep eden müşterilerimize kodlar eksiksiz iletilir.<br/>
+          • Kurmayı bilmeyen müşterilerimizin sunucusuna bizzat biz bağlanıp botu anahtar teslim kuruyoruz.
+        </div>
       </div>
 
       <!-- Ürün Tablosu -->
@@ -1550,6 +1567,11 @@ ${items}
 ${keys}
 
 (Durum: ONAYLANDI & ÖMÜR BOYU GEÇERLİ)
+
+[AÇIK KAYNAK KOD & KURULUM DESTEĞİ]
+-------------------------------------------------------
+* Açık kaynak kod dosyalarını Ticket üzerinden talep edebilirsiniz.
+* Bot kurulumunu bilmiyorsanız ekibimiz botu sunucunuza bizzat anahtar teslim kurmaktadır.
 
 [DISCORD TEKNİK DESTEK & KURULUM]
 -------------------------------------------------------

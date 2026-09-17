@@ -1577,6 +1577,10 @@ function renderUserLicenses() {
           <div style="font-size:12.5px;color:#ffffff;font-weight:600;margin-bottom:4px;">Lisansınız Yönetici Onayından Sonra Açılacaktır</div>
           <div style="font-size:12px;color:#cbd5e1;line-height:1.5;margin-bottom:10px;">
             Discord bot kurulumu, token teslimatı ve lisansınızın hızlı onaylanması için lütfen Discord sunucumuzda Ticket açınız:
+            <span style="display:block;margin-top:5px;color:#93c5fd;">
+              • <b>Açık Kaynak Kod:</b> İsteyen müşterilerimize tam açık kaynak kodları teslim edilir.<br/>
+              • <b>Birebir Kurulum:</b> Kurmayı bilmiyorsanız botu sunucunuza bizzat biz kuruyoruz!
+            </span>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;font-size:12px;padding:7px 14px;">
@@ -1600,7 +1604,7 @@ function renderUserLicenses() {
         </span>
         <span style="display:flex;align-items:center;gap:6px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          Ömür Boyu Güncelleme
+          Ömür Boyu Güncelleme &amp; Açık Kaynak
         </span>
       </div>
 
@@ -1672,7 +1676,7 @@ function renderUserDownloads() {
         <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Kurulum Paketi &amp; Dokümantasyon · ZIP (v4.2.0)</div>
         <div style="font-size:11.5px;color:${isPending ? '#eab308' : '#34c759'};margin-top:4px;display:flex;align-items:center;gap:5px;">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici onayı bekleniyor (Onaylandıktan sonra indirme açılır)' : 'Yüksek hızlı bulut sunucusu indirme bağlantısı aktif'}</span>
+          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : 'Açık kaynak paket ve yüksek hızlı bulut indirme bağlantısı aktif'}</span>
         </div>
       </div>
 
