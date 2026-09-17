@@ -3,13 +3,30 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<script>
+  try {
+    if (localStorage.getItem('closydev_theme') === 'light') {
+      document.documentElement.classList.add('light-theme');
+    }
+  } catch(e) {}
+</script>
 <title>Hesabım — closydev. Müşteri Portalı</title>
+<meta name="title" content="Hesabım — closydev. Müşteri Portalı">
+<meta name="description" content="closydev. Müşteri Paneli. Siparişleriniz, bot lisanslarınız ve hesap ayarlarınız.">
+<meta name="theme-color" content="#2cd3f0">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://closydev.site/hesabim.html">
+<meta property="og:site_name" content="closydev.">
+<meta property="og:title" content="Hesabım — closydev. Müşteri Portalı">
+<meta property="og:description" content="closydev. Müşteri Paneli. Siparişleriniz, bot lisanslarınız ve hesap ayarlarınız.">
+<meta property="og:image" content="https://closydev.site/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://closydev.site/logo.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4.0">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=4.0">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=4.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico?v=4.0">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
-<meta property="og:image" content="logo.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
@@ -873,6 +890,118 @@
     box-shadow: 0 0 10px #a855f7, 0 0 18px #818cf8;
     animation: heroCaretBlink 0.75s infinite ease-in-out;
   }
+
+  /* ====================================================================
+     LIGHT & DARK THEME SYSTEM (hesabim.html)
+     ==================================================================== */
+  html, body, nav.dash-nav-enter, .stat-kpi-card, .dashboard-order-card, .sidebar-item {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f5f5f7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+  .theme-toggle-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Light Mode Overrides */
+  html.light-theme, html.light-theme body {
+    background-color: #fbfbfd !important;
+    color: #1d1d1f !important;
+  }
+
+  .light-theme nav.dash-nav-enter {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+  }
+  .light-theme .brand-text {
+    color: #09090b !important;
+  }
+  .light-theme .nav-brand-link svg path {
+    fill: #09090b !important;
+  }
+
+  .light-theme .theme-toggle-btn {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #1d1d1f !important;
+  }
+  .light-theme .theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .light-theme .sidebar-item {
+    color: #52525b !important;
+  }
+  .light-theme .sidebar-item svg {
+    stroke: #52525b !important;
+  }
+  .light-theme .sidebar-item:hover {
+    color: #09090b !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+  .light-theme .sidebar-item.active {
+    background: #09090b !important;
+    color: #ffffff !important;
+  }
+  .light-theme .sidebar-item.active svg {
+    stroke: #ffffff !important;
+  }
+
+  .light-theme .stat-kpi-card {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04) !important;
+  }
+  .light-theme .stat-kpi-card:hover {
+    border-color: rgba(0, 0, 0, 0.16) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07) !important;
+  }
+
+  .light-theme .dashboard-order-card {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  }
+  .light-theme .dashboard-order-card:hover {
+    border-color: rgba(168, 85, 247, 0.4) !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .light-theme h1, .light-theme h2, .light-theme h3, .light-theme h4, .light-theme h5, .light-theme h6 {
+    color: #09090b !important;
+  }
+  .light-theme p {
+    color: #4b5563 !important;
+  }
+  .light-theme .apple-glass {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+  .light-theme #profileContainer {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  }
 </style>
 </head>
 <body>
@@ -1142,6 +1271,26 @@
 
   <!-- Right Controls -->
   <div style="display:flex;align-items:center;gap:14px;">
+    <!-- Dark / Light Theme Toggle Button -->
+    <button type="button" id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" title="Tema Değiştir" aria-label="Tema Değiştir">
+      <!-- Sun Icon (Active in Dark mode) -->
+      <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <!-- Moon Icon (Active in Light mode) -->
+      <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+
     <div id="topNavUserAction"></div>
 
     <a id="navAdminBtn" href="admin.html" style="display:none;font-size:12.5px;color:#a5b4fc;text-decoration:none;font-weight:600;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:7px 14px;border-radius:9999px;transition:all .2s ease;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">

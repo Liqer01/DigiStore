@@ -2959,6 +2959,49 @@ pause
     });
   }
 
+  // ==========================================
+  // Unified Theme System (Dark / Light Mode)
+  // ==========================================
+  const STORAGE_KEY_THEME = 'closydev_theme';
+
+  function initTheme() {
+    try {
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+      const isLight = (savedTheme === 'light');
+      if (isLight) {
+        document.documentElement.classList.add('light-theme');
+      } else {
+        document.documentElement.classList.remove('light-theme');
+      }
+      updateThemeIcons(isLight);
+    } catch(e) {}
+  }
+
+  function updateThemeIcons(isLight) {
+    const suns = document.querySelectorAll('.theme-icon-sun');
+    const moons = document.querySelectorAll('.theme-icon-moon');
+    suns.forEach(s => s.style.display = isLight ? 'none' : 'block');
+    moons.forEach(m => m.style.display = isLight ? 'block' : 'none');
+  }
+
+  window.toggleTheme = function() {
+    const isLight = document.documentElement.classList.toggle('light-theme');
+    try {
+      localStorage.setItem(STORAGE_KEY_THEME, isLight ? 'light' : 'dark');
+    } catch(e) {}
+    updateThemeIcons(isLight);
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland(isLight ? 'Açık Tema Aktif' : 'Koyu Tema Aktif', 'Görünüm modu güncellendi', 'success');
+    }
+  };
+
+  // Run on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+  } else {
+    initTheme();
+  }
+
   // Mount on document ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountStorefrontSupportWidget);

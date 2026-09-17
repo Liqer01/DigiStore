@@ -3,14 +3,41 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>closydev. — Dijital Bot ve Geliştirici Mağazası</title>
+<script>
+  try {
+    if (localStorage.getItem('closydev_theme') === 'light') {
+      document.documentElement.classList.add('light-theme');
+    }
+  } catch(e) {}
+</script>
+<title>closydev. — Yeni Nesil Discord Bot & Sistemleri</title>
+<meta name="title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
+<meta name="description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<meta name="theme-color" content="#2cd3f0">
+
+<!-- Open Graph / Discord Embed -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://closydev.site/">
+<meta property="og:site_name" content="closydev.">
+<meta property="og:title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
+<meta property="og:description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<meta property="og:image" content="https://closydev.site/logo.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:type" content="image/png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:url" content="https://closydev.site/">
+<meta name="twitter:title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
+<meta name="twitter:description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<meta name="twitter:image" content="https://closydev.site/logo.png">
+
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4.0">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=4.0">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=4.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico?v=4.0">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
-<meta property="og:image" content="logo.png?v=4.0">
-<meta name="twitter:image" content="logo.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
@@ -911,6 +938,196 @@
   .faq-answer-anim {
     animation: faqAnswerSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+
+  /* ====================================================================
+     LIGHT & DARK THEME SYSTEM
+     ==================================================================== */
+  html, body, .main-header, .apple-card, .cart-pill-btn, .cat-pill-btn, footer {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f5f5f7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+  .theme-toggle-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Light Theme Overrides */
+  html.light-theme, html.light-theme body {
+    background-color: #fbfbfd !important;
+    color: #1d1d1f !important;
+  }
+
+  .light-theme .main-header {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: rgba(0, 0, 0, 0.09) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06), 0 0 1px 1px rgba(0, 0, 0, 0.04) !important;
+  }
+  .light-theme .main-header.header-scrolled {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important;
+  }
+  .light-theme .brand-text {
+    color: #09090b !important;
+  }
+  .light-theme .nav-brand-link svg path {
+    fill: #09090b !important;
+  }
+  .light-theme .nav-menu-link {
+    color: #52525b !important;
+  }
+  .light-theme .nav-menu-link:hover {
+    color: #000000 !important;
+    background: rgba(0, 0, 0, 0.06) !important;
+  }
+  .light-theme .cart-pill-btn {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+  .light-theme .cart-pill-btn svg {
+    stroke: #1d1d1f !important;
+  }
+  .light-theme #cartTotalNav {
+    color: #1d1d1f !important;
+  }
+
+  .light-theme .theme-toggle-btn {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #1d1d1f !important;
+  }
+  .light-theme .theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .light-theme .category-filter-pill-bar {
+    background: rgba(244, 244, 246, 0.9) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04) !important;
+  }
+  .light-theme .cat-pill-btn {
+    color: #52525b !important;
+  }
+  .light-theme .cat-pill-btn:hover {
+    color: #000000 !important;
+    background: rgba(0, 0, 0, 0.06) !important;
+  }
+  .light-theme .cat-pill-btn.active {
+    background: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+  }
+  .light-theme .cat-pill-btn.active .cat-pill-badge {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+  }
+
+  .light-theme .apple-card {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  }
+  .light-theme .apple-card:hover {
+    border-color: rgba(0, 0, 0, 0.16) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .light-theme h1, .light-theme h2, .light-theme h3, .light-theme h4, .light-theme h5, .light-theme h6 {
+    color: #09090b !important;
+  }
+  .light-theme p, .light-theme .hero-anim-fade {
+    color: #4b5563 !important;
+  }
+  .light-theme .hero-anim-pill {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+  .light-theme .hero-anim-pill span {
+    color: #374151 !important;
+  }
+
+  .light-theme .btn-pill-white {
+    background: #09090b !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+  }
+  .light-theme .btn-pill-white:hover {
+    background: #27272a !important;
+  }
+
+  .light-theme .apple-card.faq-item {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+  .light-theme .apple-card.faq-item:hover {
+    border-color: rgba(0, 0, 0, 0.16) !important;
+  }
+  .light-theme .apple-card.faq-item h4 {
+    color: #09090b !important;
+  }
+  .light-theme .apple-card.faq-item .faq-answer {
+    color: #4b5563 !important;
+  }
+  .light-theme .apple-card.faq-item.faq-active {
+    background: #fef2f2 !important;
+    border-color: #fca5a5 !important;
+    box-shadow: 0 10px 24px rgba(239, 68, 68, 0.08) !important;
+  }
+  .light-theme .apple-card.faq-item.faq-active h4 {
+    color: #991b1b !important;
+  }
+  .light-theme .apple-card.faq-item.faq-active .faq-answer {
+    color: #7f1d1d !important;
+  }
+
+  .light-theme footer {
+    background: #f4f4f6 !important;
+    border-top-color: rgba(0, 0, 0, 0.08) !important;
+  }
+  .light-theme footer a, .light-theme footer p {
+    color: #52525b !important;
+  }
+  .light-theme footer a:hover {
+    color: #000000 !important;
+  }
+
+  .light-theme #navUserBadge {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+  .light-theme #navUserName {
+    color: #09090b !important;
+  }
+  .light-theme #navUserDropdown {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12) !important;
+  }
+  .light-theme #navUserDropdown a {
+    color: #09090b !important;
+  }
+  .light-theme #navUserDropdown a:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
 </style>
 </head>
 <body>
@@ -1152,8 +1369,28 @@
       <a href="#sss" class="nav-menu-link">SSS</a>
     </nav>
 
-    <!-- Right: Cart, Hesabım / Giriş Yap & Admin Paneli -->
+    <!-- Right: Theme, Cart, Hesabım / Giriş Yap & Admin Paneli -->
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <!-- Dark / Light Theme Toggle Button -->
+      <button type="button" id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" title="Tema Değiştir" aria-label="Tema Değiştir">
+        <!-- Sun Icon (Active in Dark mode) -->
+        <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <!-- Moon Icon (Active in Light mode) -->
+        <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <!-- Cart -->
       <div class="cart-pill-btn" onclick="toggleCart()" title="Sepet">
         <svg width="15" height="15" fill="none" stroke="#f5f5f7" stroke-width="2" viewBox="0 0 24 24">
