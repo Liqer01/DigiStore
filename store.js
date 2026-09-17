@@ -1043,14 +1043,18 @@
 
     getUserLicenses(userEmail) {
       if (!userEmail) return [];
-      const userOrders = this.getUserOrders(userEmail).filter(o => o.status === 'completed');
+      const userOrders = this.getUserOrders(userEmail);
       const licenses = [];
       userOrders.forEach(o => {
+        const isCompleted = o.status === 'completed';
+        const isRefunded = o.status === 'refunded';
+        const licenseStatus = isCompleted ? 'active' : (isRefunded ? 'revoked' : 'pending');
         (o.licenseKeys || []).forEach(k => {
           licenses.push({
             orderId: o.id,
             product: o.product,
             key: k,
+            status: licenseStatus,
             date: o.date
           });
         });
@@ -1157,8 +1161,18 @@
       const orders = this.getOrders();
       const o = orders.find(x => String(x.id) === String(orderId));
       if (o) {
+        const prevStatus = o.status;
         o.status = newStatus;
         this.saveOrders(orders);
+
+        if (newStatus === 'completed' && prevStatus !== 'completed') {
+          try {
+            this.sendOrderApprovalEmail(o);
+          } catch (err) {
+            console.error('Approval email error:', err);
+          }
+        }
+
         try {
           fetch(this.getApiBaseUrl() + '/api/orders', {
             method: 'POST',
@@ -1221,18 +1235,17 @@
       const dateStr = order.date || new Date().toLocaleString('tr-TR');
       const items = order.items && order.items.length ? order.items : [{ name: order.product || 'Dijital Lisans', qty: 1, price: order.amount || 0 }];
       const totalFormatted = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
-      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys : ['DS-KEY-AKTIF-2026'];
 
       return `<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sipariş Onayı #${order.id} — DigiStore PRO</title>
+<title>Sipariş Alındı #${order.id} — DigiStore PRO</title>
 <style>
   body { margin:0; padding:24px 12px; background-color:#0b0b0f; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#f5f5f7; -webkit-font-smoothing:antialiased; }
   .email-container { max-width:620px; margin:0 auto; background:#121218; border:1px solid rgba(255,255,255,0.12); border-radius:20px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.6); }
-  .header { padding:32px 28px 24px; text-align:center; background:linear-gradient(180deg, rgba(10,132,255,0.12) 0%, rgba(18,18,24,0) 100%); border-bottom:1px solid rgba(255,255,255,0.08); }
+  .header { padding:32px 28px 24px; text-align:center; background:linear-gradient(180deg, rgba(234,179,8,0.12) 0%, rgba(18,18,24,0) 100%); border-bottom:1px solid rgba(255,255,255,0.08); }
   .logo-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:8px 18px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); margin-bottom:16px; }
   .title { font-size:22px; font-weight:800; color:#ffffff; margin:0 0 8px; letter-spacing:-0.5px; }
   .subtitle { font-size:14px; color:#86868b; margin:0; line-height:1.5; }
@@ -1241,13 +1254,14 @@
   .meta-item { display:flex; flex-direction:column; }
   .meta-lbl { font-size:11px; font-weight:700; color:#86868b; text-transform:uppercase; letter-spacing:0.04em; }
   .meta-val { font-size:14px; font-weight:600; color:#ffffff; margin-top:2px; word-break:break-all; }
-  .license-box { background:#09090d; border:1px solid rgba(56,189,248,0.3); border-radius:14px; padding:18px; margin:20px 0; }
-  .key-pill { font-family:'JetBrains Mono',SFMono-Regular,Consolas,monospace; font-size:15px; font-weight:700; color:#38bdf8; background:rgba(56,189,248,0.1); border:1px dashed rgba(56,189,248,0.4); padding:8px 14px; border-radius:8px; display:inline-block; margin-top:8px; letter-spacing:0.05em; }
+  .discord-box { background:rgba(88,101,242,0.1); border:1px solid rgba(88,101,242,0.35); border-radius:14px; padding:18px; margin:20px 0; }
+  .discord-btn { display:block; background:#5865F2; color:#ffffff !important; text-decoration:none; padding:11px 18px; border-radius:10px; font-weight:700; font-size:13px; text-align:center; margin-top:8px; }
+  .discord-btn-alt { display:block; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#ffffff !important; text-decoration:none; padding:11px 18px; border-radius:10px; font-weight:700; font-size:13px; text-align:center; margin-top:8px; }
+  .license-box { background:#09090d; border:1px solid rgba(234,179,8,0.35); border-radius:14px; padding:18px; margin:20px 0; }
+  .key-pill-wait { font-family:'JetBrains Mono',SFMono-Regular,Consolas,monospace; font-size:14px; font-weight:700; color:#eab308; background:rgba(234,179,8,0.1); border:1px dashed rgba(234,179,8,0.4); padding:8px 14px; border-radius:8px; display:inline-block; margin-top:8px; letter-spacing:0.05em; }
   .items-table { width:100%; border-collapse:collapse; margin-bottom:20px; }
   .items-table th { font-size:11.5px; text-transform:uppercase; color:#86868b; text-align:left; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); }
   .items-table td { font-size:13.5px; color:#f5f5f7; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
-  .guide-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:18px; margin-top:20px; font-size:13px; color:#a1a1a6; line-height:1.6; }
-  .guide-title { font-size:13px; font-weight:700; color:#ffffff; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
   .footer { padding:24px 28px; background:rgba(0,0,0,0.4); border-top:1px solid rgba(255,255,255,0.08); text-align:center; font-size:11.5px; color:#86868b; line-height:1.6; }
 </style>
 </head>
@@ -1255,11 +1269,11 @@
   <div class="email-container">
     <div class="header">
       <div class="logo-badge">
-        <span style="font-weight:800;font-size:15px;color:#fff;letter-spacing:-0.4px;">Digi<span style="color:#38bdf8;">Store</span></span>
-        <span style="background:#38bdf8;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;">PRO</span>
+        <span style="font-weight:800;font-size:15px;color:#fff;letter-spacing:-0.4px;">Digi<span style="color:#eab308;">Store</span></span>
+        <span style="background:#eab308;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;">ONAY BEKLİYOR</span>
       </div>
-      <h1 class="title">Siparişiniz &amp; Dijital Lisansınız Teslim Edildi</h1>
-      <p class="subtitle">Merhaba <b>${customerName}</b>, siparişiniz başarıyla onaylandı ve teslimat gerçekleştirildi.</p>
+      <h1 class="title">Siparişiniz Alındı — Yönetici Onayı Bekleniyor</h1>
+      <p class="subtitle">Merhaba <b>${customerName}</b>, siparişiniz sisteme kaydedilmiştir. Yönetici onayı ve bot teslimatı için lütfen Discord sunucumuzda Ticket açınız.</p>
     </div>
 
     <div class="body-content">
@@ -1268,7 +1282,172 @@
       <div class="meta-grid">
         <div class="meta-item">
           <span class="meta-lbl">Sipariş Numarası</span>
-          <span class="meta-val" style="font-family:'JetBrains Mono',monospace;color:#38bdf8;">#${order.id}</span>
+          <span class="meta-val" style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">#${order.id}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">Teslimat Adresi</span>
+          <span class="meta-val" style="color:#34c759;">${recipientEmail}</span>
+        </div>
+        <div class="meta-item" style="margin-top:8px;">
+          <span class="meta-lbl">Tarih / Saat</span>
+          <span class="meta-val">${dateStr}</span>
+        </div>
+        <div class="meta-item" style="margin-top:8px;">
+          <span class="meta-lbl">Ödeme Şekli</span>
+          <span class="meta-val">${order.method || 'Kredi Kartı'}</span>
+        </div>
+      </div>
+
+      <!-- Discord Ticket Bilgisi -->
+      <div class="discord-box">
+        <div style="font-size:12px;font-weight:700;color:#5865F2;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">DISCORD BOT KURULUM &amp; TICKET TALEBI</div>
+        <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;">Hızlı Teslimat İçin Ticket Açınız</div>
+        <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
+          Satın aldığınız Discord Ticket botunun sunucunuza tanımlanması, token yapılandırması ve siparişinizin hemen onaylanması için lütfen resmi Discord adreslerimize katılıp Ticket açınız:
+        </div>
+        <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
+        <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
+      </div>
+
+      <!-- Lisans Bekleme Kutusu -->
+      <div class="license-box">
+        <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:0.04em;">DİJİTAL LİSANS DURUMU</div>
+        <div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px;">${order.product || 'Lisans Paketi'}</div>
+        <div class="key-pill-wait">DS-••••-••••-•••• (Yönetici Onayından Sonra Açılacak)</div>
+        <div style="font-size:12.5px;color:#eab308;margin-top:10px;font-weight:600;">
+          Yönetici admin panelinden siparişi onayladığında lisans anahtarınız aktif edilecek ve tarafınıza ikinci bir onay e-postası iletilecektir.
+        </div>
+      </div>
+
+      <!-- Ürün Tablosu -->
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">Sipariş Kalemleri</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Ürün Açıklaması</th>
+            <th style="text-align:center;">Adet</th>
+            <th style="text-align:right;">Tutar</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(it => `
+            <tr>
+              <td><b>${it.name}</b><br/><span style="font-size:11.5px;color:#86868b;">Yönetici Onayı Bekliyor</span></td>
+              <td style="text-align:center;">${it.qty || 1}</td>
+              <td style="text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace;">₺${Number(it.price || 0).toLocaleString('tr-TR')}</td>
+            </tr>`).join('')}
+          <tr>
+            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (KDV Dahil)</td>
+            <td style="text-align:right;font-weight:800;font-size:18px;color:#fff;font-family:'JetBrains Mono',monospace;padding-top:16px;">${totalFormatted}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="footer">
+      <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">DigiStore Bilişim Ticaret A.Ş. · GİB e-Arşiv Fatura Onaylı</div>
+      <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@digistore.com</div>
+      <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu bildirim sipariş kaydınız üzerine sistem tarafından otomatik iletilmiştir.</div>
+    </div>
+  </div>
+</body>
+</html>`;
+    },
+
+    generateEmailPlainText(order, recipientEmail, customerName) {
+      const items = order.items && order.items.length ? order.items.map(it => `* ${it.name} (Adet: ${it.qty || 1}) - ₺${it.price}`).join('\n') : `* ${order.product || 'Dijital Lisans'}`;
+      const total = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
+
+      return `=======================================================
+DIGISTORE PRO — SİPARİŞİNİZ ALINDI (YÖNETİCİ ONAYI BEKLENİYOR)
+=======================================================
+
+Sayın ${customerName},
+
+DigiStore üzerinden vermiş olduğunuz sipariş başarıyla alınmıştır.
+Siparişiniz yönetici incelemesine iletilmiştir.
+
+[SİPARİŞ DETAYLARI]
+-------------------------------------------------------
+Sipariş No        : #${order.id}
+Teslimat E-postası : ${recipientEmail}
+Tarih             : ${order.date || new Date().toLocaleString('tr-TR')}
+Ödeme Şekli       : ${order.method || 'Kredi Kartı'}
+Toplam Tutar      : ${total} (KDV Dahil)
+
+[DİJİTAL LİSANS DURUMU]
+-------------------------------------------------------
+Durum: YÖNETİCİ ONAYI BEKLİYOR (KİLİTLİ)
+Lisans Kodu: DS-••••-••••-•••• (Yönetici admin panelinden onayladıktan sonra açılacaktır)
+
+[BOT KURULUMU & HIZLI ONAY İÇİN TICKET AÇIN]
+-------------------------------------------------------
+Discord Ticket botunuzun token yapılandırması ve siparişinizin
+hemen onaylanması için lütfen Discord sunucumuza katılıp Ticket açınız:
+
+Discord 1: https://discord.gg/vqYZgAyP8v
+Discord 2: https://discord.gg/imzapriw
+
+Yönetici siparişinizi onayladığında lisans anahtarınız e-posta ve müşteri panelinize iletilecektir.
+
+7/24 Teknik Destek: destek@digistore.com
+DigiStore Bilişim Ticaret A.Ş.`;
+    },
+
+    generateApprovalEmailHtml(order, recipientEmail, customerName) {
+      const dateStr = order.date || new Date().toLocaleString('tr-TR');
+      const items = order.items && order.items.length ? order.items : [{ name: order.product || 'Dijital Lisans', qty: 1, price: order.amount || 0 }];
+      const totalFormatted = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
+      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys : ['DS-KEY-AKTIF-2026'];
+
+      return `<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sipariş Onaylandı #${order.id} — DigiStore PRO</title>
+<style>
+  body { margin:0; padding:24px 12px; background-color:#0b0b0f; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#f5f5f7; -webkit-font-smoothing:antialiased; }
+  .email-container { max-width:620px; margin:0 auto; background:#121218; border:1px solid rgba(255,255,255,0.12); border-radius:20px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.6); }
+  .header { padding:32px 28px 24px; text-align:center; background:linear-gradient(180deg, rgba(34,197,94,0.12) 0%, rgba(18,18,24,0) 100%); border-bottom:1px solid rgba(255,255,255,0.08); }
+  .logo-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:8px 18px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); margin-bottom:16px; }
+  .title { font-size:22px; font-weight:800; color:#ffffff; margin:0 0 8px; letter-spacing:-0.5px; }
+  .subtitle { font-size:14px; color:#86868b; margin:0; line-height:1.5; }
+  .body-content { padding:28px; }
+  .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
+  .meta-item { display:flex; flex-direction:column; }
+  .meta-lbl { font-size:11px; font-weight:700; color:#86868b; text-transform:uppercase; letter-spacing:0.04em; }
+  .meta-val { font-size:14px; font-weight:600; color:#ffffff; margin-top:2px; word-break:break-all; }
+  .license-box { background:#09090d; border:1px solid rgba(34,197,94,0.35); border-radius:14px; padding:18px; margin:20px 0; }
+  .key-pill { font-family:'JetBrains Mono',SFMono-Regular,Consolas,monospace; font-size:15px; font-weight:700; color:#34c759; background:rgba(34,197,94,0.1); border:1px dashed rgba(34,197,94,0.4); padding:8px 14px; border-radius:8px; display:inline-block; margin-top:8px; letter-spacing:0.05em; }
+  .discord-box { background:rgba(88,101,242,0.1); border:1px solid rgba(88,101,242,0.35); border-radius:14px; padding:18px; margin:20px 0; }
+  .discord-btn { display:block; background:#5865F2; color:#ffffff !important; text-decoration:none; padding:11px 18px; border-radius:10px; font-weight:700; font-size:13px; text-align:center; margin-top:8px; }
+  .discord-btn-alt { display:block; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#ffffff !important; text-decoration:none; padding:11px 18px; border-radius:10px; font-weight:700; font-size:13px; text-align:center; margin-top:8px; }
+  .items-table { width:100%; border-collapse:collapse; margin-bottom:20px; }
+  .items-table th { font-size:11.5px; text-transform:uppercase; color:#86868b; text-align:left; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .items-table td { font-size:13.5px; color:#f5f5f7; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .footer { padding:24px 28px; background:rgba(0,0,0,0.4); border-top:1px solid rgba(255,255,255,0.08); text-align:center; font-size:11.5px; color:#86868b; line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <div class="logo-badge">
+        <span style="font-weight:800;font-size:15px;color:#fff;letter-spacing:-0.4px;">Digi<span style="color:#22c55e;">Store</span></span>
+        <span style="background:#22c55e;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;">AKTİF</span>
+      </div>
+      <h1 class="title">Siparişiniz Onaylandı &amp; Lisansınız Açıldı</h1>
+      <p class="subtitle">Merhaba <b>${customerName}</b>, siparişiniz yönetici tarafından onaylanmış ve lisans anahtarınız aktif edilmiştir.</p>
+    </div>
+
+    <div class="body-content">
+      
+      <!-- Sipariş Meta -->
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-lbl">Sipariş Numarası</span>
+          <span class="meta-val" style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">#${order.id}</span>
         </div>
         <div class="meta-item">
           <span class="meta-lbl">Teslimat Adresi</span>
@@ -1286,14 +1465,27 @@
 
       <!-- Lisans Kutusu -->
       <div class="license-box">
-        <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:0.04em;">DİJİTAL LİSANS ANAHTARINIZ</div>
+        <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:0.04em;">AKTİF DİJİTAL LİSANS ANAHTARINIZ</div>
         <div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px;">${order.product || 'Lisans Paketi'}</div>
         ${keys.map(k => `<div class="key-pill">${k}</div>`).join('')}
-        <div style="font-size:12px;color:#34c759;margin-top:10px;font-weight:600;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Orijinal &amp; Ömür Boyu Geçerli Lisans</span></div>
+        <div style="font-size:12px;color:#34c759;margin-top:10px;font-weight:600;display:flex;align-items:center;gap:6px;">
+          <span>Aktif &amp; Ömür Boyu Doğrulanmış Lisans</span>
+        </div>
+      </div>
+
+      <!-- Discord Destek & Ticket -->
+      <div class="discord-box">
+        <div style="font-size:12px;font-weight:700;color:#5865F2;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">DISCORD DESTEK &amp; BOT KURULUM KANALI</div>
+        <div style="font-size:15px;font-weight:700;color:#ffffff;margin-bottom:8px;">Teknik Destek &amp; Güncellemeler</div>
+        <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
+          Botunuzun token girişi, sunucu yetkilendirmesi ve güncellemeler için Discord kanallarımızdan Ticket açarak 7/24 destek alabilirsiniz:
+        </div>
+        <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
+        <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
       </div>
 
       <!-- Ürün Tablosu -->
-      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">Satın Alınan Kalemler</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">Onaylanan Ürünler</div>
       <table class="items-table">
         <thead>
           <tr>
@@ -1305,54 +1497,41 @@
         <tbody>
           ${items.map(it => `
             <tr>
-              <td><b>${it.name}</b><br/><span style="font-size:11.5px;color:#86868b;">Anında Dijital Aktivasyon</span></td>
+              <td><b>${it.name}</b><br/><span style="font-size:11.5px;color:#34c759;">Lisans Aktifleştirildi</span></td>
               <td style="text-align:center;">${it.qty || 1}</td>
               <td style="text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace;">₺${Number(it.price || 0).toLocaleString('tr-TR')}</td>
             </tr>`).join('')}
           <tr>
-            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM ÖDENEN TUTAR (KDV Dahil)</td>
+            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (KDV Dahil)</td>
             <td style="text-align:right;font-weight:800;font-size:18px;color:#fff;font-family:'JetBrains Mono',monospace;padding-top:16px;">${totalFormatted}</td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Aktivasyon Rehberi -->
-      <div class="guide-box">
-        <div class="guide-title">
-          <span>Hızlı Etkinleştirme ve Kurulum</span>
-        </div>
-        <ol style="margin:0;padding-left:18px;">
-          <li>Yukarıdaki lisans kodunuzu seçip kopyalayın.</li>
-          <li>Windows lisansı için: <b>Ayarlar > Sistem > Etkinleştirme > Ürün Anahtarını Değiştir</b> bölümüne yapıştırın.</li>
-          <li>Yazılım veya Bot için: Panelden indirdiğiniz ZIP arşivindeki <code style="color:#60a5fa;">LISANS_ANAHTARI.txt</code> dosyasına ekleyip <code style="color:#60a5fa;">kurulum_baslat.bat</code> dosyasını çalıştırın.</li>
-        </ol>
-      </div>
-
     </div>
 
-    <!-- Footer -->
     <div class="footer">
       <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">DigiStore Bilişim Ticaret A.Ş. · GİB e-Arşiv Fatura Onaylı</div>
       <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@digistore.com</div>
-      <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu e-posta dijital siparişinize istinaden sistem tarafından otomatik oluşturulmuştur.</div>
+      <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu onay e-postası siparişinizin onaylanması üzerine iletilmiştir.</div>
     </div>
   </div>
 </body>
 </html>`;
     },
 
-    generateEmailPlainText(order, recipientEmail, customerName) {
+    generateApprovalEmailPlainText(order, recipientEmail, customerName) {
       const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys.join(', ') : 'DS-KEY-AKTIF-2026';
       const items = order.items && order.items.length ? order.items.map(it => `* ${it.name} (Adet: ${it.qty || 1}) - ₺${it.price}`).join('\n') : `* ${order.product || 'Dijital Lisans'}`;
       const total = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
 
       return `=======================================================
-DIGISTORE PRO — RESMİ DİJİTAL SİPARİŞ & LİSANS TESLİMATI
+DIGISTORE PRO — SİPARİŞİNİZ ONAYLANDI & LİSANS AKTİF
 =======================================================
 
 Sayın ${customerName},
 
-DigiStore üzerinden vermiş olduğunuz sipariş başarıyla onaylanmış ve dijital teslimatınız gerçekleştirilmiştir.
+DigiStore üzerinden vermiş olduğunuz sipariş yönetici tarafından onaylanmış ve dijital lisans anahtarınız aktif edilmiştir.
 
 [SİPARİŞ DETAYLARI]
 -------------------------------------------------------
@@ -1362,30 +1541,24 @@ Tarih             : ${order.date || new Date().toLocaleString('tr-TR')}
 Ödeme Şekli       : ${order.method || 'Kredi Kartı'}
 Toplam Tutar      : ${total} (KDV Dahil)
 
-[SATIN ALINAN ÜRÜNLER]
+[ONAYLANAN ÜRÜNLER]
 -------------------------------------------------------
 ${items}
 
-[ÜRETİLEN DİJİTAL LİSANS ANAHTARLARINIZ]
+[AKTİF DİJİTAL LİSANS ANAHTARLARINIZ]
 -------------------------------------------------------
 ${keys}
 
 (Durum: ONAYLANDI & ÖMÜR BOYU GEÇERLİ)
 
-[ETKİNLİŞTİRME REHBERİ]
+[DISCORD TEKNİK DESTEK & KURULUM]
 -------------------------------------------------------
-1. Windows Lisansı İçin:
-   Ayarlar > Sistem > Etkinleştirme > "Ürün Anahtarını Değiştir" alanına lisansınızı girin ve "Etkinleştir"e tıklayın.
+Bot kurulumu, token girişi ve sorularınız için Discord sunucumuzdan Ticket açabilirsiniz:
 
-2. Bot / Yazılım / Şablon İçin:
-   Müşteri panelinizdeki "İndirmelerim" sayfasından kurulum ZIP paketini indirin. "kurulum_baslat.bat" ile çalıştırın.
+Discord 1: https://discord.gg/vqYZgAyP8v
+Discord 2: https://discord.gg/imzapriw
 
-[DESTEK & İLETİŞİM]
--------------------------------------------------------
 7/24 Teknik Destek: destek@digistore.com
-Resmi e-Arşiv Faturanız müşteri panelinizdeki "Faturalarım" sekmesinde kayıtlıdır.
-
-Teşekkür eder, iyi çalışmalar dileriz.
 DigiStore Bilişim Ticaret A.Ş.`;
     },
 
@@ -1393,7 +1566,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
       const to = orderData.email || 'musteri@email.com';
       const customer = orderData.customer || 'Değerli Müşterimiz';
       const orderId = orderData.id || ('DS-' + Math.floor(100000 + Math.random() * 900000));
-      const subject = `Siparişiniz & Lisans Anahtarlarınız Teslim Edildi: #${orderId}`;
+      const subject = `Siparişiniz Alındı — Yönetici Onayı Bekleniyor: #${orderId}`;
 
       const html = this.generateEmailHtml(orderData, to, customer);
       const plain = this.generateEmailPlainText(orderData, to, customer);
@@ -1407,14 +1580,14 @@ DigiStore Bilişim Ticaret A.Ş.`;
         to: to,
         customer: customer,
         subject: subject,
-        preview: `${orderData.product || 'Dijital Lisans Paketi'} lisans anahtarınız ve faturanız teslim edildi.`,
+        preview: `Siparişiniz alındı. Hızlı onay ve bot kurulumu için Discord'da ticket açınız.`,
         html: html,
         plain: plain,
         gmailUrl: gmailUrl,
         mailtoUrl: mailtoUrl,
         date: orderData.date || ('Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })),
         timestamp: Date.now(),
-        status: 'Teslim Edildi',
+        status: 'Onay Bekliyor',
         read: false,
         licenseKeys: orderData.licenseKeys || []
       };
@@ -1423,7 +1596,62 @@ DigiStore Bilişim Ticaret A.Ş.`;
       emails.unshift(emailRecord);
       this.saveEmails(emails);
 
-      // Background notification attempt to local or production backend
+      // Background notification attempt
+      try {
+        if (typeof fetch !== 'undefined') {
+          fetch(this.getApiBaseUrl() + '/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: to,
+              customer: customer,
+              orderId: orderId,
+              subject: subject,
+              html: html,
+              plain: plain
+            })
+          }).catch(() => {});
+        }
+      } catch (e) {}
+
+      return emailRecord;
+    },
+
+    sendOrderApprovalEmail(orderData) {
+      const to = orderData.email || 'musteri@email.com';
+      const customer = orderData.customer || 'Değerli Müşterimiz';
+      const orderId = orderData.id || ('DS-' + Math.floor(100000 + Math.random() * 900000));
+      const subject = `Siparişiniz Onaylandı & Lisansınız Aktifleştirildi: #${orderId}`;
+
+      const html = this.generateApprovalEmailHtml(orderData, to, customer);
+      const plain = this.generateApprovalEmailPlainText(orderData, to, customer);
+
+      const gmailUrl = `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(orderId)}`;
+      const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}`;
+
+      const emailRecord = {
+        id: 'EML-' + Math.floor(100000 + Math.random() * 900000),
+        orderId: orderId,
+        to: to,
+        customer: customer,
+        subject: subject,
+        preview: `Siparişiniz onaylandı. ${orderData.product || 'Discord Bot'} lisans anahtarınız aktifleştirildi.`,
+        html: html,
+        plain: plain,
+        gmailUrl: gmailUrl,
+        mailtoUrl: mailtoUrl,
+        date: 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: Date.now(),
+        status: 'Onaylandı & Aktif',
+        read: false,
+        licenseKeys: orderData.licenseKeys || []
+      };
+
+      const emails = this.getEmails();
+      emails.unshift(emailRecord);
+      this.saveEmails(emails);
+
+      // Background notification attempt
       try {
         if (typeof fetch !== 'undefined') {
           fetch(this.getApiBaseUrl() + '/api/send-email', {
