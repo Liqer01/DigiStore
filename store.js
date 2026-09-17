@@ -29,7 +29,7 @@
     setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
   } catch(e) {}
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v6';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v7';
   const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
@@ -64,18 +64,18 @@
   const DEFAULT_PRODUCTS = [
     {
       id: 1,
-      name: 'İmza Yeni Nesil Discord Ticket Botu v14',
+      name: 'Closy Yeni Nesil Discord Ticket Botu v14',
       category: 'ticket',
       price: 99,
       oldPrice: 199,
       rating: 5.0,
       reviews: 284,
       badge: 'hot',
-      desc: 'Resmi İmza Ticket Botu altyapısı. Butonlu ve açılır menülü ticket sistemi, HTML sohbet transkripti, web panel entegrasyonu ve tam açık kaynak Python kodları. Kurulumu bilmeyen müşterilerimize sunucusuna bizzat biz kuruyoruz.',
+      desc: 'Resmi Closy Ticket Botu altyapısı. Butonlu ve açılır menülü ticket sistemi, HTML sohbet transkripti, web panel entegrasyonu ve tam açık kaynak Python kodları. Kurulumu bilmeyen müşterilerimize sunucusuna bizzat biz kuruyoruz.',
       features: ['İsteyene Açık Kaynak Kod (Python)', 'Bilmeyene Ücretsiz Birebir Kurulum', 'Butonlu & Açılır Menülü Ticket', 'HTML & Web Sohbet Transkripti'],
       downloads: 1840,
       active: true,
-      filePackage: 'Imza_Ticket_Botu_v14.zip'
+      filePackage: 'Closy_Ticket_Botu_v14.zip'
     },
     {
       id: 2,
@@ -156,7 +156,7 @@
     init() {
       // Purge any legacy test storage from user browsers
       try {
-        ['digistore_products_v5','digistore_products_v4','digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
+        ['digistore_products_v6','digistore_products_v5','digistore_products_v4','digistore_products_v3','digistore_categories_v3','digistore_orders_v2','digistore_profile_v2','digistore_session_v2','digistore_users_v2','digistore_emails_v2'].forEach(k => localStorage.removeItem(k));
       } catch(e) {}
 
       const savedCats = this.getCategories();
@@ -1751,7 +1751,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
     },
 
     generateNewLicense(productName, email, customerName) {
-      const key = 'DS-' + Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-');
+      const key = 'CLOSY-' + Array.from({ length: 3 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-');
       const order = this.addOrder({
         customer: customerName || 'Manuel Lisans',
         email: email || 'lisans@digistore.com',

@@ -1650,8 +1650,8 @@ function renderUserInvoices() {
 
 function getProductZipPath(productName) {
   const name = (productName || '').toLowerCase();
-  if (name.includes('ticket') || name.includes('imza') || name.includes('bilet')) {
-    return 'downloads/Imza_Ticket_Botu_v14.zip';
+  if (name.includes('ticket') || name.includes('closy') || name.includes('imza') || name.includes('bilet')) {
+    return 'downloads/Closy_Ticket_Botu_v14.zip';
   } else if (name.includes('guard') || name.includes('moderasyon')) {
     return 'downloads/3_Closy_Welcome_ve_Guard_Suite.zip';
   } else if (name.includes('ses') || name.includes('istatistik')) {
@@ -1661,7 +1661,7 @@ function getProductZipPath(productName) {
   } else if (name.includes('mega') || name.includes('full') || name.includes('bundle') || name.includes('vip')) {
     return 'downloads/4_Closy_VIP_All_In_One_Bundle.zip';
   }
-  return 'downloads/Imza_Ticket_Botu_v14.zip';
+  return 'downloads/Closy_Ticket_Botu_v14.zip';
 }
 
 function renderUserDownloads() {
