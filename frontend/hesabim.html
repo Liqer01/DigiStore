@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Hesabım — DigiStore Müşteri Portalı</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<meta property="og:image" content="logo.png">
+<title>Hesabım — closydev. Müşteri Portalı</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4.0">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=4.0">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=4.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=4.0">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
+<meta property="og:image" content="logo.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
 <script src="store.js?v=2.5"></script>
@@ -47,13 +48,22 @@
   ::-webkit-scrollbar-thumb { background: #26262b; border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
+  /* Ambient Atmospheric Background Lighting */
+  .dashboard-ambient-glow {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 50%;
+  }
+
   /* Premium Apple Glass */
   .apple-glass {
-    background: rgba(14, 14, 18, 0.72);
+    background: rgba(14, 14, 18, 0.75);
     backdrop-filter: blur(28px) saturate(190%);
     -webkit-backdrop-filter: blur(28px) saturate(190%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 24px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -61,39 +71,79 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 16px;
-    border-radius: 9999px;
+    padding: 12px 18px;
+    border-radius: 14px;
     cursor: pointer;
     font-size: 13.5px;
     font-weight: 600;
-    color: #86868b;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #94a3b8;
+    border: 1px solid transparent;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
   }
 
   .sidebar-item:hover {
     background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
-    transform: translateX(2px);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(3px);
   }
 
   .sidebar-item.active {
     background: #ffffff;
     color: #000000;
     font-weight: 700;
-    box-shadow: 0 4px 18px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   .sidebar-item.active svg {
     stroke: #000000;
   }
 
+  /* KPI Quick Stats Cards */
+  .stat-kpi-card {
+    background: rgba(16, 16, 22, 0.75);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Elevated Order Cards */
+  .dashboard-order-card {
+    background: rgba(14, 14, 19, 0.75);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .dashboard-order-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(168, 85, 247, 0.32) !important;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(168, 85, 247, 0.1) !important;
+  }
+
   /* Status Badges */
   .status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
+    gap: 7px;
+    padding: 5px 13px;
     border-radius: 9999px;
     font-size: 11.5px;
     font-weight: 700;
@@ -101,42 +151,70 @@
   }
 
   .badge-ok {
-    background: rgba(52, 199, 89, 0.12);
-    border: 1px solid rgba(52, 199, 89, 0.28);
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
     color: #34c759;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.12);
   }
 
   .badge-wait {
-    background: rgba(255, 159, 10, 0.12);
-    border: 1px solid rgba(255, 159, 10, 0.28);
-    color: #ff9f0a;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.12);
   }
 
   .badge-iade {
-    background: rgba(255, 69, 58, 0.12);
-    border: 1px solid rgba(255, 69, 58, 0.28);
-    color: #ff453a;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
   }
 
   /* Action Buttons */
   .btn-action-primary {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     padding: 9px 18px;
     border-radius: 9999px;
     background: #ffffff;
     color: #000000;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
     font-size: 12.5px;
     font-weight: 700;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
   }
 
   .btn-action-primary:hover {
-    background: #f0f0f2;
-    transform: scale(1.02);
+    background: #f4f4f5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-action-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f5f5f7;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-action-glass:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  }
     box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
   }
 
@@ -218,109 +296,98 @@
   }
 
   .ios-alert-box {
+    position: relative;
     width: 100%;
-    max-width: 310px;
-    background: rgba(28, 28, 32, 0.92);
+    max-width: 360px;
+    background: rgba(13, 13, 18, 0.95);
     backdrop-filter: blur(40px) saturate(210%);
     -webkit-backdrop-filter: blur(40px) saturate(210%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 22px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 1px 1px rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 24px;
+    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 35px rgba(168, 85, 247, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     text-align: center;
     overflow: hidden;
-    transform: scale(1.15);
-    transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.25s ease;
+    transform: scale(0.92);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    padding: 28px 24px 22px;
   }
 
   .ios-backdrop.active .ios-alert-box {
     transform: scale(1);
+    opacity: 1;
   }
 
   .ios-alert-content {
-    padding: 24px 22px 18px;
-  }
-
-  .ios-alert-icon-wrap {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: rgba(255, 69, 58, 0.12);
-    border: 1px solid rgba(255, 69, 58, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px;
-  }
-
-  .ios-alert-icon-wrap.warning {
-    background: rgba(255, 159, 10, 0.14);
-    border-color: rgba(255, 159, 10, 0.3);
-  }
-
-  .ios-alert-icon-wrap.success {
-    background: rgba(52, 199, 89, 0.14);
-    border-color: rgba(52, 199, 89, 0.3);
+    padding: 0 0 20px;
   }
 
   .ios-alert-title {
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: #ffffff;
-    letter-spacing: -0.022em;
-    margin-bottom: 6px;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
   }
 
   .ios-alert-desc {
     font-size: 13.5px;
-    color: #a1a1a6;
-    line-height: 1.45;
-  }
-
-  .ios-alert-divider {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.12);
-    width: 100%;
+    color: #94a3b8;
+    line-height: 1.5;
+    max-width: 295px;
+    margin: 0 auto;
   }
 
   .ios-alert-buttons {
     display: flex;
+    gap: 10px;
+    align-items: center;
   }
 
-  .ios-btn-primary {
+  .btn-alert-cancel {
     flex: 1;
-    padding: 14px 16px;
-    background: transparent;
-    border: none;
-    color: #0a84ff;
-    font-size: 16.5px;
+    padding: 11px 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    font-size: 14px;
     font-weight: 600;
+    border-radius: 12px;
     cursor: pointer;
-    letter-spacing: -0.015em;
-    transition: background 0.12s ease;
+    transition: all 0.2s ease;
   }
 
-  .ios-btn-primary:active {
+  .btn-alert-cancel:hover {
     background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.22);
   }
 
-  .ios-btn-cancel {
-    flex: 1;
-    padding: 14px 16px;
-    background: transparent;
-    border: none;
-    color: #86868b;
-    font-size: 16.5px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: -0.015em;
-    transition: all 0.12s ease;
-  }
-  .ios-btn-cancel:hover {
+  .btn-alert-confirm {
+    flex: 1.15;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: 1px solid rgba(239, 68, 68, 0.5);
     color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4);
+    transition: all 0.2s ease;
   }
-  .ios-btn-cancel:active {
-    background: rgba(255, 255, 255, 0.1);
+
+  .btn-alert-confirm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(239, 68, 68, 0.55);
   }
+
+  .btn-alert-confirm.btn-confirm-blue {
+    background: linear-gradient(135deg, #0a84ff 0%, #8b5cf6 100%) !important;
+    border-color: rgba(10, 132, 255, 0.5) !important;
+    box-shadow: 0 4px 18px rgba(10, 132, 255, 0.4) !important;
+  }
+
 
   /* Auth Modal & Google Button Styles */
   .auth-backdrop {
@@ -346,13 +413,26 @@
     position: relative;
     width: 100%;
     max-width: 420px;
-    background: rgba(20, 20, 24, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: radial-gradient(120% 80% at 50% 0%, rgba(168, 85, 247, 0.08) 0%, rgba(10, 132, 255, 0.03) 40%, rgba(15, 16, 22, 0.97) 100%);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 28px;
     padding: 32px 28px;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.06);
     transform: scale(0.96) translateY(12px);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.8), rgba(255, 255, 255, 0.8), rgba(10, 132, 255, 0.8), transparent);
+    border-radius: 999px;
+    pointer-events: none;
   }
   .auth-backdrop.active .auth-card {
     transform: scale(1) translateY(0);
@@ -372,11 +452,12 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 2;
   }
   .auth-close-btn:hover {
     background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
   .btn-google-auth {
     width: 100%;
@@ -404,6 +485,61 @@
   .btn-google-auth:active {
     transform: scale(0.98);
   }
+  .btn-oauth-provider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.2px;
+    user-select: none;
+    box-sizing: border-box;
+  }
+  .btn-oauth-discord {
+    background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(88, 101, 242, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .btn-oauth-discord:hover {
+    background: linear-gradient(135deg, #4f5be3 0%, #3e47b0 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(88, 101, 242, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-oauth-discord:active {
+    transform: scale(0.985);
+  }
+  .btn-oauth-github {
+    background: linear-gradient(180deg, #24292F 0%, #171a1d 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  .btn-oauth-github:hover {
+    background: linear-gradient(180deg, #2d333b 0%, #1e2227 100%);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .btn-oauth-github:active {
+    transform: scale(0.985);
+  }
+  .auth-tabs-nav {
+    display: flex;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 18px;
+    gap: 4px;
+  }
   .auth-tab-btn {
     flex: 1;
     padding: 8px 12px;
@@ -416,27 +552,98 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
+  .auth-tab-btn:hover {
+    color: #ffffff;
+  }
   .auth-tab-btn.active {
     background: rgba(255, 255, 255, 0.12);
     color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  .auth-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .auth-input-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .auth-input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #64748b;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    z-index: 1;
+  }
+  .auth-input-wrap:focus-within .auth-input-icon {
+    color: #a855f7;
   }
   .auth-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    height: 42px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 11px 14px;
+    padding: 0 14px 0 40px;
     color: #ffffff;
     font-size: 13.5px;
     outline: none;
     font-family: inherit;
     transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  .auth-input::placeholder {
+    color: #475569;
   }
   .auth-input:focus {
-    border-color: #0a84ff;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+    border-color: rgba(168, 85, 247, 0.6);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.18);
+  }
+  .btn-auth-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 44px;
+    margin-top: 6px;
+    padding: 0 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    color: #090a0f;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(255, 255, 255, 0.18), inset 0 1px 0 #ffffff;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.2px;
+  }
+  .btn-auth-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3), inset 0 1px 0 #ffffff;
+  }
+  .btn-auth-submit:active {
+    transform: scale(0.985);
   }
 
   /* Dynamic Island */
@@ -532,9 +739,147 @@
     transform: translateY(-1px);
   }
 
+  /* Sidebar User Email Privacy Blur */
+  .profile-email-blur {
+    display: inline-block;
+    font-size: 12px;
+    color: #86868b;
+    margin-top: 2px;
+    filter: blur(5px);
+    opacity: 0.65;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 2px 8px;
+    border: 1px solid transparent;
+    transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .profile-email-blur:hover,
+  .profile-email-blur:focus,
+  .profile-email-blur.revealed {
+    filter: blur(0) !important;
+    opacity: 1 !important;
+    user-select: all !important;
+    color: #f5f5f7 !important;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Page Load & Tab Transitions (Apple Ultra Pro Cyber) */
+  @keyframes dashTopDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+      filter: blur(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes dashSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes dashCardEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      filter: blur(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes tabFadeEntrance {
+    0% {
+      opacity: 0;
+      transform: translateY(16px);
+      filter: blur(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes heroCaretBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .dash-nav-enter {
+    animation: dashTopDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .dash-sidebar-enter {
+    animation: dashSlideUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+  }
+
+  .dash-sidebar-enter .sidebar-item:nth-child(1) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.10s both; }
+  .dash-sidebar-enter .sidebar-item:nth-child(2) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both; }
+  .dash-sidebar-enter .sidebar-item:nth-child(3) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both; }
+  .dash-sidebar-enter .sidebar-item:nth-child(4) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+  .dash-sidebar-enter .sidebar-item:nth-child(5) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both; }
+  .dash-sidebar-enter .sidebar-item:nth-child(6) { animation: dashSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both; }
+
+  .dash-workspace-enter {
+    animation: dashSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+
+  .dash-kpi-card-1 {
+    animation: dashCardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  }
+
+  .dash-kpi-card-2 {
+    animation: dashCardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.23s both;
+  }
+
+  .dash-kpi-card-3 {
+    animation: dashCardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.31s both;
+  }
+
+  .tab-enter-anim {
+    animation: tabFadeEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .dash-card-anim {
+    animation: dashCardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .dash-caret {
+    display: inline-block;
+    width: 3px;
+    height: 0.85em;
+    background: #a855f7;
+    margin-left: 5px;
+    vertical-align: -0.05em;
+    border-radius: 2px;
+    box-shadow: 0 0 10px #a855f7, 0 0 18px #818cf8;
+    animation: heroCaretBlink 0.75s infinite ease-in-out;
+  }
 </style>
 </head>
 <body>
+
+<!-- Ambient Cyber Atmospheric Glows -->
+<div class="dashboard-ambient-glow" style="top:-140px;left:50%;transform:translateX(-50%);width:960px;height:520px;background:radial-gradient(circle, rgba(168,85,247,0.09) 0%, rgba(59,130,246,0.04) 50%, transparent 75%);filter:blur(70px);"></div>
+<div class="dashboard-ambient-glow" style="bottom:5%;right:2%;width:550px;height:420px;background:radial-gradient(circle, rgba(10,132,255,0.05) 0%, transparent 70%);filter:blur(65px);"></div>
 
 <!-- Dynamic Island -->
 <div id="dynamicIsland" class="dynamic-island">
@@ -547,25 +892,40 @@
   </div>
 </div>
 
-<!-- iOS Alert Modal -->
+<!-- Apple Ultra Cyber Confirmation / Alert Modal -->
 <div id="iosAlertBackdrop" class="ios-backdrop" style="display:none;" onclick="handleBackdropClick(event)">
   <div class="ios-alert-box" id="iosAlertBox">
+    
+    <!-- Top Cyber Ambient Glow inside card -->
+    <div style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:240px;height:120px;background:radial-gradient(circle, rgba(168,85,247,0.22) 0%, transparent 70%);pointer-events:none;"></div>
+
     <div class="ios-alert-content">
-      <div id="iosAlertIcon" class="ios-alert-icon-wrap">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
+      
+      <!-- closydev. Razor Cyber Lightning Emblem with glowing frame -->
+      <div style="display:flex;justify-content:center;margin-bottom:14px;position:relative;z-index:1;">
+        <div style="position:relative;width:54px;height:54px;border-radius:16px;background:#06060a;border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(168,85,247,0.35), inset 0 1px 1px rgba(255,255,255,0.3);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(255,255,255,0.8));">
+            <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+          </svg>
+          <!-- Dynamic Type Status Dot -->
+          <div id="iosAlertDot" style="position:absolute;bottom:-2px;right:-2px;width:13px;height:13px;border-radius:50%;background:#ef4444;border:2px solid #06060a;box-shadow:0 0 8px #ef4444;"></div>
+        </div>
       </div>
-      <h3 class="ios-alert-title" id="iosAlertTitle">Dikkat</h3>
-      <p class="ios-alert-desc" id="iosAlertDesc">Bir bildirim oluştu.</p>
+
+      <!-- closydev Brand Micro-Badge -->
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:3px 10px;border-radius:999px;margin-bottom:12px;position:relative;z-index:1;">
+        <span id="iosAlertBadgeDot" style="width:5px;height:5px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.06em;color:#e2e8f0;text-transform:uppercase;">closydev<span style="color:#a855f7;">.</span> HESAP GÜVENLİĞİ</span>
+      </div>
+
+      <h3 class="ios-alert-title" id="iosAlertTitle">Çıkış Yapılsın mı?</h3>
+      <p class="ios-alert-desc" id="iosAlertDesc">Hesabınızdan çıkış yapmak istediğinize emin misiniz? Oturumunuz sonlandırılacaktır.</p>
     </div>
-    <div class="ios-alert-divider"></div>
+
+    <!-- Modern Action Buttons -->
     <div class="ios-alert-buttons">
-      <button type="button" class="ios-btn-cancel" id="iosAlertCancelBtn" style="display:none;" onclick="cancelIosAlert()">Vazgeç</button>
-      <div id="iosAlertBtnDivider" style="width:1px;background:rgba(255,255,255,0.12);display:none;"></div>
-      <button type="button" class="ios-btn-primary" id="iosAlertBtn" onclick="confirmIosAlert()">Tamam</button>
+      <button type="button" class="btn-alert-cancel" id="iosAlertCancelBtn" style="display:none;" onclick="cancelIosAlert()">Vazgeç</button>
+      <button type="button" class="btn-alert-confirm" id="iosAlertBtn" onclick="confirmIosAlert()">Çıkış Yap</button>
     </div>
   </div>
 </div>
@@ -577,12 +937,27 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
 
-    <div style="text-align:center;margin-bottom:22px;">
-      <div style="width:52px;height:52px;border-radius:15px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(168,85,247,0.35);margin-bottom:12px;overflow:hidden;">
-        <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <!-- Glowing Lightning Pedestal -->
+      <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+        <div style="position:absolute;inset:-4px;border-radius:20px;background:linear-gradient(135deg,rgba(168,85,247,0.35),rgba(10,132,255,0.35));filter:blur(10px);opacity:0.7;"></div>
+        <div style="position:relative;width:52px;height:52px;border-radius:16px;background:linear-gradient(180deg,#15161f 0%,#0c0d12 100%);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.25);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));">
+            <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+          </svg>
+        </div>
       </div>
-      <h3 style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.4px;" id="authModalTitle">DigiStore'a Giriş Yap</h3>
-      <p style="font-size:13px;color:#86868b;margin-top:4px;" id="authModalSubtitle">Tüm dijital siparişleriniz ve lisanslarınız tek bir yerde.</p>
+
+      <!-- Micro Security Badge -->
+      <div style="display:flex;justify-content:center;margin-bottom:8px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:999px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#34c759;box-shadow:0 0 6px #34c759;"></span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.06em;color:#94a3b8;text-transform:uppercase;">256-BIT SSL ŞİFRELİ GÜVENLİ PORTAL</span>
+        </div>
+      </div>
+
+      <h3 style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.4px;margin:0 0 4px 0;" id="authModalTitle">closydev'e Giriş Yap</h3>
+      <p style="font-size:12.5px;color:#86868b;margin:0;" id="authModalSubtitle">Tüm dijital siparişleriniz ve lisanslarınız tek bir yerde.</p>
     </div>
 
     <!-- Official Google Identity Services Component -->
@@ -591,7 +966,7 @@
          data-callback="handleCredentialResponse"
          data-auto_prompt="false">
     </div>
-    <div style="display:flex;justify-content:center;margin-bottom:12px;width:100%;">
+    <div style="display:flex;justify-content:center;margin-bottom:10px;width:100%;">
       <div class="g_id_signin"
            data-type="standard"
            data-size="large"
@@ -602,8 +977,9 @@
            data-width="360">
       </div>
     </div>
+
     <!-- Discord & GitHub OAuth Providers -->
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;margin-bottom:12px;width:100%;max-width:360px;margin-left:auto;margin-right:auto;">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;width:100%;max-width:360px;margin-left:auto;margin-right:auto;">
       <button type="button" onclick="handleDiscordAuth()" class="btn-oauth-provider btn-oauth-discord">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
           <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
@@ -618,14 +994,15 @@
       </button>
     </div>
 
-    <div style="display:flex;align-items:center;gap:12px;margin:18px 0;">
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
-      <span style="font-size:11.5px;color:#86868b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">veya e-posta ile</span>
-      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+    <!-- Divider -->
+    <div style="display:flex;align-items:center;gap:12px;margin:16px 0 14px 0;">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);"></div>
+      <span style="font-size:10.5px;color:#71717a;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">VEYA E-POSTA İLE</span>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);"></div>
     </div>
 
     <!-- Auth Tabs -->
-    <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:12px;padding:3px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.08);">
+    <div class="auth-tabs-nav">
       <button type="button" id="tabBtnLogin" class="auth-tab-btn active" onclick="switchAuthTab('login')">Giriş Yap</button>
       <button type="button" id="tabBtnRegister" class="auth-tab-btn" onclick="switchAuthTab('register')">Kayıt Ol</button>
     </div>
@@ -633,17 +1010,28 @@
     <!-- Login Form -->
     <form id="loginForm" onsubmit="handleLoginFormSubmit(event)">
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">E-POSTA ADRESİ</label>
-          <input type="email" id="loginEmail" required placeholder="ornek@email.com" class="auth-input" >
+        <div class="auth-input-group">
+          <label class="auth-input-label">E-POSTA ADRESİ</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </span>
+            <input type="email" id="loginEmail" required placeholder="ornek@email.com" class="auth-input" autocomplete="email">
+          </div>
         </div>
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">ŞİFRE</label>
-          <input type="password" id="loginPassword" required placeholder="••••••••" class="auth-input" >
+        <div class="auth-input-group">
+          <label class="auth-input-label">ŞİFRE</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </span>
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="auth-input" autocomplete="current-password">
+          </div>
         </div>
         <div id="loginError" style="display:none;font-size:12px;color:#ff453a;background:rgba(255,69,58,0.1);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,69,58,0.2);"></div>
-        <button type="submit" class="btn-action-primary" style="width:100%;margin-top:6px;padding:12px;justify-content:center;font-size:14px;">
-          Giriş Yap
+        <button type="submit" class="btn-auth-submit">
+          <span>Giriş Yap</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     </form>
@@ -651,21 +1039,41 @@
     <!-- Register Form -->
     <form id="registerForm" style="display:none;" onsubmit="handleRegisterFormSubmit(event)">
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">AD SOYAD</label>
-          <input type="text" id="regName" required placeholder="Adınız Soyadınız" class="auth-input">
+        <div class="auth-input-group">
+          <label class="auth-input-label">AD SOYAD</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+            <input type="text" id="regName" required placeholder="Adınız Soyadınız" class="auth-input" autocomplete="name">
+          </div>
         </div>
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">E-POSTA / GMAIL ADRESİ</label>
-          <input type="email" id="regEmail" required placeholder="adiniz@gmail.com" class="auth-input">
+        <div class="auth-input-group">
+          <label class="auth-input-label">E-POSTA / GMAIL ADRESİ</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </span>
+            <input type="email" id="regEmail" required placeholder="adiniz@gmail.com" class="auth-input" autocomplete="email">
+          </div>
         </div>
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">TELEFON</label>
-          <input type="tel" id="regPhone" placeholder="+90 5xx xxx xx xx" class="auth-input">
+        <div class="auth-input-group">
+          <label class="auth-input-label">TELEFON</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </span>
+            <input type="tel" id="regPhone" placeholder="+90 5xx xxx xx xx" class="auth-input" autocomplete="tel">
+          </div>
         </div>
-        <div>
-          <label style="display:block;font-size:11.5px;color:#86868b;font-weight:600;margin-bottom:5px;">ŞİFRE (EN AZ 6 KARAKTER)</label>
-          <input type="password" id="regPassword" required placeholder="••••••••" minlength="6" class="auth-input">
+        <div class="auth-input-group">
+          <label class="auth-input-label">ŞİFRE (EN AZ 6 KARAKTER)</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </span>
+            <input type="password" id="regPassword" required placeholder="••••••••" minlength="6" class="auth-input" autocomplete="new-password">
+          </div>
         </div>
         <!-- KVKK & Yasal Onay Kutuları -->
         <div style="display:flex;flex-direction:column;gap:8px;margin:4px 0 6px;">
@@ -679,8 +1087,9 @@
           </label>
         </div>
         <div id="regError" style="display:none;font-size:12px;color:#ff453a;background:rgba(255,69,58,0.1);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,69,58,0.2);"></div>
-        <button type="submit" class="btn-action-primary" style="width:100%;margin-top:6px;padding:12px;justify-content:center;font-size:14px;">
-          Hesap Oluştur ve Başla
+        <button type="submit" class="btn-auth-submit">
+          <span>Hesap Oluştur ve Başla</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     </form>
@@ -719,24 +1128,23 @@
 </div>
 
 <!-- TOP NAV -->
-<nav style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+<nav class="dash-nav-enter" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
   
-  <!-- Apple Ultra Premium Brand Logo -->
-  <a href="index.html" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.querySelector('.logo-icon-box').style.transform='scale(1.05)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 25px rgba(168,85,247,0.5)';" onmouseout="this.querySelector('.logo-icon-box').style.transform='scale(1)';this.querySelector('.logo-icon-box').style.boxShadow='0 0 16px rgba(168,85,247,0.3)';">
-    <div class="logo-icon-box" style="position:relative;width:38px;height:38px;border-radius:11px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(168,85,247,0.3), inset 0 1px 1px rgba(255,255,255,0.25);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);overflow:hidden;">
-      <img src="logo-icon.png" alt="DigiStore Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span style="font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif;">Digi<span style="background:linear-gradient(135deg,#a855f7 0%,#818cf8 50%,#38bdf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span></span>
-      <span style="font-size:9.5px;font-weight:800;letter-spacing:0.06em;color:#a855f7;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);padding:1px 6px;border-radius:6px;text-transform:uppercase;">PRO</span>
-    </div>
+  <!-- closydev. Brand Logo -->
+  <a href="index.html" class="nav-brand-link" title="closydev." style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,255,255,0.6));">
+      <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+    </svg>
+    <span class="brand-text" style="display:inline-block;font-size:19px;font-weight:700;letter-spacing:-0.04em;color:#ffffff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1;white-space:nowrap;">
+      closydev<span style="color:#ffffff;">.</span>
+    </span>
   </a>
 
   <!-- Right Controls -->
   <div style="display:flex;align-items:center;gap:14px;">
     <div id="topNavUserAction"></div>
 
-    <a id="navAdminBtn" href="/admin/" style="display:none;font-size:12.5px;color:#a5b4fc;text-decoration:none;font-weight:600;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:7px 14px;border-radius:9999px;transition:all .2s ease;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">
+    <a id="navAdminBtn" href="admin.html" style="display:none;font-size:12.5px;color:#a5b4fc;text-decoration:none;font-weight:600;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:7px 14px;border-radius:9999px;transition:all .2s ease;" onmouseover="this.style.background='rgba(99,102,241,0.2)'" onmouseout="this.style.background='rgba(99,102,241,0.1)'">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -758,7 +1166,7 @@
 <div style="max-width:1160px;margin:40px auto 90px;padding:0 24px;display:grid;grid-template-columns:260px 1fr;gap:28px;">
 
   <!-- LEFT SIDEBAR -->
-  <div>
+  <div class="dash-sidebar-enter">
     
     <!-- User Profile Identity Card -->
     <div class="apple-glass" style="padding:24px 20px;margin-bottom:18px;text-align:center;">
@@ -775,9 +1183,9 @@
       </div>
       
       <div id="sidebarName" style="font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.4px;">Misafir</div>
-      <div id="sidebarEmail" style="font-size:12px;color:#86868b;margin-top:2px;">Giri? Yap?lmad?</div>
+      <div id="sidebarEmail" class="profile-email-blur" title="Görüntülemek için üzerine gelin veya dokunun" tabindex="0" onclick="this.classList.toggle('revealed')">Giriş Yapılmadı</div>
       
-      <div id="sidebarRole" style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(10,132,255,0.12);border:1px solid rgba(10,132,255,0.25);color:#60a5fa;font-size:11px;font-weight:700;padding:4px 14px;border-radius:9999px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>Oturum A??n</span></div>
+      <div id="sidebarRole" style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(10,132,255,0.12);border:1px solid rgba(10,132,255,0.25);color:#60a5fa;font-size:11px;font-weight:700;padding:4px 14px;border-radius:9999px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>Oturum Açın</span></div>
     </div>
 
     <!-- Navigation Menu Items -->
@@ -844,7 +1252,7 @@
       </div>
 
       <!-- Admin Paneli (Sadece admin@digistore.com) -->
-      <a id="sidebarAdminBtn" href="/admin/" class="sidebar-item" style="display:none;color:#a5b4fc;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:12px;text-decoration:none;margin-top:2px;">
+      <a id="sidebarAdminBtn" href="admin.html" class="sidebar-item" style="display:none;color:#a5b4fc;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:12px;text-decoration:none;margin-top:2px;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -928,10 +1336,51 @@
     </div>
 
     <!-- LOGGED IN USER WORKSPACE -->
-    <div id="userWorkspace">
+    <div id="userWorkspace" class="dash-workspace-enter">
+
+      <!-- Quick KPI Stats Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px;">
+        
+        <!-- Stat 1: Toplam Sipariş -->
+        <div class="stat-kpi-card dash-kpi-card-1">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#86868b;">Toplam Sipariş</div>
+            <div id="statTotalOrders" style="font-size:22px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px;">0</div>
+          </div>
+        </div>
+
+        <!-- Stat 2: Aktif Lisanslar -->
+        <div class="stat-kpi-card dash-kpi-card-2">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;color:#c084fc;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#86868b;">Aktif Lisanslar</div>
+            <div id="statActiveLicenses" style="font-size:22px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px;">0</div>
+          </div>
+        </div>
+
+        <!-- Stat 3: Hesap Statüsü -->
+        <div class="stat-kpi-card dash-kpi-card-3">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;color:#34c759;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#86868b;">Hesap Statüsü</div>
+            <div id="statAccountStatus" style="font-size:13.5px;font-weight:700;color:#34c759;margin-top:3px;display:flex;align-items:center;gap:6px;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#34c759;box-shadow:0 0 8px #34c759;"></span>
+              <span>Doğrulanmış Müşteri</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
     <!-- 1. SİPARİŞLERİM PANELİ -->
-    <div id="tab-siparisler">
+    <div id="tab-siparisler" class="tab-enter-anim">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
         <div style="display:flex;align-items:center;gap:12px;">
           <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:#fff;">
@@ -1181,10 +1630,59 @@
 
 <!-- JAVASCRIPT LOGIC -->
 <script>
+let currentTypewriterTimer = null;
+function playTabTitleTypewriter(tabId) {
+  if (currentTypewriterTimer) {
+    clearInterval(currentTypewriterTimer);
+    currentTypewriterTimer = null;
+  }
+  
+  const tab = document.getElementById('tab-' + tabId);
+  if (!tab) return;
+  const heading = tab.querySelector('h2');
+  if (!heading) return;
+
+  const originalText = heading.getAttribute('data-original-title') || heading.textContent.trim();
+  if (!heading.hasAttribute('data-original-title')) {
+    heading.setAttribute('data-original-title', originalText);
+  }
+
+  heading.innerHTML = '<span class="typewriter-text"></span><span class="dash-caret"></span>';
+  const textContainer = heading.querySelector('.typewriter-text');
+  const caret = heading.querySelector('.dash-caret');
+  
+  let i = 0;
+  const speed = 24;
+  currentTypewriterTimer = setInterval(() => {
+    if (i < originalText.length) {
+      textContainer.textContent += originalText.charAt(i);
+      i++;
+    } else {
+      clearInterval(currentTypewriterTimer);
+      currentTypewriterTimer = null;
+      setTimeout(() => {
+        if (caret) {
+          caret.style.transition = 'opacity 0.4s ease';
+          caret.style.opacity = '0';
+          setTimeout(() => caret.remove(), 450);
+        }
+      }, 500);
+    }
+  }, speed);
+}
+
 function showTab(id) {
-  document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('[id^="tab-"]').forEach(el => {
+    el.style.display = 'none';
+    el.classList.remove('tab-enter-anim');
+  });
   const target = document.getElementById('tab-' + id);
-  if (target) target.style.display = 'block';
+  if (target) {
+    target.style.display = 'block';
+    void target.offsetWidth;
+    target.classList.add('tab-enter-anim');
+    playTabTitleTypewriter(id);
+  }
   
   document.querySelectorAll('.sidebar-item').forEach(el => {
     el.classList.remove('active');
@@ -1293,21 +1791,7 @@ function renderUserProfile() {
   `;
 
   if (topNavUserAction) {
-    const avatarBadgeHtml = p.avatar
-      ? `<img src="${p.avatar}" alt="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;">`
-      : `<div style="width:22px;height:22px;border-radius:50%;background:${av.style.background};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">${initial}</div>`;
-
-    topNavUserAction.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:9999px;">
-          ${avatarBadgeHtml}
-          <span style="font-size:13px;font-weight:600;color:#f5f5f7;">${p.name || 'Hesabım'}</span>
-        </div>
-        <button onclick="confirmLogout()" class="btn-action-glass" style="padding:6px 14px;font-size:12.5px;color:#ff453a;border-color:rgba(255,69,58,0.25);">
-          <span>Çıkış Yap</span>
-        </button>
-      </div>
-    `;
+    topNavUserAction.innerHTML = '';
   }
 
   const pn = document.getElementById('profileName');
@@ -1430,49 +1914,61 @@ function renderUserOrders() {
     return;
   }
 
-  list.innerHTML = orders.map(o => `
-    <div class="apple-glass" style="padding:22px;">
+  list.innerHTML = orders.map((o, idx) => `
+    <div class="apple-glass dashboard-order-card dash-card-anim" style="padding:24px 26px;animation-delay:${idx * 60}ms;">
       
+      <!-- Ambient Status Corner Glow -->
+      <div style="position:absolute;top:0;right:0;width:140px;height:140px;background:radial-gradient(circle at 100% 0%, ${o.status === 'completed' ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)'} 0%, transparent 70%);pointer-events:none;"></div>
+
       <!-- Top Meta -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
-        <div>
-          <div style="font-size:11px;color:#86868b;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">SİPARİŞ NUMARASI</div>
-          <div style="font-size:15px;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px;">#${o.id}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;position:relative;z-index:1;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div>
+            <div style="font-size:10.5px;color:#86868b;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">SİPARİŞ NUMARASI</div>
+            <div style="font-size:15px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;margin-top:2px;letter-spacing:0.02em;">#${o.id}</div>
+          </div>
+          <button onclick="copyOrderId('${o.id}')" title="Sipariş No Kopyala" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#86868b;border-radius:8px;padding:4px 8px;cursor:pointer;display:inline-flex;align-items:center;transition:all .2s ease;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#86868b';this.style.background='rgba(255,255,255,0.05)'">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          </button>
         </div>
         
         <span class="status-badge ${o.status === 'completed' ? 'badge-ok' : (o.status === 'pending' ? 'badge-wait' : 'badge-iade')}">
-          <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${o.status === 'completed' ? 'Tamamlandı' : (o.status === 'pending' ? 'Onay Bekliyor' : 'İade Edildi')}</span>
+          <span style="width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;"></span>
+          <span>${o.status === 'completed' ? 'Tamamlandı &amp; Aktif' : (o.status === 'pending' ? 'Ödeme / Onay Bekliyor' : 'İade Edildi')}</span>
         </span>
       </div>
 
       <!-- Item Row -->
-      <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;">
-        <div style="width:42px;height:42px;border-radius:10px;background:#14141c;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px;margin-bottom:18px;position:relative;z-index:1;">
+        <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg, rgba(168,85,247,0.15), rgba(59,130,246,0.15));border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;color:#c084fc;flex-shrink:0;box-shadow:0 0 18px rgba(168,85,247,0.2);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </div>
         
         <div style="flex:1;min-width:0;">
-          <div style="font-size:14.5px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          <div style="font-size:15.5px;font-weight:800;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-0.2px;">
             ${o.product}
           </div>
-          <div style="font-size:12px;color:#86868b;margin-top:3px;">
-            ${o.date} · ${o.method || 'Kredi Kartı'}
+          <div style="font-size:12px;color:#94a3b8;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span>${o.date}</span>
+            <span style="color:rgba(255,255,255,0.2);">•</span>
+            <span style="color:#e2e8f0;">${o.method || 'Kredi Kartı / 3D Secure'}</span>
+            <span style="color:rgba(255,255,255,0.2);">•</span>
+            <span style="color:#34c759;font-weight:600;">Doğrulanmış Lisans</span>
           </div>
         </div>
 
         <div style="text-align:right;">
-          <div style="font-size:17px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:19px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;">
             ₺${Number(o.amount).toLocaleString('tr-TR')}
           </div>
-          <div style="font-size:11px;color:#86868b;">KDV dahil</div>
+          <div style="font-size:11px;color:#86868b;margin-top:2px;">KDV dahil</div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;position:relative;z-index:1;">
         ${o.status === 'completed' ? `
           <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -1494,17 +1990,17 @@ function renderUserOrders() {
             <span>Shopier ile Öde</span>
           </a>
 
-          <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;">
+          <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;border-color:transparent;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
             <span>Discord'da Ticket Aç</span>
           </a>
 
-          <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;">
-            <span>Yedek Discord</span>
+          <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;">
+            <span>Discord Sunucusu</span>
           </a>
 
-          <span style="font-size:12px;color:#eab308;background:rgba(234,179,8,0.1);padding:6px 14px;border-radius:8px;border:1px solid rgba(234,179,8,0.25);display:inline-flex;align-items:center;gap:6px;">
-            <span style="width:6px;height:6px;border-radius:50%;background:#eab308;"></span>
+          <span style="font-size:12px;color:#fbbf24;background:rgba(245,158,11,0.1);padding:6px 14px;border-radius:9999px;border:1px solid rgba(245,158,11,0.25);display:inline-flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #fbbf24;"></span>
             <span>Yönetici Onayı Bekleniyor</span>
           </span>
         `}
@@ -1524,70 +2020,55 @@ function renderUserLicenses() {
     list.innerHTML = `
       <div class="apple-glass" style="padding:40px 20px;text-align:center;color:#86868b;">
         <p style="font-size:15px;color:#fff;font-weight:600;">Aktif lisans bulunamadı</p>
-        <p style="font-size:13px;margin-top:4px;">Satın aldığınız ürünlerin lisans anahtarları yönetici onayından sonra burada açılır.</p>
+        <p style="font-size:13px;margin-top:4px;">Satın aldığınız ürünlerin lisans anahtarları anında burada açılır.</p>
       </div>`;
     return;
   }
 
-  list.innerHTML = licenses.map(l => {
-    const isPending = l.status === 'pending';
+  list.innerHTML = licenses.map((l, idx) => {
     const isRevoked = l.status === 'revoked';
 
     return `
-    <div class="apple-glass" style="padding:22px;">
+    <div class="apple-glass dash-card-anim" style="padding:22px;animation-delay:${idx * 60}ms;">
       
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-        <div style="width:38px;height:38px;border-radius:10px;background:${isPending ? 'rgba(234,179,8,0.12)' : (isRevoked ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)')};color:${isPending ? '#eab308' : (isRevoked ? '#ef4444' : '#22c55e')};display:flex;align-items:center;justify-content:center;">
+        <div style="width:38px;height:38px;border-radius:10px;background:${isRevoked ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)'};color:${isRevoked ? '#ef4444' : '#22c55e'};display:flex;align-items:center;justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="M21 2l-9.6 9.6"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path></svg>
         </div>
         <div style="flex:1;">
           <div style="font-size:15px;font-weight:700;color:#fff;">${l.product}</div>
           <div style="font-size:12px;color:#86868b;margin-top:2px;">Ömür Boyu Geçerli · Sipariş: #${l.orderId}</div>
         </div>
-        <span class="status-badge ${isPending ? 'badge-wait' : (isRevoked ? 'badge-iade' : 'badge-ok')}">
+        <span class="status-badge ${isRevoked ? 'badge-iade' : 'badge-ok'}">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici Onayı Bekliyor' : (isRevoked ? 'İptal / İade' : 'Aktif &amp; Doğrulandı')}</span>
+          <span>${isRevoked ? 'İptal / İade' : 'Aktif &amp; Doğrulandı'}</span>
         </span>
       </div>
 
       <!-- License Key Terminal Box -->
-      <div style="background:#09090c;border:1px solid ${isPending ? 'rgba(234,179,8,0.25)' : 'rgba(255,255,255,0.1)'};border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div style="background:#09090c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div>
           <div style="font-size:10px;color:#86868b;margin-bottom:5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">DİJİTAL LİSANS ANAHTARI</div>
-          ${isPending ? `
-            <code style="color:#eab308;font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;">DS-••••-••••-•••• (Yönetici Onayından Sonra Açılacak)</code>
-          ` : `
-            <code style="color:#60a5fa;font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;">${l.key}</code>
-          `}
+          <code style="color:#60a5fa;font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;">${l.key}</code>
+          <div style="font-size:11px;color:#94a3b8;margin-top:4px;">(CLOSY ve DS formatındaki tüm lisanslar bot ile yüzde 100 uyumludur)</div>
         </div>
         <div>
-          ${isPending ? `
-            <span style="font-size:11.5px;color:#eab308;background:rgba(234,179,8,0.1);padding:5px 12px;border-radius:8px;border:1px solid rgba(234,179,8,0.25);">Kilitli / Onay Bekleniyor</span>
-          ` : `
-            <button onclick="copyLicense(this,'${l.key}')" class="btn-action-glass" style="padding:7px 16px;font-size:12px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="downloads/ClosyBotManager.zip" class="btn-action-primary" style="padding:7px 14px;font-size:12px;text-decoration:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;border-radius:8px;display:inline-flex;align-items:center;gap:6px;" download title="Closy Bot Manager Masaustu Uygulamasini Indir">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Masaustu Panelini Indir (Closy Bot Manager)</span>
+            </a>
+            <a href="downloads/Closy_Ticket_Botu_v14.zip" class="btn-action-glass" style="padding:7px 14px;font-size:12px;text-decoration:none;color:#fff;border-radius:8px;display:inline-flex;align-items:center;gap:6px;" download title="Bot Kaynak Kodlarini Indir">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Bot Dosyalarini Indir (.zip)</span>
+            </a>
+            <button onclick="copyLicense(this,'${l.key}')" class="btn-action-glass" style="padding:7px 14px;font-size:12px;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               <span>Kopyala</span>
             </button>
-          `}
+          </div>
         </div>
       </div>
-
-      ${isPending ? `
-        <div style="background:rgba(88,101,242,0.08);border:1px solid rgba(88,101,242,0.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
-          <div style="font-size:12.5px;color:#ffffff;font-weight:600;margin-bottom:4px;">Lisansınız Yönetici Onayından Sonra Açılacaktır</div>
-          <div style="font-size:12px;color:#cbd5e1;line-height:1.5;margin-bottom:10px;">
-            Discord bot kurulumu, token teslimatı ve lisansınızın hızlı onaylanması için lütfen Discord sunucumuzda Ticket açınız:
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;font-size:12px;padding:7px 14px;">
-              <span>Discord 1: discord.gg/vqYZgAyP8v (Ticket Aç)</span>
-            </a>
-            <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;font-size:12px;padding:7px 14px;">
-              <span>Discord 2: discord.gg/imzapriw</span>
-            </a>
-          </div>
-        </div>
-      ` : ''}
 
       <div style="display:flex;gap:18px;font-size:12.5px;color:#86868b;flex-wrap:wrap;">
         <span style="display:flex;align-items:center;gap:6px;">
@@ -1600,7 +2081,7 @@ function renderUserLicenses() {
         </span>
         <span style="display:flex;align-items:center;gap:6px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          Ömür Boyu Güncelleme
+          Ömür Boyu Güncelleme &amp; Açık Kaynak
         </span>
       </div>
 
@@ -1623,8 +2104,8 @@ function renderUserInvoices() {
     return;
   }
 
-  list.innerHTML = orders.map(o => `
-    <div class="apple-glass" style="padding:20px 24px;display:flex;align-items:center;gap:16px;">
+  list.innerHTML = orders.map((o, idx) => `
+    <div class="apple-glass dash-card-anim" style="padding:20px 24px;display:flex;align-items:center;gap:16px;animation-delay:${idx * 60}ms;">
       <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;color:#c084fc;flex-shrink:0;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
       </div>
@@ -1644,6 +2125,22 @@ function renderUserInvoices() {
   `).join('');
 }
 
+function getProductZipPath(productName) {
+  const name = (productName || '').toLowerCase();
+  if (name.includes('ticket') || name.includes('closy') || name.includes('imza') || name.includes('bilet')) {
+    return 'downloads/Closy_Ticket_Botu_v14.zip';
+  } else if (name.includes('guard') || name.includes('moderasyon')) {
+    return 'downloads/3_Closy_Welcome_ve_Guard_Suite.zip';
+  } else if (name.includes('ses') || name.includes('istatistik')) {
+    return 'downloads/1_Closy_Priv_Voice_Hub.zip';
+  } else if (name.includes('kayıt') || name.includes('hoş geldin') || name.includes('başvuru')) {
+    return 'downloads/5_Raven_Basvuru_Botu.zip';
+  } else if (name.includes('mega') || name.includes('full') || name.includes('bundle') || name.includes('vip')) {
+    return 'downloads/4_Closy_VIP_All_In_One_Bundle.zip';
+  }
+  return 'downloads/Closy_Ticket_Botu_v14.zip';
+}
+
 function renderUserDownloads() {
   if (typeof DigiStoreDB === 'undefined') return;
   const p = DigiStoreDB.getUserProfile();
@@ -1658,37 +2155,39 @@ function renderUserDownloads() {
     return;
   }
 
-  list.innerHTML = orders.map(o => {
+  list.innerHTML = orders.map((o, idx) => {
     const isPending = o.status !== 'completed';
+    const zipPath = getProductZipPath(o.product);
+    const fileName = zipPath.split('/').pop();
 
     return `
-    <div class="apple-glass" style="padding:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+    <div class="apple-glass dash-card-anim" style="padding:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;animation-delay:${idx * 60}ms;">
       <div style="width:48px;height:48px;border-radius:12px;background:${isPending ? 'rgba(234,179,8,0.12)' : 'rgba(52,199,89,0.12)'};border:1px solid ${isPending ? 'rgba(234,179,8,0.25)' : 'rgba(52,199,89,0.25)'};display:flex;align-items:center;justify-content:center;color:${isPending ? '#eab308' : '#34c759'};flex-shrink:0;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
       </div>
 
       <div style="flex:1;min-width:240px;">
         <div style="font-size:15px;font-weight:700;color:#fff;">${o.product}</div>
-        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Kurulum Paketi &amp; Dokümantasyon · ZIP (v4.2.0)</div>
+        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Tam Açık Kaynak Kod &amp; Kurulum Arşivi · ${fileName}</div>
         <div style="font-size:11.5px;color:${isPending ? '#eab308' : '#34c759'};margin-top:4px;display:flex;align-items:center;gap:5px;">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici onayı bekleniyor (Onaylandıktan sonra indirme açılır)' : 'Yüksek hızlı bulut sunucusu indirme bağlantısı aktif'}</span>
+          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : 'Gerçek bot kaynak kodları (main.py, config.json, baslat.bat) indirilmeye hazır'}</span>
         </div>
       </div>
 
       <div>
         ${isPending ? `
           <div style="display:flex;gap:8px;align-items:center;">
-            <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;font-size:12.5px;">
+            <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;font-size:12.5px;">
               <span>Discord Ticket Aç</span>
             </a>
             <span class="status-badge badge-wait">Onay Bekliyor</span>
           </div>
         ` : `
-          <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
+          <a href="${zipPath}" download="${fileName}" onclick="showDynamicIsland('İndirme Başlatıldı', '${fileName} indiriliyor. Bot kodları (main.py) arşivdedir.', 'success')" class="btn-action-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             <span>İndir (ZIP)</span>
-          </button>
+          </a>
         `}
       </div>
     </div>
@@ -1726,8 +2225,8 @@ function renderUserEmails() {
     return;
   }
 
-  list.innerHTML = emails.map(e => `
-    <div class="apple-glass" style="padding:22px;border-left:4px solid ${e.read ? 'rgba(255,255,255,0.1)' : '#0a84ff'};">
+  list.innerHTML = emails.map((e, idx) => `
+    <div class="apple-glass dash-card-anim" style="padding:22px;border-left:4px solid ${e.read ? 'rgba(255,255,255,0.1)' : '#0a84ff'};animation-delay:${idx * 60}ms;">
       
       <!-- Top Row -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
@@ -1817,6 +2316,30 @@ function closeEmailModal() {
   if (backdrop) backdrop.style.display = 'none';
 }
 
+function updateDashboardKpis() {
+  if (typeof DigiStoreDB === 'undefined') return;
+  const user = DigiStoreDB.getUserProfile() || {};
+  const orders = DigiStoreDB.getUserOrders(user.email);
+  const licenses = DigiStoreDB.getUserLicenses(user.email);
+  
+  const elOrders = document.getElementById('statTotalOrders');
+  if (elOrders) elOrders.textContent = orders.length;
+  
+  const elLicenses = document.getElementById('statActiveLicenses');
+  if (elLicenses) {
+    const activeCount = licenses.filter(l => (l.status || '').toLowerCase() === 'aktif' || !l.status).length;
+    elLicenses.textContent = activeCount;
+  }
+}
+
+function copyOrderId(id) {
+  if (!id) return;
+  navigator.clipboard.writeText(String(id)).catch(() => {});
+  if (typeof showDynamicIsland === 'function') {
+    showDynamicIsland('Sipariş No Kopyalandı', '#' + id + ' panoya kopyalandı', 'copy');
+  }
+}
+
 function renderAllData() {
   renderUserProfile();
   renderUserOrders();
@@ -1824,6 +2347,7 @@ function renderAllData() {
   renderUserInvoices();
   renderUserDownloads();
   renderUserEmails();
+  updateDashboardKpis();
 }
 
 function copyLicense(btn, key) {
@@ -1933,113 +2457,33 @@ function downloadProductArchive(productName, orderId, btn) {
   const orders = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrders() : [];
   const order = orders.find(o => String(o.id) === String(orderId)) || {};
 
-  if (order.status !== 'completed') {
+  if (order.status === 'refunded') {
     showIosAlert({
-      title: 'Ödeme Onayı Bekleniyor',
-      message: 'Bu ürünün indirme bağlantısı ve lisansı, ödemeniz Shopier üzerinden onaylandıktan sonra aktif olacaktır.',
+      title: 'Lisans İptal Edildi',
+      message: 'Bu sipariş iptal veya iade edildiğinden dosya indirmeye kapatılmıştır.',
       type: 'warning'
     });
     return;
   }
 
+  const zipPath = getProductZipPath(productName);
+  const fileName = zipPath.split('/').pop();
+
   if (btn) {
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-spin"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-      <span>Paketleniyor...</span>`;
+      <span>İndiriliyor...</span>`;
     btn.disabled = true;
   }
 
   setTimeout(() => {
     try {
-      const user = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getUserProfile() : { name: 'Müşteri' };
-      const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('DS-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
-
-      const readmeText = 
-`======================================================================
-DIGISTORE PRO — RESMI DIJITAL TESLIMAT & KURULUM PAKETI
-======================================================================
-Urun Adi          : ${productName}
-Siparis Numarasi  : #${orderId}
-Lisans Anahtari   : ${licenseKey}
-Musteri Adi       : ${user.name || 'Zeybe'}
-Teslimat Tarihi   : ${order.date || new Date().toLocaleString('tr-TR')}
-Lisans Durumu     : ONAYLANDI (Omur Boyu Gecerli & Aktif)
-======================================================================
-
-[1] HIZLI KURULUM ADIMLARI:
-1. Bu arsivdeki dosyalari bilgisayarinizda istediginiz klasore cikartin.
-2. 'LISANS_ANAHTARI.txt' dosyasindaki seri numarasini kopyalayin.
-3. 'kurulum_baslat.bat' dosyasini cift tiklayarak calistirin.
-4. Yazilim veya bot otomatik olarak lisansi dogrulayip baslayacaktir.
-
-[2] YASAL GUVECE & DESTEK:
-Bu dijital urun ve lisans haklari adiniza resmi olarak tahsis edilmistir.
-- Musteri Paneli  : https://digistore.com/hesabim.html
-- 7/24 Destek     : destek@digistore.com
-- Garanti         : 14 Gun Kosulsuz Iade & Degisim Guvencesi
-
-(c) 2026 DigiStore Bilisim Ticaret A.S. Tum haklari saklidir.
-======================================================================`;
-
-      const licenseText = 
-`======================================================================
-DIGISTORE PRO RESMI LISANS SERTIFIKASI
-======================================================================
-URUN            : ${productName}
-LISANS ANAHTARI : ${licenseKey}
-SAHIBI          : ${user.name || 'Zeybe'}
-SIPARIS         : #${orderId}
-GUVENLIK KODU   : SHA256-${Math.random().toString(36).substring(2, 10).toUpperCase()}
-DURUM           : AKTIF & DOGRULANMIS
-======================================================================`;
-
-      const batScript = 
-`@echo off
-color 0b
-title DigiStore Kurulum Sihirbazi - ${productName}
-echo ======================================================================
-echo    DIGISTORE PRO KURULUM VE AKTIVASYON YONETICISI
-echo ======================================================================
-echo  Urun: ${productName}
-echo  Siparis: #${orderId}
-echo  Lisans Dogrulaniyor...
-timeout /t 1 /nobreak >nul
-echo  [OK] Lisans Basariyla Dogrulandi: ${licenseKey}
-echo  [OK] Kurulum dosyalari hazirlandi.
-echo ======================================================================
-echo  Kurulum basariyla tamamlandi. Tesekkur ederiz!
-pause
-`;
-
-      const configJson = JSON.stringify({
-        product: productName,
-        orderId: orderId,
-        licenseKey: licenseKey,
-        customer: user.name || 'Zeybe',
-        version: "4.2.0",
-        activated: true,
-        channel: "production",
-        downloadTimestamp: new Date().toISOString()
-      }, null, 2);
-
-      const zipBlob = createZipBlob([
-        { name: 'KURULUM_REHBERI.txt', content: readmeText },
-        { name: 'LISANS_ANAHTARI.txt', content: licenseText },
-        { name: 'kurulum_baslat.bat', content: batScript },
-        { name: 'config.json', content: configJson }
-      ]);
-
-      const safeName = productName.replace(/[^a-zA-Z0-9_-]/g, '_');
-      const fileName = `${safeName}_Kurulum_Paketi.zip`;
-
-      const url = URL.createObjectURL(zipBlob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = zipPath;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       if (btn) {
         btn.innerHTML = `
@@ -2049,13 +2493,13 @@ pause
         setTimeout(() => { btn.innerHTML = originalHtml; }, 2500);
       }
 
-      showDynamicIsland('İndirme Başarılı', `${fileName} bilgisayarınıza indirildi.`, 'success');
+      showDynamicIsland('İndirme Başlatıldı', `${fileName} bilgisayarınıza indiriliyor. Botun gerçek Python kodları arşivin içindedir.`, 'success');
     } catch (err) {
       console.error('Download error:', err);
       if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
       showIosAlert({ title: 'İndirme Hatası', message: 'Dosya indirilirken bir sorun oluştu: ' + err.message, type: 'error' });
     }
-  }, 600);
+  }, 400);
 }
 
 // ─── REAL OFFICIAL E-ARŞİV INVOICE DOWNLOAD ─────────────────────────
@@ -2254,37 +2698,40 @@ function showIosAlert(options) {
   document.getElementById('iosAlertTitle').textContent = title;
   document.getElementById('iosAlertDesc').textContent = message;
 
-  const iconWrap = document.getElementById('iosAlertIcon');
-  iconWrap.className = 'ios-alert-icon-wrap ' + type;
+  const dot = document.getElementById('iosAlertDot');
+  const badgeDot = document.getElementById('iosAlertBadgeDot');
+  const isDanger = (type === 'error' || confirmText.includes('Çıkış') || (confirmColor && (confirmColor.includes('3a') || confirmColor.includes('ef'))));
+  const dotColor = isDanger ? '#ef4444' : (type === 'success' ? '#34c759' : (type === 'warning' ? '#f59e0b' : '#0a84ff'));
 
-  let iconSvg = '';
-  if (type === 'error') {
-    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-  } else if (type === 'warning') {
-    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
-  } else if (type === 'success') {
-    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12l3 3 5-5"/></svg>`;
-  } else {
-    iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12.01" y2="16"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+  if (dot) {
+    dot.style.background = dotColor;
+    dot.style.boxShadow = '0 0 8px ' + dotColor;
   }
-  iconWrap.innerHTML = iconSvg;
+  if (badgeDot) {
+    badgeDot.style.background = dotColor;
+    badgeDot.style.boxShadow = '0 0 6px ' + dotColor;
+  }
 
   const btn = document.getElementById('iosAlertBtn');
   if (btn) {
     btn.textContent = confirmText;
-    btn.style.color = confirmColor;
+    if (isDanger) {
+      btn.className = 'btn-alert-confirm';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.boxShadow = '';
+    } else {
+      btn.className = 'btn-alert-confirm btn-confirm-blue';
+    }
   }
 
   const cancelBtn = document.getElementById('iosAlertCancelBtn');
-  const divider = document.getElementById('iosAlertBtnDivider');
   if (cancelBtn) {
     if (cancelText) {
       cancelBtn.textContent = cancelText;
       cancelBtn.style.display = 'block';
-      if (divider) divider.style.display = 'block';
     } else {
       cancelBtn.style.display = 'none';
-      if (divider) divider.style.display = 'none';
     }
   }
 
@@ -2362,7 +2809,7 @@ function switchAuthTab(tab) {
     registerForm.style.display = 'none';
     btnLogin.classList.add('active');
     btnRegister.classList.remove('active');
-    title.textContent = "DigiStore'a Giriş Yap";
+    title.textContent = "closydev'e Giriş Yap";
     sub.textContent = 'Tüm siparişleriniz ve lisanslarınız tek bir yerde.';
   } else {
     loginForm.style.display = 'none';
@@ -2545,6 +2992,8 @@ if (window.location.hash) {
   if (initialTab) {
     showTab(initialTab);
   }
+} else {
+  setTimeout(() => playTabTitleTypewriter('siparisler'), 150);
 }
 </script>
 </body>

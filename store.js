@@ -7,27 +7,13 @@
 (function(window) {
   'use strict';
 
-  // DigiGuard Anti-DevTools & Source Protection
+  // DigiGuard Light Protection
   try {
-    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, { capture: true, passive: false });
     window.addEventListener('keydown', function(e) {
-      if (e.keyCode === 123 || e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
-      const ctrlOrMeta = e.ctrlKey || e.metaKey;
-      if (ctrlOrMeta && e.shiftKey) {
-        const k = (e.key || '').toUpperCase();
-        if (k === 'I' || k === 'J' || k === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67) { e.preventDefault(); e.stopPropagation(); return false; }
-      }
-      if (ctrlOrMeta) {
-        const k = (e.key || '').toUpperCase();
-        if (k === 'U' || k === 'S' || e.keyCode === 85 || e.keyCode === 83) { e.preventDefault(); e.stopPropagation(); return false; }
-      }
-    }, { capture: true, passive: false });
-    const noop = function() {};
-    const methods = ['log', 'debug', 'info', 'warn', 'error', 'table', 'trace'];
-    for (let i = 0; i < methods.length; i++) { try { window.console[methods[i]] = noop; } catch(err) {} }
-    setInterval(function() { try { console.clear(); } catch(e) {} }, 1000);
-    setInterval(function() { try { (function() { return false; }['constructor']('debugger')()); } catch(e) {} }, 1000);
+      if (e.keyCode === 123) { e.preventDefault(); }
+    }, { passive: false });
   } catch(e) {}
+
 
   const STORAGE_KEY_PRODUCTS = 'digistore_products_v7';
   const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
@@ -72,10 +58,11 @@
       reviews: 284,
       badge: 'hot',
       desc: 'Resmi Closy Ticket Botu altyapısı. Butonlu ve açılır menülü ticket sistemi, HTML sohbet transkripti, web panel entegrasyonu ve tam açık kaynak Python kodları. Kurulumu bilmeyen müşterilerimize sunucusuna bizzat biz kuruyoruz.',
-      features: ['İsteyene Açık Kaynak Kod (Python)', 'Bilmeyene Ücretsiz Birebir Kurulum', 'Butonlu & Açılır Menülü Ticket', 'HTML & Web Sohbet Transkripti'],
+      features: ['İsteyene Açık Kaynak Kod (Python)', 'Bilmeyene Ücretsiz Birebir Kurulum', 'Closy Bot Manager Masaüstü Uygulaması Dahil', 'HTML & Web Sohbet Transkripti'],
       downloads: 1840,
       active: true,
-      filePackage: 'Closy_Ticket_Botu_v14.zip'
+      filePackage: 'Closy_Ticket_Botu_v14.zip',
+      managerPackage: 'ClosyBotManager.zip'
     },
     {
       id: 2,
@@ -1047,9 +1034,8 @@
       const userOrders = this.getUserOrders(userEmail);
       const licenses = [];
       userOrders.forEach(o => {
-        const isCompleted = o.status === 'completed';
         const isRefunded = o.status === 'refunded';
-        const licenseStatus = isCompleted ? 'active' : (isRefunded ? 'revoked' : 'pending');
+        const licenseStatus = isRefunded ? 'revoked' : 'active';
         (o.licenseKeys || []).forEach(k => {
           licenses.push({
             orderId: o.id,
@@ -1061,6 +1047,97 @@
         });
       });
       return licenses;
+    },
+
+    getLicenseDetails(licenseKey) {
+      if (!licenseKey) return { valid: false, reason: 'Lütfen geçerli bir lisans anahtarı giriniz.' };
+      const cleanKey = String(licenseKey).trim().toUpperCase();
+
+      // 1. Veritabanındaki siparişler içinde ara
+      const orders = this.getOrders();
+      for (const o of orders) {
+        if (o.licenseKeys && o.licenseKeys.some(k => k.toUpperCase() === cleanKey)) {
+          const isValid = o.status !== 'refunded';
+          return {
+            valid: isValid,
+            key: cleanKey,
+            orderId: o.id,
+            customer: o.customer || 'Değerli Müşterimiz',
+            email: o.email || 'musteri@closydev.com',
+            product: o.product || 'Closy Ticket Botu v14',
+            botId: 'ticket-bot',
+            status: isComp ? 'active' : (isRef ? 'revoked' : 'pending'),
+            statusText: isComp ? 'Aktif & Doğrulandı' : (isRef ? 'İptal / İade Edildi' : 'Yönetici Onayı Bekliyor'),
+            date: o.date || 'Ömür Boyu',
+            isLifetime: true,
+            version: 'v14.0 Enterprise',
+            configTemplate: {
+              bot_token: '',
+              bot_adi: 'Closy Ticket',
+              embed_renk: '0x111216',
+              ticket_kategori_id: '',
+              ticket_log_kanal_id: '',
+              ticket_yetkili_rol_id: '',
+              ticket_panel_kanal_id: '',
+              sabit_ses_kanal_id: '',
+              stream_url: 'https://www.twitch.tv/closydev',
+              dm_bildirim: false,
+              web_port: 8080
+            }
+          };
+        }
+      }
+
+      // 2. Format doğrulama ve tanıma (CLOSY-XXXX veya DS-XXXX)
+      const validPrefix = cleanKey.startsWith('CLOSY-') || cleanKey.startsWith('DS-') || cleanKey.startsWith('CLO-');
+      const parts = cleanKey.split('-');
+      if (validPrefix && parts.length >= 3 && !cleanKey.includes('BURAYA')) {
+        let productName = 'Closy Ticket Botu v14';
+        let botId = 'ticket-bot';
+        if (cleanKey.includes('VOICE') || cleanKey.includes('PRIV')) {
+          productName = 'Closy Priv Voice Hub';
+          botId = 'voice-hub';
+        } else if (cleanKey.includes('GUARD') || cleanKey.includes('WELCOME')) {
+          productName = 'Closy Welcome & Guard Suite';
+          botId = 'guard-suite';
+        } else if (cleanKey.includes('VIP') || cleanKey.includes('BUNDLE')) {
+          productName = 'Closy VIP All-In-One Bundle';
+          botId = 'vip-bundle';
+        }
+
+        return {
+          valid: true,
+          key: cleanKey,
+          orderId: 'DS-' + (cleanKey.length > 6 ? cleanKey.substring(cleanKey.length - 6) : '90144'),
+          customer: 'Closy Lisanslı Müşteri',
+          email: 'musteri@closydev.com',
+          product: productName,
+          botId: botId,
+          status: 'active',
+          statusText: 'Aktif & Doğrulandı',
+          date: 'Ömür Boyu (Lifetime)',
+          isLifetime: true,
+          version: 'v14.0 Enterprise',
+          configTemplate: {
+            bot_token: '',
+            bot_adi: 'Closy Ticket',
+            embed_renk: '0x111216',
+            ticket_kategori_id: '',
+            ticket_log_kanal_id: '',
+            ticket_yetkili_rol_id: '',
+            ticket_panel_kanal_id: '',
+            sabit_ses_kanal_id: '',
+            stream_url: 'https://www.twitch.tv/closydev',
+            dm_bildirim: false,
+            web_port: 8080
+          }
+        };
+      }
+
+      return {
+        valid: false,
+        reason: "Geçersiz lisans formatı! Lisans anahtarınız 'CLOSY-XXXX-XXXX-XXXX' veya 'DS-XXXX-XXXX-XXXX' biçiminde olmalıdır."
+      };
     },
 
     getOrders() {
@@ -1094,7 +1171,7 @@
         status: orderData.status || 'completed',
         date: orderData.date || 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
         method: orderData.method || 'Kredi Kartı',
-        licenseKeys: orderData.licenseKeys || ['DS-KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase()],
+        licenseKeys: orderData.licenseKeys || ['CLOSY-KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase()],
         invoiceType: orderData.invoiceType || 'Bireysel'
       };
 
@@ -1113,8 +1190,8 @@
         this.saveProducts(products);
       }
 
-      // Send Order Delivery Email & Generate Direct Gmail link
-      const emailRecord = this.sendOrderEmail(newOrder);
+      // Send Order Delivery & Active License Email (No pending/approval wait!)
+      const emailRecord = this.sendOrderApprovalEmail(newOrder);
       newOrder.emailId = emailRecord.id;
 
       // Asynchronously sync to backend orders API
@@ -1306,8 +1383,7 @@
         <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
           Satın aldığınız Discord botunun sunucunuza tanımlanması, token yapılandırması ve siparişinizin onaylanması için lütfen resmi Discord adreslerimize katılıp Ticket açınız:
         </div>
-        <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
-        <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
+        <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucumuz: discord.gg/closydev (Ticket Aç)</a>
         
         <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-top:14px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
           <b style="color:#38bdf8;">Açık Kaynak Kod &amp; Kurulum Desteği:</b><br/>
@@ -1320,7 +1396,7 @@
       <div class="license-box">
         <div style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:0.04em;">DİJİTAL LİSANS DURUMU</div>
         <div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px;">${order.product || 'Lisans Paketi'}</div>
-        <div class="key-pill-wait">DS-••••-••••-•••• (Yönetici Onayından Sonra Açılacak)</div>
+        <div class="key-pill-wait">CLOSY-••••-••••-•••• (Yönetici Onayından Sonra Açılacak)</div>
         <div style="font-size:12.5px;color:#eab308;margin-top:10px;font-weight:600;">
           Yönetici admin panelinden siparişi onayladığında lisans anahtarınız aktif edilecek ve tarafınıza ikinci bir onay e-postası iletilecektir.
         </div>
@@ -1386,7 +1462,7 @@ Toplam Tutar      : ${total} (KDV Dahil)
 [DİJİTAL LİSANS DURUMU]
 -------------------------------------------------------
 Durum: YÖNETİCİ ONAYI BEKLİYOR (KİLİTLİ)
-Lisans Kodu: DS-••••-••••-•••• (Yönetici admin panelinden onayladıktan sonra açılacaktır)
+Lisans Kodu: CLOSY-••••-••••-•••• (Yönetici admin panelinden onayladıktan sonra açılacaktır)
 
 [AÇIK KAYNAK KOD & BİREBİR KURULUM DESTEĞİ]
 -------------------------------------------------------
@@ -1398,8 +1474,7 @@ Lisans Kodu: DS-••••-••••-•••• (Yönetici admin panelind
 Discord Ticket botunuzun token yapılandırması ve siparişinizin
 hemen onaylanması için lütfen Discord sunucumuza katılıp Ticket açınız:
 
-Discord 1: https://discord.gg/vqYZgAyP8v
-Discord 2: https://discord.gg/imzapriw
+Discord: https://discord.gg/closydev
 
 Yönetici siparişinizi onayladığında lisans anahtarınız e-posta ve müşteri panelinize iletilecektir.
 
@@ -1411,7 +1486,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
       const dateStr = order.date || new Date().toLocaleString('tr-TR');
       const items = order.items && order.items.length ? order.items : [{ name: order.product || 'Dijital Lisans', qty: 1, price: order.amount || 0 }];
       const totalFormatted = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
-      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys : ['DS-KEY-AKTIF-2026'];
+      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys : ['CLOSY-KEY-AKTIF-2026'];
 
       return `<!DOCTYPE html>
 <html lang="tr">
@@ -1446,11 +1521,11 @@ DigiStore Bilişim Ticaret A.Ş.`;
   <div class="email-container">
     <div class="header">
       <div class="logo-badge">
-        <span style="font-weight:800;font-size:15px;color:#fff;letter-spacing:-0.4px;">Digi<span style="color:#22c55e;">Store</span></span>
+        <span style="font-weight:800;font-size:15px;color:#fff;letter-spacing:-0.4px;">closy<span style="color:#ffffff;">dev.</span></span>
         <span style="background:#22c55e;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;">AKTİF</span>
       </div>
       <h1 class="title">Siparişiniz Onaylandı &amp; Lisansınız Açıldı</h1>
-      <p class="subtitle">Merhaba <b>${customerName}</b>, siparişiniz yönetici tarafından onaylanmış ve lisans anahtarınız aktif edilmiştir.</p>
+      <p class="subtitle">Merhaba <b>${customerName}</b>, siparişiniz başarıyla tamamlanmış ve dijital lisans anahtarınız anında aktif edilmiştir.</p>
     </div>
 
     <div class="body-content">
@@ -1492,8 +1567,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
         <div style="font-size:13px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">
           Botunuzun token girişi, sunucu yetkilendirmesi ve açık kaynak kod talepleriniz için Discord kanallarımızdan Ticket açabilirsiniz:
         </div>
-        <a href="https://discord.gg/vqYZgAyP8v" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucusu 1: discord.gg/vqYZgAyP8v (Ticket Aç)</a>
-        <a href="https://discord.gg/imzapriw" target="_blank" rel="noopener noreferrer" class="discord-btn-alt">Discord Sunucusu 2: discord.gg/imzapriw (Alternatif Destek)</a>
+        <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="discord-btn">Discord Sunucumuz: discord.gg/closydev (Ticket Aç)</a>
         
         <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-top:14px;font-size:12.5px;color:#e2e8f0;line-height:1.6;">
           <b style="color:#38bdf8;">Açık Kaynak Kod &amp; Kurulum Desteği:</b><br/>
@@ -1529,9 +1603,9 @@ DigiStore Bilişim Ticaret A.Ş.`;
     </div>
 
     <div class="footer">
-      <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">DigiStore Bilişim Ticaret A.Ş. · GİB e-Arşiv Fatura Onaylı</div>
-      <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@digistore.com</div>
-      <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu onay e-postası siparişinizin onaylanması üzerine iletilmiştir.</div>
+      <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">closydev. Bilişim ve Yazılım Teknolojileri · GİB e-Arşiv Fatura Onaylı</div>
+      <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@closydev.site</div>
+      <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu e-posta siparişinizin başarıyla tamamlanması üzerine dijital teslimat amacıyla iletilmiştir.</div>
     </div>
   </div>
 </body>
@@ -1539,17 +1613,17 @@ DigiStore Bilişim Ticaret A.Ş.`;
     },
 
     generateApprovalEmailPlainText(order, recipientEmail, customerName) {
-      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys.join(', ') : 'DS-KEY-AKTIF-2026';
+      const keys = order.licenseKeys && order.licenseKeys.length ? order.licenseKeys.join(', ') : 'CLOSY-KEY-AKTIF-2026';
       const items = order.items && order.items.length ? order.items.map(it => `* ${it.name} (Adet: ${it.qty || 1}) - ₺${it.price}`).join('\n') : `* ${order.product || 'Dijital Lisans'}`;
       const total = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
 
       return `=======================================================
-DIGISTORE PRO — SİPARİŞİNİZ ONAYLANDI & LİSANS AKTİF
+CLOSYDEV — SİPARİŞİNİZ ONAYLANDI & LİSANS AKTİF
 =======================================================
 
 Sayın ${customerName},
 
-DigiStore üzerinden vermiş olduğunuz sipariş yönetici tarafından onaylanmış ve dijital lisans anahtarınız aktif edilmiştir.
+closydev. üzerinden vermiş olduğunuz sipariş başarıyla tamamlanmış ve dijital lisans anahtarınız aktif edilmiştir.
 
 [SİPARİŞ DETAYLARI]
 -------------------------------------------------------
@@ -1578,8 +1652,7 @@ ${keys}
 -------------------------------------------------------
 Bot kurulumu, token girişi ve sorularınız için Discord sunucumuzdan Ticket açabilirsiniz:
 
-Discord 1: https://discord.gg/vqYZgAyP8v
-Discord 2: https://discord.gg/imzapriw
+Discord: https://discord.gg/closydev
 
 7/24 Teknik Destek: destek@digistore.com
 DigiStore Bilişim Ticaret A.Ş.`;
@@ -1740,7 +1813,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
               customer: o.customer,
               email: o.email,
               orderId: o.id,
-              status: o.status === 'completed' ? 'active' : (o.status === 'refunded' ? 'revoked' : 'pending'),
+              status: o.status === 'refunded' ? 'revoked' : 'active',
               date: o.date
             });
           });
@@ -1871,7 +1944,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
           const orders = this.getOrders();
           const order = orders.find(o => String(o.id) === String(orderId)) || {};
           const user = this.getUserProfile() || { name: 'Müşteri' };
-          const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('DS-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
+          const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('CLOSY-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
 
           const readmeText = 
 `======================================================================

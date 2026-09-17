@@ -603,6 +603,12 @@ app.listen(PORT, () => {
 try {
   const frontendApp = express();
   frontendApp.use(cors());
+  frontendApp.use(express.json({ limit: '50kb' }));
+  frontendApp.use(express.urlencoded({ extended: true, limit: '50kb' }));
+  try {
+    const supportHandler = require('../api/support');
+    frontendApp.all('/api/support', (req, res) => supportHandler(req, res));
+  } catch (e) {}
   frontendApp.use(express.static(frontendDir));
   frontendApp.listen(5500, () => {
     console.log(`[FRONTEND OAUTH] DigiStore Web Port 5500 Aktif: http://localhost:5500`);

@@ -1,0 +1,412 @@
+import math, os
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+
+def generate_cosmic_banner_and_icon():
+    OUTPUT_DIR = r"C:\Users\zeybe\.gemini\antigravity\scratch\digital-store"
+    ARTIFACTS_DIR = r"C:\Users\zeybe\.gemini\antigravity\brain\fd1fb7f0-0c0d-4861-b985-a148530e1c04"
+    
+    font_bold_path = r"C:\Windows\Fonts\segoeuib.ttf"
+    
+    # Pre-generate deterministic floating particle data
+    np.random.seed(1337)
+    num_particles = 42
+    particles_x = np.random.uniform(0, 1.0, num_particles)
+    particles_y = np.random.uniform(0, 1.0, num_particles)
+    particles_speed = np.random.uniform(0.08, 0.22, num_particles)
+    particles_size = np.random.choice([1.0, 1.5, 2.0], num_particles)
+    particles_phase = np.random.uniform(0, 2 * math.pi, num_particles)
+    particles_color_type = np.random.choice([0, 1, 2], num_particles)  # 0: white, 1: cyan, 2: purple
+    
+    # ----------------------------------------------------
+    # 1. GENERATE 16:9 DISCORD BANNER (960x540)
+    # ----------------------------------------------------
+    W, H = 960, 540
+    SCALE = 2  # Supersampling 1920x1080 -> 960x540 for supreme edge sharpness
+    SW, SH = W * SCALE, H * SCALE
+    NUM_FRAMES = 54
+    DURATION = 42  # ~24 fps -> 2.27s seamless loop
+    
+    font_logo = ImageFont.truetype(font_bold_path, int(74 * SCALE))
+    font_url = ImageFont.truetype(font_bold_path, int(26 * SCALE))
+    
+    # Official Razor Lightning Bolt coordinates from website SVG
+    raw_bolt = [(13, 2), (3.5, 13.5), (11.5, 13.5), (10, 22), (20.5, 10.5), (12.5, 10.5)]
+    norm_bolt = [((x - 12.0), (y - 12.0)) for x, y in raw_bolt]
+    
+    url_target = "discord.gg/closydev"
+    total_chars = len(url_target)
+    
+    frames_banner = []
+    
+    for f_idx in range(NUM_FRAMES):
+        t = f_idx / NUM_FRAMES
+        angle_rad = t * 2 * math.pi
+        
+        # Base background: Deep cosmic obsidian
+        bg = Image.new("RGBA", (SW, SH), (7, 8, 12, 255))
+        
+        # A) Fluid Silk Light Waves (Aurora Ribbons)
+        wave_layer = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+        w_draw = ImageDraw.Draw(wave_layer)
+        
+        # 3 flowing undulating silk light bands
+        ribbons = [
+            # color, blur_radius, y_anchor, amplitude, wavelength_factor
+            ((168, 85, 247, 65), int(60 * SCALE), int(SH * 0.54), int(65 * SCALE), 0.0035),
+            ((56, 189, 248, 55), int(55 * SCALE), int(SH * 0.46), int(55 * SCALE), 0.0045),
+            ((99, 102, 241, 45), int(70 * SCALE), int(SH * 0.50), int(75 * SCALE), 0.0030)
+        ]
+        
+        for r_idx, (r_col, r_blur, y_mid, amp, wave_freq) in enumerate(ribbons):
+            pts_top = []
+            pts_bot = []
+            band_thickness = int(70 * SCALE)
+            step_px = int(24 * SCALE)
+            
+            for x in range(0, SW + step_px * 2, step_px):
+                phase = angle_rad + r_idx * 2.1
+                y_val = y_mid + amp * math.sin(x * (wave_freq / SCALE) + phase) + (amp * 0.35) * math.cos(x * (wave_freq * 1.8 / SCALE) - phase)
+                pts_top.append((x, y_val - band_thickness))
+                pts_bot.append((x, y_val + band_thickness))
+                
+            poly = pts_top + pts_bot[::-1]
+            w_draw.polygon(poly, fill=r_col)
+            
+        wave_layer = wave_layer.filter(ImageFilter.GaussianBlur(radius=int(45 * SCALE)))
+        bg = Image.alpha_composite(bg, wave_layer)
+        
+        # B) Central Volumetric Glow
+        cx, cy = SW // 2, SH // 2
+        core_glow = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+        cg_draw = ImageDraw.Draw(core_glow)
+        cg_draw.ellipse([cx - int(320 * SCALE), cy - int(170 * SCALE), cx + int(320 * SCALE), cy + int(170 * SCALE)], fill=(56, 189, 248, 38))
+        cg_draw.ellipse([cx - int(210 * SCALE), cy - int(115 * SCALE), cx + int(210 * SCALE), cy + int(115 * SCALE)], fill=(168, 85, 247, 35))
+        core_glow = core_glow.filter(ImageFilter.GaussianBlur(radius=int(60 * SCALE)))
+        bg = Image.alpha_composite(bg, core_glow)
+        
+        # C) Floating Ambient Star Particles / Micro Dust
+        part_draw = ImageDraw.Draw(bg)
+        for p_i in range(num_particles):
+            # Particle drifts upwards smoothly across loop
+            px = int((particles_x[p_i] * SW + math.sin(angle_rad + particles_phase[p_i]) * 15 * SCALE) % SW)
+            py = int((particles_y[p_i] * SH - t * particles_speed[p_i] * SH) % SH)
+            
+            # Twinkling alpha
+            twinkle = 0.5 + 0.5 * math.sin(angle_rad * 2 + particles_phase[p_i])
+            p_alpha = int((80 + 140 * twinkle))
+            
+            c_type = particles_color_type[p_i]
+            if c_type == 0:
+                p_col = (255, 255, 255, p_alpha)
+            elif c_type == 1:
+                p_col = (186, 230, 253, p_alpha)
+            else:
+                p_col = (216, 180, 254, p_alpha)
+                
+            p_sz = int(particles_size[p_i] * SCALE)
+            part_draw.ellipse([px - p_sz, py - p_sz, px + p_sz, py + p_sz], fill=p_col)
+            
+        # D) Animation Timeline:
+        # 0..19: Scene 1 (White Lightning + closydev. Logo)
+        # 20..25: Transition 1 -> 2
+        # 26..46: Scene 2 (Search capsule with typewriter)
+        # 47..53: Transition 2 -> 1
+        if f_idx <= 19:
+            logo_alpha = 1.0
+            logo_scale = 1.0 + 0.015 * math.sin(f_idx / 19.0 * math.pi)
+            capsule_alpha = 0.0
+            capsule_scale = 0.90
+            typed_len = 0
+            show_cursor = True
+        elif 20 <= f_idx <= 25:
+            progress = (f_idx - 20) / 5.0
+            logo_alpha = 1.0 - progress
+            logo_scale = 1.0 - 0.08 * progress
+            capsule_alpha = progress
+            capsule_scale = 0.90 + 0.10 * progress
+            typed_len = 0
+            show_cursor = True
+        elif 26 <= f_idx <= 46:
+            logo_alpha = 0.0
+            logo_scale = 0.90
+            capsule_alpha = 1.0
+            capsule_scale = 1.0
+            type_progress = min(1.0, (f_idx - 26) / 15.0)
+            typed_len = int(math.ceil(type_progress * total_chars))
+            show_cursor = ((f_idx // 3) % 2 == 0)
+        else:
+            progress = (f_idx - 47) / 6.0
+            capsule_alpha = 1.0 - progress
+            capsule_scale = 1.0 - 0.08 * progress
+            logo_alpha = progress
+            logo_scale = 0.90 + 0.10 * progress
+            typed_len = total_chars
+            show_cursor = True
+            
+        # ----------------------------------------------------
+        # RENDER SCENE 1: LIGHTNING BOLT + closydev. LOGO
+        # ----------------------------------------------------
+        if logo_alpha > 0.01:
+            logo_layer = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+            
+            scale_b = 3.9 * SCALE * logo_scale
+            bolt_cx = cx - int(175 * SCALE * logo_scale)
+            bolt_cy = cy
+            
+            b_pts = [(int(bolt_cx + x * scale_b), int(bolt_cy + y * scale_b)) for x, y in norm_bolt]
+            
+            # Diffuse ambient glow behind lightning
+            bolt_glow = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+            bglow_draw = ImageDraw.Draw(bolt_glow)
+            bglow_draw.polygon(b_pts, fill=(255, 255, 255, int(185 * logo_alpha)))
+            bolt_glow = bolt_glow.filter(ImageFilter.GaussianBlur(radius=int(24 * SCALE)))
+            logo_layer = Image.alpha_composite(logo_layer, bolt_glow)
+            
+            l_draw = ImageDraw.Draw(logo_layer)
+            alpha_int = int(255 * logo_alpha)
+            l_draw.polygon(b_pts, fill=(255, 255, 255, alpha_int))
+            
+            text_x = bolt_cx + int(56 * SCALE * logo_scale)
+            text_y = cy - int(48 * SCALE * logo_scale)
+            l_draw.text((text_x, text_y), "closydev.", font=font_logo, fill=(255, 255, 255, alpha_int))
+            
+            # Shimmer light beam gliding across the logo in Scene 1
+            if f_idx <= 19:
+                shim_t = f_idx / 19.0
+                shim_x = bolt_cx - int(40 * SCALE) + int(shim_t * int(460 * SCALE))
+                l_draw.line([(shim_x, cy - int(55 * SCALE)), (shim_x + int(35 * SCALE), cy + int(55 * SCALE))], fill=(255, 255, 255, int(105 * logo_alpha)), width=int(4 * SCALE))
+                
+            bg = Image.alpha_composite(bg, logo_layer)
+            
+        # ----------------------------------------------------
+        # RENDER SCENE 2: SEARCH CAPSULE (Typewriter)
+        # ----------------------------------------------------
+        if capsule_alpha > 0.01:
+            cap_layer = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+            
+            cw = int(500 * SCALE * capsule_scale)
+            ch = int(60 * SCALE * capsule_scale)
+            cradius = ch // 2
+            
+            c_left = cx - cw // 2
+            c_top = cy - ch // 2
+            c_right = cx + cw // 2
+            c_bottom = cy + ch // 2
+            
+            # Glowing cyan/blue halo behind capsule
+            cap_glow = Image.new("RGBA", (SW, SH), (0, 0, 0, 0))
+            cg_draw = ImageDraw.Draw(cap_glow)
+            glow_pad = int(14 * SCALE)
+            cg_draw.rounded_rectangle([c_left - glow_pad, c_top - glow_pad, c_right + glow_pad, c_bottom + glow_pad], radius=cradius + glow_pad, fill=(56, 189, 248, int(115 * capsule_alpha)))
+            cap_glow = cap_glow.filter(ImageFilter.GaussianBlur(radius=int(18 * SCALE)))
+            cap_layer = Image.alpha_composite(cap_layer, cap_glow)
+            
+            c_draw = ImageDraw.Draw(cap_layer)
+            
+            # Capsule Body: Deep obsidian glass with glowing cyan border
+            c_alpha = int(240 * capsule_alpha)
+            b_alpha = int(185 * capsule_alpha)
+            c_draw.rounded_rectangle([c_left, c_top, c_right, c_bottom], radius=cradius, fill=(13, 16, 26, c_alpha), outline=(125, 211, 252, b_alpha), width=int(2 * SCALE))
+            
+            # Magnifying Glass Icon
+            icon_cx = c_left + int(38 * SCALE * capsule_scale)
+            icon_cy = cy
+            ir = int(11 * SCALE * capsule_scale)
+            
+            c_draw.ellipse([icon_cx - ir, icon_cy - ir, icon_cx + ir, icon_cy + ir], outline=(255, 255, 255, int(235 * capsule_alpha)), width=int(2.5 * SCALE))
+            c_draw.line([(icon_cx + int(ir * 0.7), icon_cy + int(ir * 0.7)), (icon_cx + int(ir * 1.6), icon_cy + int(ir * 1.6))], fill=(255, 255, 255, int(235 * capsule_alpha)), width=int(2.5 * SCALE))
+            
+            # Typewriter Text
+            display_text = url_target[:typed_len]
+            t_start_x = icon_cx + int(26 * SCALE * capsule_scale)
+            t_start_y = cy - int(18 * SCALE * capsule_scale)
+            
+            text_col = (147, 197, 253, int(245 * capsule_alpha))
+            c_draw.text((t_start_x, t_start_y), display_text, font=font_url, fill=text_col)
+            
+            # Blinking cursor
+            if show_cursor and (f_idx >= 26) and (capsule_alpha > 0.5):
+                bbox_t = font_url.getbbox(display_text) if display_text else [0, 0, 0, 0]
+                cur_x = t_start_x + (bbox_t[2] - bbox_t[0]) + int(4 * SCALE)
+                c_draw.line([(cur_x, cy - int(13 * SCALE)), (cur_x, cy + int(13 * SCALE))], fill=(255, 255, 255, int(235 * capsule_alpha)), width=int(2 * SCALE))
+                
+            bg = Image.alpha_composite(bg, cap_layer)
+            
+        final_banner = bg.resize((W, H), Image.Resampling.LANCZOS)
+        q_banner = final_banner.convert("RGB").quantize(colors=256)
+        frames_banner.append(q_banner)
+        
+    banner_path = os.path.join(OUTPUT_DIR, "closydev-discord-banner.gif")
+    banner_artifact = os.path.join(ARTIFACTS_DIR, "closydev-discord-banner.gif")
+    frames_banner[0].save(banner_path, save_all=True, append_images=frames_banner[1:], duration=DURATION, loop=0, disposal=2, optimize=True)
+    frames_banner[0].save(banner_artifact, save_all=True, append_images=frames_banner[1:], duration=DURATION, loop=0, disposal=2, optimize=True)
+    print(f"Cosmic Silk Banner generated: {banner_path} ({os.path.getsize(banner_path) / 1024:.1f} KB)")
+    
+    # ----------------------------------------------------
+    # 2. ALSO GENERATE 1:1 SQUARE DISCORD ICON (512x512)
+    # ----------------------------------------------------
+    W2, H2 = 512, 512
+    SW2, SH2 = W2 * SCALE, H2 * SCALE
+    font_logo_sq = ImageFont.truetype(font_bold_path, int(52 * SCALE))
+    font_url_sq = ImageFont.truetype(font_bold_path, int(20 * SCALE))
+    
+    frames_icon = []
+    
+    for f_idx in range(NUM_FRAMES):
+        t = f_idx / NUM_FRAMES
+        angle_rad = t * 2 * math.pi
+        
+        bg2 = Image.new("RGBA", (SW2, SH2), (7, 8, 12, 255))
+        
+        # Fluid Silk Light Waves for square icon
+        wave_layer2 = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+        w_draw2 = ImageDraw.Draw(wave_layer2)
+        
+        ribbons_sq = [
+            ((168, 85, 247, 65), int(50 * SCALE), int(SH2 * 0.54), int(55 * SCALE), 0.005),
+            ((56, 189, 248, 55), int(45 * SCALE), int(SH2 * 0.46), int(45 * SCALE), 0.006)
+        ]
+        
+        for r_idx, (r_col, r_blur, y_mid, amp, wave_freq) in enumerate(ribbons_sq):
+            pts_top = []
+            pts_bot = []
+            band_thickness = int(60 * SCALE)
+            step_px = int(20 * SCALE)
+            for x in range(0, SW2 + step_px * 2, step_px):
+                phase = angle_rad + r_idx * 2.4
+                y_val = y_mid + amp * math.sin(x * (wave_freq / SCALE) + phase)
+                pts_top.append((x, y_val - band_thickness))
+                pts_bot.append((x, y_val + band_thickness))
+            poly = pts_top + pts_bot[::-1]
+            w_draw2.polygon(poly, fill=r_col)
+            
+        wave_layer2 = wave_layer2.filter(ImageFilter.GaussianBlur(radius=int(40 * SCALE)))
+        bg2 = Image.alpha_composite(bg2, wave_layer2)
+        
+        # Ambient Core
+        cx2, cy2 = SW2 // 2, SH2 // 2
+        core2 = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+        c2_draw = ImageDraw.Draw(core2)
+        c2_draw.ellipse([cx2 - int(190 * SCALE), cy2 - int(190 * SCALE), cx2 + int(190 * SCALE), cy2 + int(190 * SCALE)], fill=(56, 189, 248, 45))
+        c2_draw.ellipse([cx2 - int(130 * SCALE), cy2 - int(130 * SCALE), cx2 + int(130 * SCALE), cy2 + int(130 * SCALE)], fill=(168, 85, 247, 40))
+        core2 = core2.filter(ImageFilter.GaussianBlur(radius=int(45 * SCALE)))
+        bg2 = Image.alpha_composite(bg2, core2)
+        
+        # Floating Particles
+        part_draw2 = ImageDraw.Draw(bg2)
+        for p_i in range(28):
+            px = int((particles_x[p_i] * SW2 + math.sin(angle_rad + particles_phase[p_i]) * 10 * SCALE) % SW2)
+            py = int((particles_y[p_i] * SH2 - t * particles_speed[p_i] * SH2) % SH2)
+            twinkle = 0.5 + 0.5 * math.sin(angle_rad * 2 + particles_phase[p_i])
+            p_alpha = int((80 + 140 * twinkle))
+            p_col = (255, 255, 255, p_alpha) if particles_color_type[p_i] == 0 else (186, 230, 253, p_alpha)
+            p_sz = int(particles_size[p_i] * SCALE)
+            part_draw2.ellipse([px - p_sz, py - p_sz, px + p_sz, py + p_sz], fill=p_col)
+            
+        # Timeline
+        if f_idx <= 19:
+            l_alpha = 1.0
+            l_sc = 1.0 + 0.015 * math.sin(f_idx / 19.0 * math.pi)
+            c_alpha = 0.0
+            c_sc = 0.90
+            t_len = 0
+            cur_on = True
+        elif 20 <= f_idx <= 25:
+            prog = (f_idx - 20) / 5.0
+            l_alpha = 1.0 - prog
+            l_sc = 1.0 - 0.08 * prog
+            c_alpha = prog
+            c_sc = 0.90 + 0.10 * prog
+            t_len = 0
+            cur_on = True
+        elif 26 <= f_idx <= 46:
+            l_alpha = 0.0
+            l_sc = 0.90
+            c_alpha = 1.0
+            c_sc = 1.0
+            t_prog = min(1.0, (f_idx - 26) / 15.0)
+            t_len = int(math.ceil(t_prog * total_chars))
+            cur_on = ((f_idx // 3) % 2 == 0)
+        else:
+            prog = (f_idx - 47) / 6.0
+            c_alpha = 1.0 - prog
+            c_sc = 1.0 - 0.08 * prog
+            l_alpha = prog
+            l_sc = 0.90 + 0.10 * prog
+            t_len = total_chars
+            cur_on = True
+            
+        # Scene 1 for Icon (Vertical Stacking)
+        if l_alpha > 0.01:
+            l_layer = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+            bolt_cy_sq = cy2 - int(45 * SCALE * l_sc)
+            scale_b_sq = 4.6 * SCALE * l_sc
+            
+            b_pts_sq = [(int(cx2 + x * scale_b_sq), int(bolt_cy_sq + y * scale_b_sq)) for x, y in norm_bolt]
+            
+            bglow_sq = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+            ImageDraw.Draw(bglow_sq).polygon(b_pts_sq, fill=(255, 255, 255, int(185 * l_alpha)))
+            bglow_sq = bglow_sq.filter(ImageFilter.GaussianBlur(radius=int(22 * SCALE)))
+            l_layer = Image.alpha_composite(l_layer, bglow_sq)
+            
+            ld = ImageDraw.Draw(l_layer)
+            a_int = int(255 * l_alpha)
+            ld.polygon(b_pts_sq, fill=(255, 255, 255, a_int))
+            
+            bbox_t = font_logo_sq.getbbox("closydev.")
+            w_text = bbox_t[2] - bbox_t[0]
+            tx = cx2 - w_text // 2
+            ty = cy2 + int(36 * SCALE * l_sc)
+            ld.text((tx, ty), "closydev.", font=font_logo_sq, fill=(255, 255, 255, a_int))
+            
+            bg2 = Image.alpha_composite(bg2, l_layer)
+            
+        # Scene 2 for Icon (Compact Capsule)
+        if c_alpha > 0.01:
+            c_layer = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+            cw2 = int(390 * SCALE * c_sc)
+            ch2 = int(54 * SCALE * c_sc)
+            cr2 = ch2 // 2
+            
+            cl = cx2 - cw2 // 2
+            ct = cy2 - ch2 // 2
+            cr = cx2 + cw2 // 2
+            cb = cy2 + ch2 // 2
+            
+            cg = Image.new("RGBA", (SW2, SH2), (0, 0, 0, 0))
+            ImageDraw.Draw(cg).rounded_rectangle([cl - 10 * SCALE, ct - 10 * SCALE, cr + 10 * SCALE, cb + 10 * SCALE], radius=cr2 + 10 * SCALE, fill=(56, 189, 248, int(115 * c_alpha)))
+            cg = cg.filter(ImageFilter.GaussianBlur(radius=int(16 * SCALE)))
+            c_layer = Image.alpha_composite(c_layer, cg)
+            
+            cd = ImageDraw.Draw(c_layer)
+            cd.rounded_rectangle([cl, ct, cr, cb], radius=cr2, fill=(13, 16, 26, int(240 * c_alpha)), outline=(125, 211, 252, int(185 * c_alpha)), width=int(2 * SCALE))
+            
+            icx = cl + int(30 * SCALE * c_sc)
+            icy = cy2
+            ir = int(9 * SCALE * c_sc)
+            cd.ellipse([icx - ir, icy - ir, icx + ir, icy + ir], outline=(255, 255, 255, int(235 * c_alpha)), width=int(2 * SCALE))
+            cd.line([(icx + int(ir * 0.7), icy + int(ir * 0.7)), (icx + int(ir * 1.5), icy + int(ir * 1.5))], fill=(255, 255, 255, int(235 * c_alpha)), width=int(2 * SCALE))
+            
+            disp_txt = url_target[:t_len]
+            cd.text((icx + int(20 * SCALE * c_sc), cy2 - int(13 * SCALE * c_sc)), disp_txt, font=font_url_sq, fill=(147, 197, 253, int(245 * c_alpha)))
+            
+            if cur_on and (f_idx >= 26) and (c_alpha > 0.5):
+                bb = font_url_sq.getbbox(disp_txt) if disp_txt else [0, 0, 0, 0]
+                cur_x = icx + int(20 * SCALE * c_sc) + (bb[2] - bb[0]) + int(3 * SCALE)
+                cd.line([(cur_x, cy2 - int(10 * SCALE)), (cur_x, cy2 + int(10 * SCALE))], fill=(255, 255, 255, int(235 * c_alpha)), width=int(2 * SCALE))
+                
+            bg2 = Image.alpha_composite(bg2, c_layer)
+            
+        final_icon = bg2.resize((W2, H2), Image.Resampling.LANCZOS)
+        q_icon = final_icon.convert("RGB").quantize(colors=256)
+        frames_icon.append(q_icon)
+        
+    icon_path = os.path.join(OUTPUT_DIR, "closydev-discord-icon.gif")
+    icon_artifact = os.path.join(ARTIFACTS_DIR, "closydev-discord-icon.gif")
+    frames_icon[0].save(icon_path, save_all=True, append_images=frames_icon[1:], duration=DURATION, loop=0, disposal=2, optimize=True)
+    frames_icon[0].save(icon_artifact, save_all=True, append_images=frames_icon[1:], duration=DURATION, loop=0, disposal=2, optimize=True)
+    print(f"Cosmic Silk Icon generated: {icon_path} ({os.path.getsize(icon_path) / 1024:.1f} KB)")
+
+if __name__ == "__main__":
+    generate_cosmic_banner_and_icon()

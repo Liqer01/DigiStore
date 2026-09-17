@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>DigiStore — Yönetim Paneli</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<meta property="og:image" content="logo.png">
+<title>closydev. — Yönetim Paneli</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=4.0">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=4.0">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=4.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=4.0">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
+<meta property="og:image" content="logo.png?v=4.0">
 <script src="security.js"></script>
 <script>
 // Auto-Redirect: Eger bu dosya yanlislikla ana sayfada veya admin disinda acildiysa hemen magazaya don
@@ -26,6 +27,7 @@
   } catch(e) {}
 })();
 (async function() {
+  if (window.location.protocol === 'file:') return;
   const currentPath = (window.location.pathname || '').toLowerCase();
   if (!currentPath.includes('admin')) return;
   try {
@@ -565,12 +567,14 @@
   
   <!-- Sidebar Brand -->
   <div style="padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;" onclick="returnToStore()" title="Mağazaya Dön">
-    <div style="position:relative;width:34px;height:34px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.3);overflow:hidden;">
-      <img src="logo-icon.png" alt="DigiStore Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div style="position:relative;width:34px;height:34px;border-radius:10px;background:#0d0d12;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(255,255,255,0.1);overflow:hidden;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px rgba(255,255,255,0.6));">
+        <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+      </svg>
     </div>
     <div>
-      <div style="font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:4px;">Digi<span style="background:linear-gradient(135deg,#a855f7,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Store</span> <span style="font-size:8.5px;color:#a855f7;background:rgba(168,85,247,0.15);padding:1px 4px;border-radius:4px;">PRO</span></div>
-      <div style="font-size:10px;color:#86868b;letter-spacing:0.04em;">TITANIUM ADMIN</div>
+      <div style="font-size:16px;font-weight:700;letter-spacing:-0.04em;color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;">closydev<span style="color:#ffffff;">.</span></div>
+      <div style="font-size:10px;color:#86868b;letter-spacing:0.04em;font-weight:600;">TITANIUM ADMIN</div>
     </div>
   </div>
 
@@ -2132,7 +2136,7 @@ function returnToStore() {
   if (window.location.hostname.includes('closydev.site')) {
     window.location.href = '/frontend/index.html';
   } else {
-    window.location.href = '../index.html';
+    window.location.href = window.location.pathname.includes('/admin/') ? '../index.html' : 'index.html';
   }
 }
 
