@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta property="og:image" content="logo.png">
-<script src="../security.js"></script>
+<script src="security.js"></script>
 <script>
 // Auto-Redirect: Eger bu dosya yanlislikla ana sayfada veya admin disinda acildiysa hemen magazaya don
 (function() {
@@ -1342,7 +1342,12 @@ function renderDashboardOrders() {
       <td style="color:#fff;font-weight:700;">₺${Number(o.amount).toLocaleString('tr-TR')}</td>
       <td>${renderStatusPill(o.status)}</td>
       <td style="color:#86868b;font-size:12px;">${o.date || '-'}</td>
-      <td><button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button></td>
+      <td>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${o.status === 'pending' ? `<button class="btn-pill-white" style="background:#22c55e;color:#000;font-weight:700;padding:5px 10px;font-size:11px;" onclick="setOrderStatus('${o.id}','completed')">Onayla &amp; Lisansı Aç</button>` : ''}
+          <button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button>
+        </div>
+      </td>
     </tr>
   `).join('');
 }
@@ -1384,7 +1389,10 @@ function renderFullOrders() {
       <td style="font-size:12px;color:#86868b;">${o.method || 'Kredi Kartı'}</td>
       <td>${renderStatusPill(o.status)}</td>
       <td>
-        <button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${o.status === 'pending' ? `<button class="btn-pill-white" style="background:#22c55e;color:#000;font-weight:700;padding:5px 10px;font-size:11px;" onclick="setOrderStatus('${o.id}','completed')">Onayla &amp; Lisansı Aç</button>` : ''}
+          <button class="btn-pill-dark" onclick="viewOrder('${o.id}')">Görüntüle</button>
+        </div>
       </td>
     </tr>
   `).join('');
@@ -1472,7 +1480,7 @@ function viewOrder(orderId) {
   `;
 
   document.getElementById('odModalActions').innerHTML = `
-    ${o.status !== 'completed' ? `<button class="btn-pill-white" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;" onclick="setOrderStatus('${o.id}','completed')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Siparişi Onayla &amp; Tamamla</span></button>` : ''}
+    ${o.status !== 'completed' ? `<button class="btn-pill-white" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#22c55e;color:#000;font-weight:800;" onclick="setOrderStatus('${o.id}','completed')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Siparişi Onayla &amp; Lisansı Aç</span></button>` : ''}
     ${o.status !== 'refunded' ? `<button class="btn-pill-danger" style="flex:1;" onclick="setOrderStatus('${o.id}','refunded')">İade Et</button>` : ''}
     <button class="btn-pill-dark" onclick="closeOrderDetailModal()">Kapat</button>
   `;
@@ -1488,7 +1496,7 @@ function setOrderStatus(orderId, newStatus) {
   DigiStoreDB.updateOrderStatus(orderId, newStatus);
   closeOrderDetailModal();
   renderAll();
-  showDynamicIsland('Sipariş Güncellendi', `#${orderId} durumu: ${newStatus}`, 'success');
+  showDynamicIsland('Sipariş Güncellendi', newStatus === 'completed' ? `#${orderId} onaylandı & lisansı açıldı` : `#${orderId} durumu: ${newStatus}`, 'success');
 }
 
 // ─── PRODUCTS FULL TABLE & CRUD ─────────────────────────────────────
@@ -2136,15 +2144,56 @@ function updateLiveClock() {
 updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
+// Realtime Canlı Destek Bus Dinleyicisi (Müşteri mesajları anında admin ekranına düşer)
+if (typeof BroadcastChannel !== 'undefined') {
+  try {
+    const adminSupportBus = new BroadcastChannel('digistore_support_bus');
+    adminSupportBus.onmessage = function(ev) {
+      if (ev.data && (ev.data.type === 'new_message' || ev.data.type === 'sync')) {
+        if (!currentSelectedChatId && ev.data.chatId) {
+          currentSelectedChatId = ev.data.chatId;
+        }
+        renderSupportConversations();
+        renderActiveSupportChat();
+        updateStats();
+
+        if (ev.data.type === 'new_message' && ev.data.sender === 'user') {
+          const senderTitle = (ev.data.userName || 'Müşteri') + (ev.data.userEmail ? ' (' + ev.data.userEmail + ')' : '');
+          showDynamicIsland('Yeni Canlı Destek Mesajı', senderTitle + ': ' + (ev.data.message?.text || ''), 'success');
+        }
+      }
+    };
+  } catch (e) {}
+}
+
 // Initial start
 try {
   renderAll();
-  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
-    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+  if (typeof DigiStoreDB !== 'undefined') {
+    if (typeof DigiStoreDB.syncRemoteOrders === 'function') {
+      DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+    }
+    if (typeof DigiStoreDB.syncSupportWithServer === 'function') {
+      DigiStoreDB.syncSupportWithServer().then(() => {
+        renderSupportConversations();
+        renderActiveSupportChat();
+        updateStats();
+      });
+    }
   }
 } catch (err) {
   console.error('Admin dashboard initial render error:', err);
 }
+
+// Canlı Destek Senkronizasyon Döngüsü (Her 2.5 saniyede sunucudan tüm yeni mesajları canlı çeker)
+setInterval(async () => {
+  if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncSupportWithServer === 'function') {
+    await DigiStoreDB.syncSupportWithServer();
+    renderSupportConversations();
+    renderActiveSupportChat();
+    updateStats();
+  }
+}, 2500);
 
 // Background order synchronizer (Polls every 8 seconds for live incoming orders)
 setInterval(() => {

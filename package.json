@@ -6,6 +6,6 @@
     "start": "node backend/server.js"
   },
   "dependencies": {
-    "nodemailer": "^6.9.9"
+    "nodemailer": "^6.10.1"
   }
 }

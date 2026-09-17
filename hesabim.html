@@ -1648,6 +1648,22 @@ function renderUserInvoices() {
   `).join('');
 }
 
+function getProductZipPath(productName) {
+  const name = (productName || '').toLowerCase();
+  if (name.includes('ticket') || name.includes('imza') || name.includes('bilet')) {
+    return 'downloads/Imza_Ticket_Botu_v14.zip';
+  } else if (name.includes('guard') || name.includes('moderasyon')) {
+    return 'downloads/3_Closy_Welcome_ve_Guard_Suite.zip';
+  } else if (name.includes('ses') || name.includes('istatistik')) {
+    return 'downloads/1_Closy_Priv_Voice_Hub.zip';
+  } else if (name.includes('kayıt') || name.includes('hoş geldin') || name.includes('başvuru')) {
+    return 'downloads/5_Raven_Basvuru_Botu.zip';
+  } else if (name.includes('mega') || name.includes('full') || name.includes('bundle') || name.includes('vip')) {
+    return 'downloads/4_Closy_VIP_All_In_One_Bundle.zip';
+  }
+  return 'downloads/Imza_Ticket_Botu_v14.zip';
+}
+
 function renderUserDownloads() {
   if (typeof DigiStoreDB === 'undefined') return;
   const p = DigiStoreDB.getUserProfile();
@@ -1664,6 +1680,8 @@ function renderUserDownloads() {
 
   list.innerHTML = orders.map(o => {
     const isPending = o.status !== 'completed';
+    const zipPath = getProductZipPath(o.product);
+    const fileName = zipPath.split('/').pop();
 
     return `
     <div class="apple-glass" style="padding:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
@@ -1673,10 +1691,10 @@ function renderUserDownloads() {
 
       <div style="flex:1;min-width:240px;">
         <div style="font-size:15px;font-weight:700;color:#fff;">${o.product}</div>
-        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Kurulum Paketi &amp; Dokümantasyon · ZIP (v4.2.0)</div>
+        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Tam Açık Kaynak Kod &amp; Kurulum Arşivi · ${fileName}</div>
         <div style="font-size:11.5px;color:${isPending ? '#eab308' : '#34c759'};margin-top:4px;display:flex;align-items:center;gap:5px;">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : 'Açık kaynak paket ve yüksek hızlı bulut indirme bağlantısı aktif'}</span>
+          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : 'Gerçek bot kaynak kodları (main.py, config.json, baslat.bat) indirilmeye hazır'}</span>
         </div>
       </div>
 
@@ -1689,10 +1707,10 @@ function renderUserDownloads() {
             <span class="status-badge badge-wait">Onay Bekliyor</span>
           </div>
         ` : `
-          <button onclick="downloadProductArchive('${o.product.replace(/'/g, "\\'")}', '${o.id}', this)" class="btn-action-primary">
+          <a href="${zipPath}" download="${fileName}" onclick="showDynamicIsland('İndirme Başlatıldı', '${fileName} indiriliyor. Bot kodları (main.py) arşivdedir.', 'success')" class="btn-action-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             <span>İndir (ZIP)</span>
-          </button>
+          </a>
         `}
       </div>
     </div>
@@ -1940,110 +1958,30 @@ function downloadProductArchive(productName, orderId, btn) {
   if (order.status !== 'completed') {
     showIosAlert({
       title: 'Ödeme Onayı Bekleniyor',
-      message: 'Bu ürünün indirme bağlantısı ve lisansı, ödemeniz Shopier üzerinden onaylandıktan sonra aktif olacaktır.',
+      message: 'Bu ürünün indirme bağlantısı ve lisansı, ödemeniz Shopier üzerinden onaylandıktan sonra aktif olacaktır. Discord üzerinden Ticket açabilirsiniz.',
       type: 'warning'
     });
     return;
   }
 
+  const zipPath = getProductZipPath(productName);
+  const fileName = zipPath.split('/').pop();
+
   if (btn) {
     btn.innerHTML = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-spin"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-      <span>Paketleniyor...</span>`;
+      <span>İndiriliyor...</span>`;
     btn.disabled = true;
   }
 
   setTimeout(() => {
     try {
-      const user = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getUserProfile() : { name: 'Müşteri' };
-      const licenseKey = (order.licenseKeys && order.licenseKeys.length) ? order.licenseKeys[0] : ('DS-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-KEY-2026');
-
-      const readmeText = 
-`======================================================================
-DIGISTORE PRO — RESMI DIJITAL TESLIMAT & KURULUM PAKETI
-======================================================================
-Urun Adi          : ${productName}
-Siparis Numarasi  : #${orderId}
-Lisans Anahtari   : ${licenseKey}
-Musteri Adi       : ${user.name || 'Zeybe'}
-Teslimat Tarihi   : ${order.date || new Date().toLocaleString('tr-TR')}
-Lisans Durumu     : ONAYLANDI (Omur Boyu Gecerli & Aktif)
-======================================================================
-
-[1] HIZLI KURULUM ADIMLARI:
-1. Bu arsivdeki dosyalari bilgisayarinizda istediginiz klasore cikartin.
-2. 'LISANS_ANAHTARI.txt' dosyasindaki seri numarasini kopyalayin.
-3. 'kurulum_baslat.bat' dosyasini cift tiklayarak calistirin.
-4. Yazilim veya bot otomatik olarak lisansi dogrulayip baslayacaktir.
-
-[2] YASAL GUVECE & DESTEK:
-Bu dijital urun ve lisans haklari adiniza resmi olarak tahsis edilmistir.
-- Musteri Paneli  : https://digistore.com/hesabim.html
-- 7/24 Destek     : destek@digistore.com
-- Garanti         : 14 Gun Kosulsuz Iade & Degisim Guvencesi
-
-(c) 2026 DigiStore Bilisim Ticaret A.S. Tum haklari saklidir.
-======================================================================`;
-
-      const licenseText = 
-`======================================================================
-DIGISTORE PRO RESMI LISANS SERTIFIKASI
-======================================================================
-URUN            : ${productName}
-LISANS ANAHTARI : ${licenseKey}
-SAHIBI          : ${user.name || 'Zeybe'}
-SIPARIS         : #${orderId}
-GUVENLIK KODU   : SHA256-${Math.random().toString(36).substring(2, 10).toUpperCase()}
-DURUM           : AKTIF & DOGRULANMIS
-======================================================================`;
-
-      const batScript = 
-`@echo off
-color 0b
-title DigiStore Kurulum Sihirbazi - ${productName}
-echo ======================================================================
-echo    DIGISTORE PRO KURULUM VE AKTIVASYON YONETICISI
-echo ======================================================================
-echo  Urun: ${productName}
-echo  Siparis: #${orderId}
-echo  Lisans Dogrulaniyor...
-timeout /t 1 /nobreak >nul
-echo  [OK] Lisans Basariyla Dogrulandi: ${licenseKey}
-echo  [OK] Kurulum dosyalari hazirlandi.
-echo ======================================================================
-echo  Kurulum basariyla tamamlandi. Tesekkur ederiz!
-pause
-`;
-
-      const configJson = JSON.stringify({
-        product: productName,
-        orderId: orderId,
-        licenseKey: licenseKey,
-        customer: user.name || 'Zeybe',
-        version: "4.2.0",
-        activated: true,
-        channel: "production",
-        downloadTimestamp: new Date().toISOString()
-      }, null, 2);
-
-      const zipBlob = createZipBlob([
-        { name: 'KURULUM_REHBERI.txt', content: readmeText },
-        { name: 'LISANS_ANAHTARI.txt', content: licenseText },
-        { name: 'kurulum_baslat.bat', content: batScript },
-        { name: 'config.json', content: configJson }
-      ]);
-
-      const safeName = productName.replace(/[^a-zA-Z0-9_-]/g, '_');
-      const fileName = `${safeName}_Kurulum_Paketi.zip`;
-
-      const url = URL.createObjectURL(zipBlob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = zipPath;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       if (btn) {
         btn.innerHTML = `
@@ -2053,13 +1991,13 @@ pause
         setTimeout(() => { btn.innerHTML = originalHtml; }, 2500);
       }
 
-      showDynamicIsland('İndirme Başarılı', `${fileName} bilgisayarınıza indirildi.`, 'success');
+      showDynamicIsland('İndirme Başlatıldı', `${fileName} bilgisayarınıza indiriliyor. Botun gerçek Python kodları arşivin içindedir.`, 'success');
     } catch (err) {
       console.error('Download error:', err);
       if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
       showIosAlert({ title: 'İndirme Hatası', message: 'Dosya indirilirken bir sorun oluştu: ' + err.message, type: 'error' });
     }
-  }, 600);
+  }, 400);
 }
 
 // ─── REAL OFFICIAL E-ARŞİV INVOICE DOWNLOAD ─────────────────────────
