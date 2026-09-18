@@ -19,6 +19,23 @@ let inMemoryData = {
   adminOnlineUntil: 0
 };
 
+function deduplicateChatMessages(messages) {
+  if (!Array.isArray(messages)) return [];
+  const clean = [];
+  const seenIds = new Set();
+  for (const m of messages) {
+    if (!m || !m.text) continue;
+    if (m.id && seenIds.has(m.id)) continue;
+    const prev = clean[clean.length - 1];
+    if (prev && prev.sender === m.sender && (prev.text || '').trim() === (m.text || '').trim()) {
+      continue;
+    }
+    if (m.id) seenIds.add(m.id);
+    clean.push(m);
+  }
+  return clean;
+}
+
 function readSupportData() {
   const filePath = getFilePath();
   try {
@@ -26,6 +43,11 @@ function readSupportData() {
       const content = fs.readFileSync(filePath, 'utf8');
       const parsed = JSON.parse(content);
       if (parsed && Array.isArray(parsed.chats)) {
+        parsed.chats.forEach(c => {
+          if (Array.isArray(c.messages)) {
+            c.messages = deduplicateChatMessages(c.messages);
+          }
+        });
         inMemoryData = parsed;
         return inMemoryData;
       }
@@ -35,6 +57,13 @@ function readSupportData() {
 }
 
 function writeSupportData(data) {
+  if (data && Array.isArray(data.chats)) {
+    data.chats.forEach(c => {
+      if (Array.isArray(c.messages)) {
+        c.messages = deduplicateChatMessages(c.messages);
+      }
+    });
+  }
   inMemoryData = data;
   const filePath = getFilePath();
   try {
@@ -81,16 +110,20 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'POST') {
-    const { action, chatId, sessionId, userEmail, userName, text, isAdmin, senderEmail } = req.body || {};
+    const { action, chatId, sessionId, userEmail, userName, text, isAdmin, senderEmail, messageId, clientTime, timestamp } = req.body || {};
 
     // 1. Yonetici Kalp Atisi (Heartbeat)
     if (action === 'heartbeat') {
-      if (senderEmail === 'admin@digistore.com' || isAdmin) {
+      const isHeartbeatAdmin = isAdmin || (senderEmail && (
+        senderEmail.toLowerCase().trim() === 'admin@digistore.com' ||
+        senderEmail.toLowerCase().trim() === 'destek@closydev.site'
+      ));
+      if (isHeartbeatAdmin) {
         data.adminOnlineUntil = now + 65000;
         writeSupportData(data);
         return send(200, { success: true, adminOnline: true });
       }
-      return send(403, { error: 'Yalnizca admin@digistore.com yonetici cevrimici durumu bildirebilir' });
+      return send(403, { error: 'Yalnizca yetkili yonetici cevrimici durumu bildirebilir' });
     }
 
     // 2. Mesaj Gonderimi
@@ -100,29 +133,41 @@ module.exports = async (req, res) => {
       }
 
       const cleanText = text.trim();
-      const timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const timeStr = clientTime || new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const msgId = messageId || ('msg_' + now + '_' + Math.random().toString(36).substring(2, 6));
 
-      // Yonetici (admin@digistore.com) yanit gonderiyor
-      if (isAdmin || senderEmail === 'admin@digistore.com') {
-        if (senderEmail && senderEmail.toLowerCase() !== 'admin@digistore.com') {
-          return send(403, { error: 'Bu islemi sadece admin@digistore.com gerceklestirebilir' });
-        }
+      // Yonetici yanit gonderiyor
+      const isAgent = isAdmin || (senderEmail && (
+        senderEmail.toLowerCase().trim() === 'admin@digistore.com' ||
+        senderEmail.toLowerCase().trim() === 'destek@closydev.site'
+      ));
 
+      if (isAgent) {
         const targetChat = (data.chats || []).find(c => c.id === chatId);
         if (!targetChat) {
           return send(404, { error: 'Sohbet oturumu bulunamadi' });
         }
 
+        if (!Array.isArray(targetChat.messages)) targetChat.messages = [];
+
+        // Mukerrer kontrolu (Ayni ID veya ayni icerik)
+        const dupIndex = targetChat.messages.findIndex(m => m.id === msgId || (m.sender === 'admin' && (m.text || '').trim() === cleanText));
+        if (dupIndex !== -1) {
+          return send(200, { success: true, message: targetChat.messages[dupIndex], adminOnline: true });
+        }
+
         const adminMsg = {
-          id: 'msg_' + now + '_' + Math.random().toString(36).substring(2, 6),
+          id: msgId,
           sender: 'admin',
-          senderName: 'Site Yoneticisi (admin@digistore.com)',
-          senderEmail: 'admin@digistore.com',
+          senderName: 'closydev. Yetkili Destek',
+          senderEmail: senderEmail || 'destek@closydev.site',
           text: cleanText,
-          time: timeStr
+          time: timeStr,
+          timestamp: timestamp || now
         };
 
         targetChat.messages.push(adminMsg);
+        targetChat.messages = deduplicateChatMessages(targetChat.messages);
         targetChat.lastUpdated = now;
         targetChat.unreadByUser = (targetChat.unreadByUser || 0) + 1;
         targetChat.unreadByAdmin = 0;
@@ -136,6 +181,9 @@ module.exports = async (req, res) => {
       let chat = null;
       if (chatId) {
         chat = (data.chats || []).find(c => c.id === chatId);
+      }
+      if (!chat && userEmail) {
+        chat = (data.chats || []).find(c => c.userEmail && c.userEmail.toLowerCase().trim() === userEmail.toLowerCase().trim());
       }
       if (!chat && sessionId) {
         chat = (data.chats || []).find(c => c.sessionId === sessionId);
@@ -161,16 +209,26 @@ module.exports = async (req, res) => {
         }
       }
 
+      if (!Array.isArray(chat.messages)) chat.messages = [];
+
+      // Mukerrer kontrolu
+      const dupIndex = chat.messages.findIndex(m => m.id === msgId || (m.sender === 'user' && (m.text || '').trim() === cleanText));
+      if (dupIndex !== -1) {
+        return send(200, { success: true, message: chat.messages[dupIndex], chat, adminOnline: (data.adminOnlineUntil || 0) > now });
+      }
+
       const userMsg = {
-        id: 'msg_' + now + '_' + Math.random().toString(36).substring(2, 6),
+        id: msgId,
         sender: 'user',
         senderName: chat.userName || 'Musteri',
         senderEmail: chat.userEmail || '',
         text: cleanText,
-        time: timeStr
+        time: timeStr,
+        timestamp: timestamp || now
       };
 
       chat.messages.push(userMsg);
+      chat.messages = deduplicateChatMessages(chat.messages);
       chat.lastUpdated = now;
       chat.unreadByAdmin = (chat.unreadByAdmin || 0) + 1;
 
@@ -178,9 +236,13 @@ module.exports = async (req, res) => {
       return send(200, { success: true, message: userMsg, chat, adminOnline: (data.adminOnlineUntil || 0) > now });
     }
 
-    // 3. Sohbet Silme (Sadece admin@digistore.com)
+    // 3. Sohbet Silme
     if (action === 'delete') {
-      if (senderEmail === 'admin@digistore.com' || isAdmin) {
+      const isDeleteAdmin = isAdmin || (senderEmail && (
+        senderEmail.toLowerCase().trim() === 'admin@digistore.com' ||
+        senderEmail.toLowerCase().trim() === 'destek@closydev.site'
+      ));
+      if (isDeleteAdmin) {
         data.chats = (data.chats || []).filter(c => c.id !== chatId);
         writeSupportData(data);
         return send(200, { success: true });

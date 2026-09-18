@@ -2343,6 +2343,61 @@ pause
              role.includes('yönetici');
     },
 
+    deduplicateMessages(messages) {
+      if (!Array.isArray(messages)) return [];
+      const clean = [];
+      const seenIds = new Set();
+      for (const m of messages) {
+        if (!m || !m.text) continue;
+        if (m.id && seenIds.has(m.id)) continue;
+
+        // Bitisik mukerrer kontrolu (ayni gonderici ve ayni metin)
+        const prev = clean[clean.length - 1];
+        if (prev && prev.sender === m.sender && (prev.text || '').trim() === (m.text || '').trim()) {
+          continue;
+        }
+
+        if (m.id) seenIds.add(m.id);
+        clean.push(m);
+      }
+      return clean;
+    },
+
+    mergeAndDeduplicateMessages(localMsgs = [], serverMsgs = []) {
+      const result = [];
+      const seenIds = new Set();
+
+      const isSameMsg = (a, b) => {
+        if (!a || !b) return false;
+        if (a.id && b.id && a.id === b.id) return true;
+        const aText = (a.text || '').trim();
+        const bText = (b.text || '').trim();
+        if (a.sender === b.sender && aText === bText && aText.length > 0) {
+          if (a.timestamp && b.timestamp) {
+            return Math.abs(a.timestamp - b.timestamp) < 120000;
+          }
+          return true;
+        }
+        return false;
+      };
+
+      const combined = [...localMsgs, ...serverMsgs];
+      for (const m of combined) {
+        if (!m || !m.text) continue;
+        if (m.id && seenIds.has(m.id)) continue;
+
+        const existingIdx = result.findIndex(item => isSameMsg(item, m));
+        if (existingIdx !== -1) {
+          continue;
+        }
+
+        if (m.id) seenIds.add(m.id);
+        result.push(m);
+      }
+
+      return this.deduplicateMessages(result);
+    },
+
     getSupportChats() {
       const raw = localStorage.getItem('digistore_support_chats');
       if (!raw) return [];
@@ -2352,6 +2407,10 @@ pause
           let dirty = false;
           chats.forEach(c => {
             if (Array.isArray(c.messages)) {
+              const prevLen = c.messages.length;
+              c.messages = this.deduplicateMessages(c.messages);
+              if (c.messages.length !== prevLen) dirty = true;
+
               c.messages.forEach(m => {
                 if (m.text && (m.text.includes('DigiStore') || m.text.includes('admin@digistore.com'))) {
                   m.text = m.text
@@ -2380,6 +2439,13 @@ pause
     },
 
     saveSupportChats(chats) {
+      if (Array.isArray(chats)) {
+        chats.forEach(c => {
+          if (Array.isArray(c.messages)) {
+            c.messages = this.deduplicateMessages(c.messages);
+          }
+        });
+      }
       localStorage.setItem('digistore_support_chats', JSON.stringify(chats));
       this.broadcastChange('digistore_support_chats');
     },
@@ -2397,7 +2463,7 @@ pause
         fetch('/api/support', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', chatId: id, senderEmail: 'admin@digistore.com', isAdmin: true })
+          body: JSON.stringify({ action: 'delete', chatId: id, senderEmail: 'destek@closydev.site', isAdmin: true })
         }).catch(() => {});
       } catch (e) {}
     },
@@ -2477,6 +2543,10 @@ pause
           changed = true;
         }
         if (chat.messages && chat.messages.length > 0) {
+          const oldLen = chat.messages.length;
+          chat.messages = this.deduplicateMessages(chat.messages);
+          if (chat.messages.length !== oldLen) changed = true;
+
           chat.messages.forEach(m => {
             if (m.text && (m.text.includes('DigiStore doğrudan') || m.text.includes('admin@digistore.com'))) {
               m.text = 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya yazabilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.';
@@ -2502,17 +2572,21 @@ pause
       const chat = this.getUserChatSession();
       const now = new Date();
       const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
 
       const newMsg = {
-        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        id: msgId,
         sender: 'user',
         senderName: chat.userName || 'Müşteri',
         senderEmail: chat.userEmail || '',
         text: cleanText,
-        time: timeStr
+        time: timeStr,
+        timestamp: Date.now()
       };
 
+      if (!Array.isArray(chat.messages)) chat.messages = [];
       chat.messages.push(newMsg);
+      chat.messages = this.deduplicateMessages(chat.messages);
       chat.lastUpdated = Date.now();
       chat.unreadByAdmin = (chat.unreadByAdmin || 0) + 1;
       chat.unreadByUser = 0;
@@ -2522,7 +2596,7 @@ pause
       if (idx !== -1) chats[idx] = chat; else chats.unshift(chat);
       this.saveSupportChats(chats);
 
-      // Anlık sekme/panel yayını (0ms gecikme ile admin ekranına iletir)
+      // Anlık sekme/panel yayını
       this.broadcastSupportRealtime({
         type: 'new_message',
         sender: 'user',
@@ -2544,7 +2618,10 @@ pause
             userEmail: chat.userEmail,
             userName: chat.userName,
             text: cleanText,
-            isAdmin: false
+            isAdmin: false,
+            messageId: newMsg.id,
+            clientTime: timeStr,
+            timestamp: newMsg.timestamp
           })
         }).catch(() => {});
       } catch (e) {}
@@ -2552,11 +2629,14 @@ pause
       return newMsg;
     },
 
-    async sendAgentSupportMessage(chatId, text, senderEmail = 'admin@digistore.com') {
+    async sendAgentSupportMessage(chatId, text, senderEmail = 'destek@closydev.site') {
       if (!text || !text.trim()) return null;
-      const isAuthorized = this.isAdminOperator() || (senderEmail && senderEmail.toLowerCase().trim() === 'admin@digistore.com');
+      const isAuthorized = this.isAdminOperator() || (senderEmail && (
+        senderEmail.toLowerCase().trim() === 'admin@digistore.com' ||
+        senderEmail.toLowerCase().trim() === 'destek@closydev.site'
+      ));
       if (!isAuthorized) {
-        console.warn('Canlı destek yanıtı sadece yetkili admin@digistore.com tarafından verilebilir');
+        console.warn('Canlı destek yanıtı sadece sistem yöneticisi tarafından verilebilir');
         return null;
       }
 
@@ -2566,17 +2646,21 @@ pause
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
 
       const newMsg = {
-        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        id: msgId,
         sender: 'admin',
-        senderName: 'Site Yöneticisi (admin@digistore.com)',
-        senderEmail: 'admin@digistore.com',
+        senderName: 'closydev. Yetkili Destek',
+        senderEmail: senderEmail || 'destek@closydev.site',
         text: text.trim(),
-        time: timeStr
+        time: timeStr,
+        timestamp: Date.now()
       };
 
+      if (!Array.isArray(chat.messages)) chat.messages = [];
       chat.messages.push(newMsg);
+      chat.messages = this.deduplicateMessages(chat.messages);
       chat.lastUpdated = Date.now();
       chat.unreadByUser = (chat.unreadByUser || 0) + 1;
       chat.unreadByAdmin = 0;
@@ -2601,7 +2685,10 @@ pause
             chatId: chat.id,
             text: text.trim(),
             isAdmin: true,
-            senderEmail: 'admin@digistore.com'
+            senderEmail: senderEmail || 'destek@closydev.site',
+            messageId: newMsg.id,
+            clientTime: timeStr,
+            timestamp: newMsg.timestamp
           })
         }).catch(() => {});
       } catch (e) {}
@@ -2645,13 +2732,13 @@ pause
           data.chats.forEach(serverChat => {
             const local = chatMap.get(serverChat.id);
             if (!local) {
+              if (Array.isArray(serverChat.messages)) {
+                serverChat.messages = this.deduplicateMessages(serverChat.messages);
+              }
               chatMap.set(serverChat.id, serverChat);
             } else {
-              // Mesajları birleştir
-              const msgMap = new Map();
-              (local.messages || []).forEach(m => msgMap.set(m.id, m));
-              (serverChat.messages || []).forEach(m => msgMap.set(m.id, m));
-              local.messages = Array.from(msgMap.values());
+              // Mesajları akıllı birleştir ve mükerrerleri temizle
+              local.messages = this.mergeAndDeduplicateMessages(local.messages || [], serverChat.messages || []);
               local.lastUpdated = Math.max(local.lastUpdated || 0, serverChat.lastUpdated || 0);
               if (serverChat.userName) local.userName = serverChat.userName;
               if (serverChat.userEmail) local.userEmail = serverChat.userEmail;
@@ -2684,7 +2771,7 @@ pause
 
     broadcastChange(topic) {
       this.listeners.forEach(fn => {
-        try { fn(topic); } catch (e) { console.error('Store listener error:', e); }
+        try { fn(topic); } catch (e) {}
       });
     }
   };
@@ -2707,13 +2794,13 @@ pause
     DigiStoreDB.syncSupportWithServer();
   }, 3500);
 
-  // Admin Heartbeat (if logged in as admin@digistore.com)
+  // Admin Heartbeat (if logged in as admin)
   setInterval(() => {
     if (DigiStoreDB.isAdminOperator()) {
       fetch('/api/support', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'heartbeat', senderEmail: 'admin@digistore.com', isAdmin: true })
+        body: JSON.stringify({ action: 'heartbeat', senderEmail: 'destek@closydev.site', isAdmin: true })
       }).catch(() => {});
     }
   }, 25000);
@@ -3135,7 +3222,9 @@ pause
 
       if (!chat || !chat.messages) return;
 
-      container.innerHTML = chat.messages.map(m => {
+      const renderedMessages = DigiStoreDB.deduplicateMessages(chat.messages);
+
+      container.innerHTML = renderedMessages.map(m => {
         let cleanText = (m.text || '')
           .replace(/Merhaba!\s*DigiStore doğrudan yönetici canlı destek hattındasınız\.\s*Mesajınızı buraya yazabilirsiniz,\s*site yöneticimiz admin@digistore\.com doğrudan canlı olarak yanıtlayacaktır\./g, 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya iletebilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.')
           .replace(/DigiStore doğrudan yönetici canlı destek hattındasınız/gi, 'closydev. resmi canlı destek hattındasınız')

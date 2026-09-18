@@ -2027,7 +2027,7 @@ function handleSupportAdminSend(e) {
   if (!text) return;
   inp.value = '';
 
-  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'admin@digistore.com');
+  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'destek@closydev.site');
   renderSupportConversations();
   renderActiveSupportChat();
   showDynamicIsland('Mesaj Gönderildi', 'Müşteriye canlı iletildi', 'success');
