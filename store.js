@@ -2350,21 +2350,53 @@ pause
       return this.isAdmin();
     },
 
+    isUtcOffsetGhost(t1, t2) {
+      if (!t1 || !t2) return true;
+      if (t1 === t2) return true;
+      const h1 = parseInt(t1.split(':')[0], 10);
+      const h2 = parseInt(t2.split(':')[0], 10);
+      if (isNaN(h1) || isNaN(h2)) return true;
+      const diff = Math.abs(h1 - h2);
+      return diff === 3 || diff === 21 || diff === 0;
+    },
+
+    getTurkeyTimeStr(d = new Date()) {
+      try {
+        return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' });
+      } catch (e) {
+        return d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      }
+    },
+
     deduplicateMessages(messages) {
       if (!Array.isArray(messages)) return [];
       const clean = [];
       const seenIds = new Set();
+      const seenKeys = new Map();
+
       for (const m of messages) {
         if (!m || !m.text) continue;
         if (m.id && seenIds.has(m.id)) continue;
 
-        // Bitisik mukerrer kontrolu (ayni gonderici ve ayni metin)
+        const normText = (m.text || '').trim().toLowerCase();
+        const key = (m.sender || '') + '|' + normText;
+
+        // 1. Bitisik mukerrer kontrolu (ayni gonderici ve ayni metin)
         const prev = clean[clean.length - 1];
-        if (prev && prev.sender === m.sender && (prev.text || '').trim() === (m.text || '').trim()) {
+        if (prev && prev.sender === m.sender && (prev.text || '').trim().toLowerCase() === normText) {
           continue;
         }
 
+        // 2. Ayni konusma icinde UTC hayalet kopya (23:00 vs 20:00 gibi UTC saat farkiyla sunucudan donen hayalet kopya)
+        if (seenKeys.has(key)) {
+          const prior = seenKeys.get(key);
+          if (this.isUtcOffsetGhost(prior.time, m.time)) {
+            continue;
+          }
+        }
+
         if (m.id) seenIds.add(m.id);
+        seenKeys.set(key, m);
         clean.push(m);
       }
       return clean;
@@ -2373,32 +2405,25 @@ pause
     mergeAndDeduplicateMessages(localMsgs = [], serverMsgs = []) {
       const result = [];
       const seenIds = new Set();
-
-      const isSameMsg = (a, b) => {
-        if (!a || !b) return false;
-        if (a.id && b.id && a.id === b.id) return true;
-        const aText = (a.text || '').trim();
-        const bText = (b.text || '').trim();
-        if (a.sender === b.sender && aText === bText && aText.length > 0) {
-          if (a.timestamp && b.timestamp) {
-            return Math.abs(a.timestamp - b.timestamp) < 120000;
-          }
-          return true;
-        }
-        return false;
-      };
+      const seenKeys = new Map();
 
       const combined = [...localMsgs, ...serverMsgs];
       for (const m of combined) {
         if (!m || !m.text) continue;
         if (m.id && seenIds.has(m.id)) continue;
 
-        const existingIdx = result.findIndex(item => isSameMsg(item, m));
-        if (existingIdx !== -1) {
-          continue;
+        const normText = (m.text || '').trim().toLowerCase();
+        const key = (m.sender || '') + '|' + normText;
+
+        if (seenKeys.has(key)) {
+          const existing = seenKeys.get(key);
+          if (m.id === existing.id || this.isUtcOffsetGhost(existing.time, m.time)) {
+            continue;
+          }
         }
 
         if (m.id) seenIds.add(m.id);
+        seenKeys.set(key, m);
         result.push(m);
       }
 
@@ -2513,7 +2538,7 @@ pause
 
       if (!chat) {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const timeStr = this.getTurkeyTimeStr(now);
         const dateStr = now.toLocaleDateString('tr-TR');
 
         chat = {
@@ -2578,7 +2603,7 @@ pause
       const cleanText = text.trim();
       const chat = this.getUserChatSession();
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const timeStr = this.getTurkeyTimeStr(now);
       const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
 
       const newMsg = {
@@ -2652,7 +2677,7 @@ pause
       if (!chat) return null;
 
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const timeStr = this.getTurkeyTimeStr(now);
       const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
 
       const newMsg = {

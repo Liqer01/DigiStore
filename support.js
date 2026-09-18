@@ -19,18 +19,45 @@ let inMemoryData = {
   adminOnlineUntil: 0
 };
 
+function isUtcOffsetGhost(t1, t2) {
+  if (!t1 || !t2) return true;
+  if (t1 === t2) return true;
+  const h1 = parseInt(t1.split(':')[0], 10);
+  const h2 = parseInt(t2.split(':')[0], 10);
+  if (isNaN(h1) || isNaN(h2)) return true;
+  const diff = Math.abs(h1 - h2);
+  return diff === 3 || diff === 21 || diff === 0;
+}
+
 function deduplicateChatMessages(messages) {
   if (!Array.isArray(messages)) return [];
   const clean = [];
   const seenIds = new Set();
+  const seenKeys = new Map();
+
   for (const m of messages) {
     if (!m || !m.text) continue;
     if (m.id && seenIds.has(m.id)) continue;
+
+    const normText = (m.text || '').trim().toLowerCase();
+    const key = (m.sender || '') + '|' + normText;
+
+    // 1. Bitisik mukerrer
     const prev = clean[clean.length - 1];
-    if (prev && prev.sender === m.sender && (prev.text || '').trim() === (m.text || '').trim()) {
+    if (prev && prev.sender === m.sender && (prev.text || '').trim().toLowerCase() === normText) {
       continue;
     }
+
+    // 2. Ayni konusma icinde UTC hayalet kopya
+    if (seenKeys.has(key)) {
+      const prior = seenKeys.get(key);
+      if (isUtcOffsetGhost(prior.time, m.time)) {
+        continue;
+      }
+    }
+
     if (m.id) seenIds.add(m.id);
+    seenKeys.set(key, m);
     clean.push(m);
   }
   return clean;
@@ -133,7 +160,14 @@ module.exports = async (req, res) => {
       }
 
       const cleanText = text.trim();
-      const timeStr = clientTime || new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      let timeStr = clientTime;
+      if (!timeStr) {
+        try {
+          timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' });
+        } catch (e) {
+          timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        }
+      }
       const msgId = messageId || ('msg_' + now + '_' + Math.random().toString(36).substring(2, 6));
 
       // Yonetici yanit gonderiyor
@@ -151,7 +185,10 @@ module.exports = async (req, res) => {
         if (!Array.isArray(targetChat.messages)) targetChat.messages = [];
 
         // Mukerrer kontrolu (Ayni ID veya ayni icerik)
-        const dupIndex = targetChat.messages.findIndex(m => m.id === msgId || (m.sender === 'admin' && (m.text || '').trim() === cleanText));
+        const dupIndex = targetChat.messages.findIndex(m => 
+          m.id === msgId || 
+          (m.sender === 'admin' && (m.text || '').trim().toLowerCase() === cleanText.toLowerCase())
+        );
         if (dupIndex !== -1) {
           return send(200, { success: true, message: targetChat.messages[dupIndex], adminOnline: true });
         }
@@ -211,8 +248,11 @@ module.exports = async (req, res) => {
 
       if (!Array.isArray(chat.messages)) chat.messages = [];
 
-      // Mukerrer kontrolu
-      const dupIndex = chat.messages.findIndex(m => m.id === msgId || (m.sender === 'user' && (m.text || '').trim() === cleanText));
+      // Mukerrer kontrolu (Ayni ID veya ayni kisi tarafindan ayni metin)
+      const dupIndex = chat.messages.findIndex(m => 
+        m.id === msgId || 
+        (m.sender === 'user' && (m.text || '').trim().toLowerCase() === cleanText.toLowerCase())
+      );
       if (dupIndex !== -1) {
         return send(200, { success: true, message: chat.messages[dupIndex], chat, adminOnline: (data.adminOnlineUntil || 0) > now });
       }
