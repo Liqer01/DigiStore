@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'degistir_bunu_production_da';
 
-// ── DIGIGUARD ENTERPRISE SECURITY SUITE ───────────────────────────
+// ── CLOSYGUARD ENTERPRISE SECURITY SUITE ──────────────────────────
 const guard = require('./middleware/guard');
 
 app.disable('x-powered-by'); // Express kimliğini gizle
@@ -405,25 +405,34 @@ app.get('/api/orders/:id', auth, (req, res) => {
 });
 
 // ── PAYMENT WEBHOOK ─────────────────────────────────────────────────
-app.post('/webhook/shopier', (req, res) => {
-  // Shopier'den odeme onay webhook'u
-  const { order_id, status, payment_id } = req.body;
-  // TODO: Shopier imza dogrulama ekle (production'da zorunlu)
+const handleShopierWebhook = (req, res) => {
+  const body = req.body || {};
+  const status = String(body.status || body.payment_status || '').toLowerCase();
+  const order_id = String(body.platform_order_id || body.order_id || body.custom_order_id || '').trim();
+  const payment_id = String(body.payment_id || 'shopier').trim();
+  const email = String(body.buyer_email || body.email || '').toLowerCase().trim();
 
-  if (status === 'SUCCESS' || status === 'success') {
-    const order = db.prepare('SELECT * FROM orders WHERE id=?').get(order_id);
-    if (!order) return res.status(404).send('Order not found');
+  if (status === 'success' || status === '1' || status === 'completed') {
+    let order = null;
+    if (order_id) {
+      order = db.prepare('SELECT * FROM orders WHERE id=?').get(order_id);
+    }
+    if (!order && email) {
+      order = db.prepare("SELECT * FROM orders WHERE user_email=? AND status='pending' ORDER BY created_at DESC").get(email);
+    }
+
+    if (!order) return res.status(200).send('Order not found or already processed');
 
     // Siparisi tamamla
     db.prepare("UPDATE orders SET status='completed', payment_id=?, completed_at=datetime('now') WHERE id=?")
-      .run(payment_id || 'shopier', order_id);
+      .run(payment_id || 'shopier', order.id);
 
     // Lisans anahtarlari olustur
-    const items = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order_id);
+    const items = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id);
     const licenses = items.map(item => {
-      const licenseKey = `DS-${uuidv4().toUpperCase().slice(0,8)}-${uuidv4().toUpperCase().slice(0,8)}-${uuidv4().toUpperCase().slice(0,8)}`;
+      const licenseKey = `CLOSY-${uuidv4().toUpperCase().slice(0,4)}-${uuidv4().toUpperCase().slice(0,4)}-${uuidv4().toUpperCase().slice(0,4)}`;
       db.prepare('INSERT INTO licenses (id, order_id, product_id, user_email, license_key) VALUES (?, ?, ?, ?, ?)')
-        .run(uuidv4(), order_id, item.product_id, order.user_email, licenseKey);
+        .run(uuidv4(), order.id, item.product_id, order.user_email, licenseKey);
       db.prepare('UPDATE products SET sales_count=sales_count+1 WHERE id=?').run(item.product_id);
       return { ...item, license_key: licenseKey };
     });
@@ -431,15 +440,19 @@ app.post('/webhook/shopier', (req, res) => {
     // Fatura olustur
     const invoiceId = uuidv4();
     db.prepare('INSERT INTO invoices (id, order_id, invoice_no, user_email, user_name, amount, tax, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(invoiceId, order_id, order.invoice_no, order.user_email, order.user_name, order.subtotal, order.tax, order.total);
+      .run(invoiceId, order.id, order.invoice_no, order.user_email, order.user_name, order.subtotal, order.tax, order.total);
 
     // Email gonder
     sendOrderEmail(order.user_email, order.user_name, order, items, licenses);
-    console.log(`[OK] Sipariş tamamlandı: ${order_id}`);
+    console.log(`[OK] Sipariş tamamlandı: ${order.id}`);
   }
 
-  res.send('OK');
-});
+  res.status(200).send('OK');
+};
+
+app.post('/webhook/shopier', handleShopierWebhook);
+app.post('/api/shopier-webhook', handleShopierWebhook);
+app.get('/api/shopier-webhook', (req, res) => res.json({ status: 'active', service: 'Shopier Webhook Receiver' }));
 
 // Sandbox: Manuel siparis onayla (gelistirme icin)
 app.post('/api/sandbox/complete-order/:id', auth, (req, res) => {

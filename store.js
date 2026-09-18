@@ -7,7 +7,7 @@
 (function(window) {
   'use strict';
 
-  // DigiGuard Light Protection
+  // ClosyGuard Light Protection
   try {
     window.addEventListener('keydown', function(e) {
       if (e.keyCode === 123) { e.preventDefault(); }
@@ -853,11 +853,11 @@
         baslik: '6698 Sayılı KVKK Madde 11 Uyarınca Kişisel Veri Paketi',
         tarih: new Date().toISOString(),
         veri_sorumlusu: {
-          unvan: 'DigiStore Bilişim ve Teknoloji Ticaret A.Ş.',
+          unvan: 'closydev. Bilişim ve Teknoloji Ticaret A.Ş.',
           mersis: '029408842100001',
           vkn: '2940884210',
           vergi_dairesi: 'Boğaziçi V.D.',
-          kep: 'digistore@hs01.kep.tr'
+          kep: 'closydev@hs01.kep.tr'
         },
         kullanici_kimlik_ve_iletisim_verileri: {
           id: p.id,
@@ -1551,8 +1551,8 @@
     </div>
 
     <div class="footer">
-      <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">DigiStore Bilişim Ticaret A.Ş. · GİB e-Arşiv Fatura Onaylı</div>
-      <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@digistore.com</div>
+      <div style="font-weight:700;color:#f5f5f7;margin-bottom:4px;">closydev. Bilişim ve Teknoloji Ticaret A.Ş. · GİB e-Arşiv Fatura Onaylı</div>
+      <div>Büyükdere Caddesi No:193 Levent, Beşiktaş / İstanbul · Destek: destek@closydev.site</div>
       <div style="margin-top:8px;font-size:10.5px;color:#6b7280;">Bu bildirim sipariş kaydınız üzerine sistem tarafından otomatik iletilmiştir.</div>
     </div>
   </div>
@@ -1565,12 +1565,12 @@
       const total = '₺' + Number(order.amount || 0).toLocaleString('tr-TR');
 
       return `=======================================================
-DIGISTORE PRO — SİPARİŞİNİZ ALINDI (YÖNETİCİ ONAYI BEKLENİYOR)
+CLOSYDEV. PRO — SİPARİŞİNİZ ALINDI (YÖNETİCİ ONAYI BEKLENİYOR)
 =======================================================
 
 Sayın ${customerName},
 
-DigiStore üzerinden vermiş olduğunuz sipariş başarıyla alınmıştır.
+closydev. üzerinden vermiş olduğunuz sipariş başarıyla alınmıştır.
 Siparişiniz yönetici incelemesine iletilmiştir.
 
 [SİPARİŞ DETAYLARI]
@@ -1600,8 +1600,8 @@ Discord: https://discord.gg/closydev
 
 Yönetici siparişinizi onayladığında lisans anahtarınız e-posta ve müşteri panelinize iletilecektir.
 
-7/24 Teknik Destek: destek@digistore.com
-DigiStore Bilişim Ticaret A.Ş.`;
+7/24 Teknik Destek: destek@closydev.site
+closydev. Bilişim ve Teknoloji Ticaret A.Ş.`;
     },
 
     generateApprovalEmailHtml(order, recipientEmail, customerName) {
@@ -1776,8 +1776,8 @@ Bot kurulumu, token girişi ve sorularınız için Discord sunucumuzdan Ticket a
 
 Discord: https://discord.gg/closydev
 
-7/24 Teknik Destek: destek@digistore.com
-DigiStore Bilişim Ticaret A.Ş.`;
+7/24 Teknik Destek: destek@closydev.site
+closydev. Bilişim ve Teknoloji Ticaret A.Ş.`;
     },
 
     sendOrderEmail(orderData) {
@@ -2089,16 +2089,16 @@ Lisans Durumu     : ONAYLANDI (Omur Boyu Gecerli & Aktif)
 
 [2] YASAL GUVENCE & DESTEK:
 Bu dijital urun ve lisans haklari adiniza resmi olarak tahsis edilmistir.
-- Musteri Paneli  : https://digistore.com/hesabim.html
-- 7/24 Destek     : destek@digistore.com
+- Musteri Paneli  : https://closydev.site/hesabim.html
+- 7/24 Destek     : destek@closydev.site
 - Garanti         : 14 Gun Kosulsuz Iade & Degisim Guvencesi
 
-(c) 2026 DigiStore Bilisim Ticaret A.S. Tum haklari saklidir.
+(c) 2026 closydev. Bilisim Ticaret A.S. Tum haklari saklidir.
 ======================================================================`;
 
           const licenseText = 
 `======================================================================
-DIGISTORE PRO RESMI LISANS SERTIFIKASI
+CLOSYDEV. PRO RESMI LISANS SERTIFIKASI
 ======================================================================
 URUN            : ${productName}
 LISANS ANAHTARI : ${licenseKey}
@@ -2224,7 +2224,7 @@ pause
   <div class="header">
     <div>
       <span class="gib-badge">e-ARŞİV FATURA</span>
-      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">DigiStore Bilişim Ticaret A.Ş.</h1>
+      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">closydev. Bilişim ve Teknoloji Ticaret A.Ş.</h1>
       <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.5;">
         Büyükdere Cad. No: 193 Levent, Beşiktaş / İstanbul<br/>
         Vergi Dairesi: Boğaziçi V.D. | VKN: 2940884210 | Mersis: 029408842100001
@@ -2297,7 +2297,7 @@ pause
       Bu fatura 213 sayılı V.U.K. hükümlerine göre elektronik ortamda düzenlenmiş olup resmi mali mühür ile onaylanmıştır. Nüsha olarak saklanabilir.
     </div>
     <div class="seal">
-      DİGİSTORE ELEKTRONİK MALİ MÜHÜR<br/>
+      CLOSYDEV. ELEKTRONİK MALİ MÜHÜR<br/>
       <span style="font-size: 10px; font-weight: 400; color: #64748b;">Zaman Damgası: ${new Date().toISOString()}</span>
     </div>
   </div>

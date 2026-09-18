@@ -29,7 +29,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.13.0"></script>
+<script src="store.js?v=3.14.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -979,6 +979,92 @@
   .light-theme .brand-text {
     color: #09090b !important;
   }
+  /* ─── ULTRA-COOL WHITE LIGHT SWEEP & BEAM FOR CLOSYDEV. ─── */
+  @keyframes whiteLightSweep {
+    0% {
+      background-position: -200% center;
+    }
+    30%, 100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes whiteLaserBeam {
+    0% {
+      left: -150%;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    40% {
+      left: 200%;
+      opacity: 1;
+    }
+    41%, 100% {
+      left: 200%;
+      opacity: 0;
+    }
+  }
+
+  .brand-light-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    overflow: hidden;
+    padding: 3px 6px;
+    border-radius: 8px;
+    user-select: none;
+    text-decoration: none;
+  }
+  .brand-light-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 25%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.08) 75%,
+      transparent 100%
+    );
+    transform: skewX(-25deg);
+    animation: whiteLaserBeam 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    filter: blur(1.5px);
+  }
+
+  .brand-text {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1;
+    white-space: nowrap;
+    background: linear-gradient(
+      115deg,
+      #cbd5e1 0%,
+      #ffffff 28%,
+      #ffffff 42%,
+      rgba(255, 255, 255, 0.35) 47%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 1) 53%,
+      #ffffff 58%,
+      #cbd5e1 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: whiteLightSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.45));
+  }
+
   .light-theme .nav-brand-link svg path {
     fill: #09090b !important;
   }
@@ -1307,7 +1393,7 @@
 <nav class="dash-nav-enter" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
   
   <!-- closydev. Brand Logo -->
-  <a href="index.html" class="nav-brand-link" title="closydev." style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+  <a href="index.html" class="nav-brand-link brand-light-wrap" title="closydev." style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,255,255,0.6));">
       <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
     </svg>
@@ -1760,7 +1846,7 @@
               <span>6698 Sayılı KVKK Kapsamında Veri Sahibi Hakları (Madde 11)</span>
             </h3>
             <p style="font-size:12.5px;color:#86868b;margin-top:4px;line-height:1.5;">
-              DigiStore Bilişim Ticaret A.Ş. nezdinde saklanan tüm kişisel kimlik, işlem ve sipariş verilerinizi anında resmi JSON olarak indirebilir veya Unutulma Hakkı kapsamında sildirebilirsiniz.
+              closydev. Bilişim ve Teknoloji Ticaret A.Ş. nezdinde saklanan tüm kişisel kimlik, işlem ve sipariş verilerinizi anında resmi JSON olarak indirebilir veya Unutulma Hakkı kapsamında sildirebilirsiniz.
             </p>
           </div>
           <span class="status-badge badge-ok">
@@ -2758,7 +2844,7 @@ function downloadInvoice(orderId) {
   <div class="header">
     <div>
       <span class="gib-badge">e-ARŞİV FATURA</span>
-      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">DigiStore Bilişim Ticaret A.Ş.</h1>
+      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">closydev. Bilişim ve Teknoloji Ticaret A.Ş.</h1>
       <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.5;">
         Büyükdere Cad. No: 193 Levent, Beşiktaş / İstanbul<br/>
         Vergi Dairesi: Boğaziçi V.D. | VKN: 2940884210 | Mersis: 029408842100001
