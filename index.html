@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.10.0"></script>
+<script src="store.js?v=3.11.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2385,6 +2385,19 @@ function goCheckout() {
     });
     return;
   }
+  if (typeof DigiStoreDB !== 'undefined' && !DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Sipariş verebilmek ve lisans anahtarlarınızı hesabınızda güvenle teslim alabilmek için lütfen önce giriş yapın veya ücretsiz kayıt olun.',
+      type: 'warning',
+      confirmText: 'Giriş Yap / Kayıt Ol',
+      onConfirm: () => {
+        toggleCart();
+        openAuthModal('login');
+      }
+    });
+    return;
+  }
   localStorage.setItem('digistore_cart', JSON.stringify(cart));
   window.location.href = 'odeme.html';
 }
@@ -2563,7 +2576,7 @@ function switchAuthTab(tab) {
     registerForm.style.display = 'none';
     btnLogin.classList.add('active');
     btnRegister.classList.remove('active');
-    title.textContent = "DigiStore'a Giriş Yap";
+    title.textContent = "closydev'e Giriş Yap";
     sub.textContent = 'Tüm siparişleriniz ve lisanslarınız tek bir yerde.';
   } else {
     loginForm.style.display = 'none';

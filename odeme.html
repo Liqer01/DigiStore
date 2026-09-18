@@ -29,8 +29,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.10.0"></script>
+<script src="store.js?v=3.11.0"></script>
 <script src="kvkk.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -671,6 +672,215 @@
     color: #64748b !important;
     border-color: #cbd5e1 !important;
   }
+
+  /* Auth Modal & OAuth Button Styles */
+  .auth-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999999;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .auth-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .auth-card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: radial-gradient(120% 80% at 50% 0%, rgba(168, 85, 247, 0.08) 0%, rgba(10, 132, 255, 0.03) 40%, rgba(15, 16, 22, 0.97) 100%);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 28px;
+    padding: 32px 28px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transform: scale(0.96) translateY(12px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.8), rgba(255, 255, 255, 0.8), rgba(10, 132, 255, 0.8), transparent);
+    border-radius: 999px;
+    pointer-events: none;
+  }
+  .auth-backdrop.active .auth-card {
+    transform: scale(1) translateY(0);
+  }
+  .auth-close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #86868b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+  }
+  .auth-close-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    transform: scale(1.08);
+  }
+  .btn-oauth-provider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.2px;
+    user-select: none;
+    box-sizing: border-box;
+  }
+  .btn-oauth-discord {
+    background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(88, 101, 242, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .btn-oauth-discord:hover {
+    background: linear-gradient(135deg, #4f5be3 0%, #3e47b0 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(88, 101, 242, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-oauth-discord:active {
+    transform: scale(0.985);
+  }
+  .btn-oauth-github {
+    background: linear-gradient(180deg, #24292F 0%, #171a1d 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  .btn-oauth-github:hover {
+    background: linear-gradient(180deg, #2d333b 0%, #1e2227 100%);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .btn-oauth-github:active {
+    transform: scale(0.985);
+  }
+  .auth-tabs-nav {
+    display: flex;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .auth-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #86868b;
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .auth-tab-btn.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .auth-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .auth-input-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #86868b;
+    letter-spacing: 0.06em;
+  }
+  .auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .auth-input-icon {
+    position: absolute;
+    left: 14px;
+    color: #86868b;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+  .auth-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 14px 10px 38px;
+    font-size: 13.5px;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .auth-input:focus {
+    border-color: #0a84ff;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+  }
+  .btn-auth-submit {
+    width: 100%;
+    background: #ffffff;
+    color: #000000;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 11px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+    margin-top: 4px;
+  }
+  .btn-auth-submit:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+  }
+  .btn-auth-submit:active {
+    transform: scale(0.985);
+  }
 </style>
 </head>
 <body>
@@ -798,7 +1008,32 @@
 
     <!-- STEP 1: Müşteri & Fatura Bilgileri -->
     <div id="panelStep1">
-      
+
+      <!-- Auth Requirement Notice Banner (Non-logged-in users) -->
+      <div id="checkoutAuthNotice" class="apple-glass" style="display:none;padding:18px 24px;margin-bottom:24px;background:radial-gradient(120% 80% at 50% 0%, rgba(168, 85, 247, 0.14) 0%, rgba(10, 132, 255, 0.08) 100%);border:1px solid rgba(168,85,247,0.35);border-radius:20px;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 8px 30px rgba(168,85,247,0.12);">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:44px;height:44px;border-radius:14px;background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);display:flex;align-items:center;justify-content:center;color:#c084fc;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:14.5px;font-weight:700;color:#ffffff;letter-spacing:-0.2px;">Sipariş Vermek İçin Üye Girişi Zorunludur</div>
+            <div style="font-size:12.5px;color:#cbd5e1;margin-top:2px;line-height:1.4;">Lisans anahtarınızın hesabınıza otomatik tanımlanabilmesi ve 7/24 erişim için lütfen giriş yapınız.</div>
+          </div>
+        </div>
+        <button type="button" onclick="openAuthModal('login')" class="btn-pill-white" style="padding:10px 22px;font-size:12.5px;font-weight:700;white-space:nowrap;border-radius:9999px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 16px rgba(255,255,255,0.2);">
+          Giriş Yap / Kayıt Ol
+        </button>
+      </div>
+
+      <!-- Logged In User Pill Banner -->
+      <div id="checkoutUserPill" class="apple-glass" style="display:none;padding:12px 20px;margin-bottom:20px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25);border-radius:16px;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;"></span>
+          <span style="font-size:12.5px;color:#e2e8f0;font-weight:600;" id="checkoutUserPillText">Giriş Yapıldı</span>
+        </div>
+        <a href="hesabim.html" style="font-size:12px;color:#38bdf8;text-decoration:none;font-weight:700;">Hesabım &rarr;</a>
+      </div>
+
       <!-- Card 1: Contact Details -->
       <div class="apple-glass" style="padding:32px;margin-bottom:24px;">
         
@@ -1316,6 +1551,17 @@ function formatCard(el) {
 }
 
 function goStep2() {
+  if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Sipariş adımına devam edebilmek için lütfen hesabınıza giriş yapın veya ücretsiz kayıt olun.',
+      type: 'warning',
+      confirmText: 'Giriş Yap / Kayıt Ol',
+      onConfirm: () => openAuthModal('login')
+    });
+    return;
+  }
+
   const fnameEl = document.getElementById('fname');
   const fname = (fnameEl?.value || '').trim();
   if (!fname || fname.length < 2 || !/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$/.test(fname)) {
@@ -1454,6 +1700,17 @@ function goStep1() {
 let paymentCheckTimer = null;
 
 function processPayment() {
+  if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Ödemeyi tamamlayabilmek için lütfen hesabınıza giriş yapın.',
+      type: 'warning',
+      confirmText: 'Giriş Yap',
+      onConfirm: () => openAuthModal('login')
+    });
+    return;
+  }
+
   const consent = document.getElementById('checkoutKvkkConsent');
   if (consent && !consent.checked) {
     showIosAlert({
@@ -1879,6 +2136,27 @@ window.alert = function(msg) {
   });
 };
 
+function updateAuthUI() {
+  const authNotice = document.getElementById('checkoutAuthNotice');
+  const userPill = document.getElementById('checkoutUserPill');
+  const userPillText = document.getElementById('checkoutUserPillText');
+
+  if (typeof DigiStoreDB !== 'undefined' && DigiStoreDB.isLoggedIn()) {
+    const p = DigiStoreDB.getUserProfile() || {};
+    if (authNotice) authNotice.style.display = 'none';
+    if (userPill) {
+      userPill.style.display = 'flex';
+      if (userPillText) {
+        userPillText.textContent = `Giriş Yapıldı: ${p.name || p.email}`;
+      }
+    }
+    populateFromUserProfile();
+  } else {
+    if (authNotice) authNotice.style.display = 'flex';
+    if (userPill) userPill.style.display = 'none';
+  }
+}
+
 function populateFromUserProfile() {
   if (typeof DigiStoreDB === 'undefined') return;
   const p = DigiStoreDB.getUserProfile();
@@ -1893,18 +2171,153 @@ function populateFromUserProfile() {
     const parts = p.name.trim().split(' ');
     const firstName = parts.length > 1 ? parts.slice(0, -1).join(' ') : parts[0];
     const lastName = parts.length > 1 ? parts[parts.length - 1] : '';
-    if (fnameInput && !fnameInput.value) fnameInput.value = firstName;
-    if (lnameInput && !lnameInput.value) lnameInput.value = lastName;
+    if (fnameInput && (!fnameInput.value || fnameInput.value === 'Ahmet')) fnameInput.value = firstName;
+    if (lnameInput && (!lnameInput.value || lnameInput.value === 'Yılmaz')) lnameInput.value = lastName;
   }
-  if (emailInput && !emailInput.value && p.email) emailInput.value = p.email;
+  if (emailInput && (!emailInput.value || emailInput.value === 'ornek@email.com') && p.email) emailInput.value = p.email;
   if (phoneInput && !phoneInput.value && p.phone) phoneInput.value = p.phone;
   const tcInput = document.getElementById('tcno');
   if (tcInput && !tcInput.value && p.tcKimlik) tcInput.value = p.tcKimlik;
 }
 
+// ─── AUTH MODAL & OAUTH ENGINE (odeme.html) ──────────────────────────
+function openAuthModal(tab = 'login') {
+  switchAuthTab(tab);
+  const m = document.getElementById('authModalBackdrop');
+  if (m) {
+    m.style.display = 'flex';
+    requestAnimationFrame(() => m.classList.add('active'));
+  }
+}
+
+function closeAuthModal() {
+  const m = document.getElementById('authModalBackdrop');
+  if (m) {
+    m.classList.remove('active');
+    setTimeout(() => { m.style.display = 'none'; }, 220);
+  }
+}
+
+function handleAuthBackdropClick(e) {
+  if (e.target.id === 'authModalBackdrop') closeAuthModal();
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const btnLogin = document.getElementById('tabBtnLogin');
+  const btnRegister = document.getElementById('tabBtnRegister');
+  const title = document.getElementById('authModalTitle');
+  const sub = document.getElementById('authModalSubtitle');
+
+  if (tab === 'login') {
+    if (loginForm) loginForm.style.display = 'block';
+    if (registerForm) registerForm.style.display = 'none';
+    if (btnLogin) btnLogin.classList.add('active');
+    if (btnRegister) btnRegister.classList.remove('active');
+    if (title) title.textContent = "closydev'e Giriş Yap";
+    if (sub) sub.textContent = 'Tüm siparişleriniz ve lisanslarınız tek bir yerde.';
+  } else {
+    if (loginForm) loginForm.style.display = 'none';
+    if (registerForm) registerForm.style.display = 'block';
+    if (btnLogin) btnLogin.classList.remove('active');
+    if (btnRegister) btnRegister.classList.add('active');
+    if (title) title.textContent = 'Yeni Hesap Oluştur';
+    if (sub) sub.textContent = 'Saniyeler içinde kayıt olup dijital ürünlere erişin.';
+  }
+  const le = document.getElementById('loginError');
+  if (le) le.style.display = 'none';
+  const re = document.getElementById('regError');
+  if (re) re.style.display = 'none';
+}
+
+function handleLoginFormSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const res = DigiStoreDB.login(email, pass);
+
+  if (res.success) {
+    closeAuthModal();
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Giriş Yapıldı', `Hoş geldin, ${res.user.name}!`, 'success');
+    }
+    updateAuthUI();
+  } else {
+    const err = document.getElementById('loginError');
+    if (err) {
+      err.textContent = res.message;
+      err.style.display = 'block';
+    }
+  }
+}
+
+function handleRegisterFormSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value;
+
+  const res = DigiStoreDB.register({ name, email, phone, password });
+  if (res.success) {
+    closeAuthModal();
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Kayıt Başarılı', `Aramıza hoş geldin, ${res.user.name}!`, 'success');
+    }
+    updateAuthUI();
+  } else {
+    const err = document.getElementById('regError');
+    if (err) {
+      err.textContent = res.message;
+      err.style.display = 'block';
+    }
+  }
+}
+
+window.handleCredentialResponse = function(response) {
+  try {
+    const base64Url = response.credential.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    const profile = JSON.parse(jsonPayload);
+
+    if (typeof DigiStoreDB !== 'undefined') {
+      DigiStoreDB.loginWithGoogle({
+        email: profile.email,
+        name: profile.name,
+        avatar: profile.picture,
+        id: profile.sub
+      });
+      closeAuthModal();
+      if (typeof showDynamicIsland === 'function') {
+        showDynamicIsland('Google Doğrulandı', `Hoş geldin, ${profile.name}!`, 'success');
+      }
+      updateAuthUI();
+    }
+  } catch (err) {
+    console.error('Google profil okuma hatası:', err);
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Google Hatası', 'Profil bilgileri alınamadı.', 'error');
+    }
+  }
+};
+
+function handleDiscordAuth() {
+  if (typeof DigiStoreDB !== 'undefined') {
+    DigiStoreDB.startDiscordAuth();
+  }
+}
+
+function handleGithubAuth() {
+  if (typeof DigiStoreDB !== 'undefined') {
+    DigiStoreDB.startGithubAuth();
+  }
+}
+
 // Initialize on page load
 initSummary();
-populateFromUserProfile();
+updateAuthUI();
 
 // URL parametresi ile Shopier donus kontrolu
 try {
@@ -1942,7 +2355,7 @@ try {
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.onUpdate((topic) => {
     if (topic === 'profile' || topic === 'auth') {
-      populateFromUserProfile();
+      updateAuthUI();
     }
   });
 }
@@ -1988,5 +2401,171 @@ try {
   }
 } catch(e) {}
 </script>
+
+<!-- Auth Modal (Apple Glass) -->
+<div id="authModalBackdrop" class="auth-backdrop" style="display:none;" onclick="handleAuthBackdropClick(event)">
+  <div class="auth-card">
+    <button onclick="closeAuthModal()" class="auth-close-btn" title="Kapat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <div style="text-align:center;margin-bottom:20px;">
+      <!-- Glowing Lightning Pedestal -->
+      <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+        <div style="position:absolute;inset:-4px;border-radius:20px;background:linear-gradient(135deg,rgba(168,85,247,0.35),rgba(10,132,255,0.35));filter:blur(10px);opacity:0.7;"></div>
+        <div style="position:relative;width:52px;height:52px;border-radius:16px;background:linear-gradient(180deg,#15161f 0%,#0c0d12 100%);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.25);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));">
+            <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Micro Security Badge -->
+      <div style="display:flex;justify-content:center;margin-bottom:8px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:3px 10px;border-radius:999px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#34c759;box-shadow:0 0 6px #34c759;"></span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:0.06em;color:#94a3b8;text-transform:uppercase;">256-BIT SSL ŞİFRELİ GÜVENLİ PORTAL</span>
+        </div>
+      </div>
+
+      <h3 style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.4px;margin:0 0 4px 0;" id="authModalTitle">closydev'e Giriş Yap</h3>
+      <p style="font-size:12.5px;color:#86868b;margin:0;" id="authModalSubtitle">Tüm siparişleriniz ve lisanslarınız tek bir yerde.</p>
+    </div>
+
+    <!-- Official Google Identity Services Component -->
+    <div id="g_id_onload"
+         data-client_id="1005294511743-8q0snj3dggul6ktjd03votrrvdvg79g5.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div style="display:flex;justify-content:center;margin-bottom:10px;width:100%;">
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="filled_black"
+           data-text="continue_with"
+           data-shape="rectangular"
+           data-logo_alignment="left"
+           data-width="360">
+      </div>
+    </div>
+
+    <!-- Discord & GitHub OAuth Providers -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;width:100%;max-width:360px;margin-left:auto;margin-right:auto;">
+      <button type="button" onclick="handleDiscordAuth()" class="btn-oauth-provider btn-oauth-discord">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+        </svg>
+        <span>Discord ile Devam Et</span>
+      </button>
+      <button type="button" onclick="handleGithubAuth()" class="btn-oauth-provider btn-oauth-github">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <span>GitHub ile Devam Et</span>
+      </button>
+    </div>
+
+    <!-- Divider -->
+    <div style="display:flex;align-items:center;gap:12px;margin:16px 0 14px 0;">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);"></div>
+      <span style="font-size:10.5px;color:#71717a;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">VEYA E-POSTA İLE</span>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);"></div>
+    </div>
+
+    <!-- Auth Tabs -->
+    <div class="auth-tabs-nav">
+      <button type="button" id="tabBtnLogin" class="auth-tab-btn active" onclick="switchAuthTab('login')">Giriş Yap</button>
+      <button type="button" id="tabBtnRegister" class="auth-tab-btn" onclick="switchAuthTab('register')">Kayıt Ol</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="handleLoginFormSubmit(event)">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="auth-input-group">
+          <label class="auth-input-label">E-POSTA ADRESİ</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </span>
+            <input type="email" id="loginEmail" required placeholder="ornek@email.com" class="auth-input" autocomplete="email">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">ŞİFRE</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </span>
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="auth-input" autocomplete="current-password">
+          </div>
+        </div>
+        <div id="loginError" style="display:none;font-size:12px;color:#ff453a;background:rgba(255,69,58,0.1);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,69,58,0.2);"></div>
+        <button type="submit" class="btn-auth-submit">
+          <span>Giriş Yap</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display:none;" onsubmit="handleRegisterFormSubmit(event)">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="auth-input-group">
+          <label class="auth-input-label">AD SOYAD</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+            <input type="text" id="regName" required placeholder="Adınız Soyadınız" class="auth-input" autocomplete="name">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">E-POSTA / GMAIL ADRESİ</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </span>
+            <input type="email" id="regEmail" required placeholder="adiniz@gmail.com" class="auth-input" autocomplete="email">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">TELEFON</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </span>
+            <input type="tel" id="regPhone" placeholder="+90 5xx xxx xx xx" class="auth-input" autocomplete="tel">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">ŞİFRE (EN AZ 6 KARAKTER)</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </span>
+            <input type="password" id="regPassword" required placeholder="••••••••" minlength="6" class="auth-input" autocomplete="new-password">
+          </div>
+        </div>
+        <!-- KVKK & Yasal Onay Kutuları -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin:4px 0 6px;">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#c4c7c5;cursor:pointer;line-height:1.4;">
+            <input type="checkbox" id="regKvkkConsent" required checked style="margin-top:2px;accent-color:#0a84ff;cursor:pointer;">
+            <span><a href="javascript:void(0)" onclick="openKvkkModal()" style="color:#0a84ff;text-decoration:underline;">6698 sayılı KVKK Aydınlatma Metni</a>'ni okudum ve kabul ediyorum. <b style="color:#ff453a;">*</b></span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#86868b;cursor:pointer;line-height:1.4;">
+            <input type="checkbox" id="regMarketingConsent" style="margin-top:2px;accent-color:#0a84ff;cursor:pointer;">
+            <span>6563 s. ETK uyarınca lisans ve güncelleme bildirimlerini almayı onaylıyorum.</span>
+          </label>
+        </div>
+        <div id="regError" style="display:none;font-size:12px;color:#ff453a;background:rgba(255,69,58,0.1);padding:8px 12px;border-radius:8px;border:1px solid rgba(255,69,58,0.2);"></div>
+        <button type="submit" class="btn-auth-submit">
+          <span>Hesap Oluştur ve Başla</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>

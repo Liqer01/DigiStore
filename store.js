@@ -1240,6 +1240,10 @@
     },
 
     addOrder(orderData) {
+      if (!this.isLoggedIn() && !orderData.fromSync) {
+        console.warn('Sipariş oluşturmak için kullanıcı girişi zorunludur.');
+        return null;
+      }
       const orders = this.getOrders();
       const orderStatus = orderData.status || 'pending';
       const isCompleted = orderStatus === 'completed';
@@ -1253,7 +1257,7 @@
         items: orderData.items || [],
         amount: Number(orderData.amount) || 0,
         status: orderStatus,
-        date: orderData.date || 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        date: orderData.date || ('Bugün ' + this.getTurkeyTimeStr()),
         method: orderData.method || 'Shopier 3D Secure',
         licenseKeys: isCompleted ? (orderData.licenseKeys || []) : [],
         invoiceType: orderData.invoiceType || 'Bireysel'
