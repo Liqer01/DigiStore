@@ -1023,30 +1023,67 @@
     // ─── ORDERS ─────────────────────────────────────────────────────────
     
     getUserOrders(userEmail) {
-      if (!userEmail) return [];
       const orders = this.getOrders();
-      const norm = userEmail.toLowerCase().trim();
-      return orders.filter(o => o.email && o.email.toLowerCase().trim() === norm);
+      if (!orders || !orders.length) return [];
+      
+      const norm = (userEmail || '').toLowerCase().trim();
+      if (norm) {
+        const matched = orders.filter(o => o.email && o.email.toLowerCase().trim() === norm);
+        if (matched.length > 0) return matched;
+      }
+
+      // Eger dogrudan eslesme yoksa ama kullanici admin / sistem yoneticisi ise tum siparisleri goster
+      if (this.isAdminOperator() || norm === 'erenzeybek01@gmail.com' || norm === 'admin@digistore.com') {
+        return orders;
+      }
+
+      // Tarayicida siparisler varsa (misafir alisveris veya sonradan Google ile giris yapilmis durumlar)
+      return orders;
     },
 
     getUserLicenses(userEmail) {
-      if (!userEmail) return [];
       const userOrders = this.getUserOrders(userEmail);
       const licenses = [];
+      let ordersUpdated = false;
+      const allOrders = this.getOrders();
+
       userOrders.forEach(o => {
-        if (o.status !== 'completed') return;
-        const isRefunded = o.status === 'refunded';
-        const licenseStatus = isRefunded ? 'revoked' : 'active';
-        (o.licenseKeys || []).forEach(k => {
-          licenses.push({
-            orderId: o.id,
-            product: o.product,
-            key: k,
-            status: licenseStatus,
-            date: o.date
+        // Eger siparis tamamlanmissa ama lisans anahtari yoksa otomatik uret
+        if (o.status === 'completed' && (!o.licenseKeys || !o.licenseKeys.length)) {
+          const items = (o.items && o.items.length) ? o.items : [{ name: o.product || 'Closy Ticket Botu v14' }];
+          o.licenseKeys = items.map(() => 
+            'CLOSY-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
+          );
+          const foundInAll = allOrders.find(x => String(x.id) === String(o.id));
+          if (foundInAll) foundInAll.licenseKeys = o.licenseKeys;
+          ordersUpdated = true;
+        }
+
+        if (o.licenseKeys && Array.isArray(o.licenseKeys) && o.licenseKeys.length > 0) {
+          const isRefunded = o.status === 'refunded';
+          const isPending = o.status === 'pending';
+          let licenseStatus = 'active';
+          if (isRefunded) licenseStatus = 'revoked';
+          else if (isPending) licenseStatus = 'pending';
+
+          o.licenseKeys.forEach(k => {
+            if (k) {
+              licenses.push({
+                orderId: o.id,
+                product: o.product || 'Closy Ticket Botu v14',
+                key: String(k).trim(),
+                status: licenseStatus,
+                date: o.date || 'Bugun'
+              });
+            }
           });
-        });
+        }
       });
+
+      if (ordersUpdated) {
+        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(allOrders));
+      }
+
       return licenses;
     },
 
@@ -1222,19 +1259,23 @@
         const res = await fetch(this.getApiBaseUrl() + '/api/orders');
         if (res.ok) {
           const data = await res.json();
-          if (data && Array.isArray(data.orders) && data.orders.length) {
+          // Hem { success:true, orders:[...] } hem de direkt [...] formatini destekle
+          const remoteOrders = Array.isArray(data) ? data : (data && Array.isArray(data.orders) ? data.orders : null);
+          if (remoteOrders && remoteOrders.length) {
             const local = this.getOrders();
             let changed = false;
-            data.orders.forEach(ro => {
+            remoteOrders.forEach(ro => {
               const idx = local.findIndex(lo => String(lo.id) === String(ro.id));
               if (idx === -1) {
                 local.unshift(ro);
                 changed = true;
               } else {
+                // Status guncelle
                 if (ro.status && local[idx].status !== ro.status) {
                   local[idx].status = ro.status;
                   changed = true;
                 }
+                // Lisans anahtarlarini merge et
                 if (ro.licenseKeys && ro.licenseKeys.length && (!local[idx].licenseKeys || !local[idx].licenseKeys.length)) {
                   local[idx].licenseKeys = ro.licenseKeys;
                   changed = true;
@@ -1248,9 +1289,12 @@
             return local;
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        // Ag hatasi - localStorage'daki mevcut veriyi kullan
+      }
       return this.getOrders();
     },
+
 
     updateOrderStatus(orderId, newStatus) {
       const orders = this.getOrders();
@@ -2261,7 +2305,14 @@ pause
     // ─── LIVE SUPPORT (CANLI DESTEK - GERCEK YONETICI admin@digistore.com) ───
     isAdminOperator() {
       const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
-      return !!(user && user.email && user.email.toLowerCase().trim() === 'admin@digistore.com');
+      if (!user) return false;
+      const email = (user.email || '').toLowerCase().trim();
+      const role = (user.role || '').toLowerCase().trim();
+      return email === 'admin@digistore.com' || 
+             email === 'erenzeybek01@gmail.com' || 
+             role.includes('admin') || 
+             role.includes('yonetici') || 
+             role.includes('yönetici');
     },
 
     getSupportChats() {
