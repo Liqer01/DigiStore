@@ -76,7 +76,15 @@ module.exports = async (req, res) => {
 
       const orders = readOrders();
       const existingIdx = orders.findIndex(o => String(o.id) === String(body.id));
+      
+      if (body.status === 'completed' && (!body.licenseKeys || !body.licenseKeys.length)) {
+        body.licenseKeys = ['CLOSY-' + Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-')];
+      }
+
       if (existingIdx !== -1) {
+        if (body.status === 'completed' && orders[existingIdx].status !== 'completed' && (!orders[existingIdx].licenseKeys || !orders[existingIdx].licenseKeys.length)) {
+          body.licenseKeys = body.licenseKeys || ['CLOSY-' + Array.from({ length: 4 }, () => Math.random().toString(36).substring(2, 6).toUpperCase()).join('-')];
+        }
         orders[existingIdx] = { ...orders[existingIdx], ...body };
       } else {
         orders.unshift(body);

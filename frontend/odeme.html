@@ -964,41 +964,16 @@
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-          <span>Güvenli Ödemeyi Onayla &amp; Lisansı Üret</span>
+          <span>Shopier ile Güvenli Ödemeye Geç →</span>
         </button>
       </div>
 
     </div>
 
-    <!-- STEP 3: Başarı ve Lisans Teslim Ekranı -->
+    <!-- STEP 3: Ödeme Onayı ve Lisans Teslim Ekranı -->
     <div id="panelStep3" style="display:none;">
-      <div class="apple-glass" style="padding:54px 38px;text-align:center;">
-        
-        <div style="width:72px;height:72px;border-radius:50%;background:rgba(52,199,89,0.14);border:1px solid rgba(52,199,89,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;color:#34c759;box-shadow:0 0 35px rgba(52,199,89,0.25);">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 6L9 17l-5-5"></path>
-          </svg>
-        </div>
-
-        <h2 style="font-size:28px;font-weight:800;color:#ffffff;margin-bottom:10px;letter-spacing:-0.6px;">
-          Ödemeniz Başarıyla Tamamlandı!
-        </h2>
-        <p style="font-size:14px;color:#a1a1a6;margin-bottom:34px;max-width:540px;margin-left:auto;margin-right:auto;line-height:1.5;">
-          Siparişiniz onaylandı. Lisans anahtarınız ve resmi e-Arşiv faturanız e-posta adresinize iletildi ve hesabınıza anında tanımlandı.
-        </p>
-
-        <div id="orderDetails" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px;margin-bottom:34px;text-align:left;"></div>
-
-        <div style="display:flex;gap:14px;justify-content:center;">
-          <a href="hesabim.html" class="btn-pill-white" style="padding:13px 30px;text-decoration:none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>Müşteri Panelime Git</span>
-          </a>
-          <a href="index.html" class="btn-pill-dark" style="padding:13px 26px;text-decoration:none;">
-            <span>Alışverişe Devam Et</span>
-          </a>
-        </div>
-
+      <div id="step3Container">
+        <!-- Dinamik olarak Ödeme Bekleme Ekranı veya Lisans Teslim Ekranı basılır -->
       </div>
     </div>
 
@@ -1376,6 +1351,8 @@ function goStep1() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+let paymentCheckTimer = null;
+
 function processPayment() {
   const consent = document.getElementById('checkoutKvkkConsent');
   if (consent && !consent.checked) {
@@ -1413,13 +1390,7 @@ function processPayment() {
     ? `Kurumsal (${sirketVal} / VKN: ${vknVal})`
     : `Bireysel (TC: ${tcVal || 'Belirtilmedi'})`;
 
-  // Lisans anahtarları anında üretilir ve aktif edilir
-  const licenseKeys = cart.map(p => ({
-    name: p.name,
-    key: 'CLOSY-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
-  }));
-
-  // Siparişi doğrudan 'completed' (TAMAMLANDI & LİSANS AKTİF) durumuyla kaydet
+  // Siparişi 'pending' (Ödeme Bekleniyor) durumuyla kaydet - Kesinlikle lisans anahtarı verilmez
   if (typeof DigiStoreDB !== 'undefined') {
     const currentProfile = DigiStoreDB.getUserProfile();
     if (!currentProfile || !currentProfile.email) {
@@ -1437,17 +1408,18 @@ function processPayment() {
       product: cart.map(c => c.name).join(', '),
       items: cart,
       amount: total,
-      status: 'completed', // DOĞRUDAN ONAYLI & AKTİF
+      status: 'pending',
       date: 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       method: paymentMethod,
-      licenseKeys: licenseKeys.map(l => l.key),
+      licenseKeys: [],
       invoiceType: invoiceInfo
     });
   }
 
-  // Shopier Güvenli Ödeme Sayfası (Canlı Ürün)
-  const shopierStoreUrl = 'https://www.shopier.com/closydev/50891803';
+  // Sepeti temizle
+  localStorage.removeItem('digistore_cart');
 
+  // Adım 3 ekranına geç
   document.getElementById('panelStep2').style.display = 'none';
   document.getElementById('panelStep3').style.display = 'block';
 
@@ -1458,31 +1430,137 @@ function processPayment() {
   document.getElementById('step3').innerHTML = '3';
   document.getElementById('step3lbl').style.color = '#ffffff';
 
-  document.getElementById('orderDetails').innerHTML = `
-    <div style="text-align:center;padding:10px 0 20px;">
-      <div style="width:68px;height:68px;border-radius:50%;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#22c55e;box-shadow:0 0 25px rgba(34,197,94,0.2);">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  const shopierStoreUrl = 'https://www.shopier.com/closydev/50891803';
+
+  // Bekleme ekranını göster
+  renderPendingPaymentScreen(orderId, total, email, fullName, shopierStoreUrl);
+
+  // Shopier ödeme sayfasını yeni sekmede başlat
+  try {
+    window.open(shopierStoreUrl, '_blank');
+  } catch (e) {}
+
+  // Canlı ödeme onay denetleyicisini başlat
+  startPaymentPolling(orderId, email, fullName, total);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPendingPaymentScreen(orderId, total, email, fullName, shopierUrl) {
+  const container = document.getElementById('step3Container');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="apple-glass" style="padding:46px 32px;text-align:center;">
+      
+      <!-- Bekleme Ikonu -->
+      <div style="width:72px;height:72px;border-radius:50%;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fbbf24;box-shadow:0 0 35px rgba(245,158,11,0.2);">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
       </div>
 
-      <h3 style="font-size:24px;font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.4px;">Siparişiniz Tamamlandı &amp; Lisansınız Teslim Edildi</h3>
-      <p style="font-size:14px;color:#a1a1a6;margin:0 0 20px;line-height:1.6;">
-        Sipariş Numaranız: <b style="color:#60a5fa;font-family:'JetBrains Mono',monospace;">#${orderId}</b> | Toplam: <b style="color:#34c759;font-weight:700;">₺${total.toFixed(0)}</b><br>
-        Lisans anahtarınız ve resmi faturanız <b style="color:#fff;">${email}</b> adresinize anında iletildi.
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);padding:6px 16px;border-radius:9999px;color:#fbbf24;font-size:12px;font-weight:700;margin-bottom:16px;letter-spacing:0.04em;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#fbbf24;box-shadow:0 0 10px #fbbf24;"></span>
+        <span>SİPARİŞ OLUŞTURULDU — SHOPIER ÖDEMESİ BEKLENİYOR</span>
+      </div>
+
+      <h2 style="font-size:26px;font-weight:800;color:#ffffff;margin-bottom:10px;letter-spacing:-0.5px;">
+        Ödemenizi Tamamlayın
+      </h2>
+      
+      <p style="font-size:14px;color:#a1a1a6;margin:0 auto 24px;max-width:540px;line-height:1.6;">
+        Sipariş Numaranız: <b style="color:#60a5fa;font-family:'JetBrains Mono',monospace;">#${orderId}</b> | Tutar: <b style="color:#34c759;font-weight:700;">₺${Number(total).toFixed(0)}</b><br>
+        Lisans anahtarınız ve indirme bağlantılarınız, Shopier üzerinden ödemeniz tamamlandığı an <b>otomatik olarak bu ekranda açılacaktır</b>.
+      </p>
+
+      <!-- Shopier Ödeme Butonu -->
+      <div style="margin-bottom:28px;">
+        <a href="${shopierUrl}" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:linear-gradient(135deg, #00b0f4, #3b82f6);color:#fff;font-size:15px;font-weight:800;padding:16px 36px;border-radius:14px;text-decoration:none;display:inline-flex;align-items:center;gap:10px;box-shadow:0 0 30px rgba(0,176,244,0.35);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <span>Shopier ile Güvenli Ödemeyi Yap (3D Secure) →</span>
+        </a>
+        <div style="font-size:12px;color:#86868b;margin-top:8px;">
+          Shopier sayfası yeni sekmede açılmadıysa yukarıdaki butona tıklayabilirsiniz.
+        </div>
+      </div>
+
+      <!-- Canlı Kontrol Kutusu -->
+      <div style="background:#09090c;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px 24px;max-width:580px;margin:0 auto 24px;text-align:left;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:11px;font-weight:700;color:#86868b;letter-spacing:0.06em;text-transform:uppercase;">OTOMATİK ONAY DENETLEYİCİ</span>
+          <span id="livePulseText" style="color:#38bdf8;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 8px #38bdf8;"></span>
+            <span>Ödeme Bekleniyor...</span>
+          </span>
+        </div>
+        <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0 0 14px;">
+          Ödemenizi Shopier üzerinde tamamladıktan sonra sayfayı kapatmanıza gerek yoktur. Sistemimiz her 2.5 saniyede bir banka onayını denetler ve onaylandığı an lisansınızı anında ekrana yansıtır.
+        </p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="checkPaymentStatusNow('${orderId}')" class="btn-action-glass" style="padding:9px 20px;font-size:12.5px;font-weight:600;border-radius:10px;">
+            <span>Ödemeyi Yaptım, Kontrol Et</span>
+          </button>
+          <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" style="color:#60a5fa;font-size:12px;text-decoration:underline;margin-left:auto;">
+            Destek: discord.gg/closydev
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <a href="index.html" style="color:#86868b;font-size:13px;text-decoration:none;">
+          ← Mağazaya Geri Dön
+        </a>
+      </div>
+
+    </div>
+  `;
+}
+
+function renderOrderSuccess(order) {
+  if (paymentCheckTimer) {
+    clearInterval(paymentCheckTimer);
+    paymentCheckTimer = null;
+  }
+
+  const container = document.getElementById('step3Container');
+  if (!container) return;
+
+  const licenseKeys = order.licenseKeys || [];
+
+  container.innerHTML = `
+    <div class="apple-glass" style="padding:48px 32px;text-align:center;">
+      
+      <div style="width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#22c55e;box-shadow:0 0 35px rgba(34,197,94,0.25);">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:6px 14px;border-radius:9999px;color:#4ade80;font-size:12px;font-weight:700;margin-bottom:14px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#4ade80;"></span>
+        <span>ÖDEMENİZ BAŞARIYLA ONAYLANDI</span>
+      </div>
+
+      <h2 style="font-size:26px;font-weight:800;color:#ffffff;margin-bottom:8px;letter-spacing:-0.5px;">
+        Lisansınız Hazır &amp; Teslim Edildi
+      </h2>
+      <p style="font-size:14px;color:#a1a1a6;margin:0 auto 24px;max-width:540px;line-height:1.6;">
+        Sipariş Numaranız: <b style="color:#60a5fa;font-family:'JetBrains Mono',monospace;">#${order.id}</b> | Toplam: <b style="color:#34c759;font-weight:700;">₺${Number(order.amount).toFixed(0)}</b><br>
+        Lisans anahtarınız ve resmi faturanız ayrıca <b style="color:#fff;">${order.email}</b> adresinize iletilmiştir.
       </p>
 
       <!-- Aktif Lisans Anahtarları Kutusu -->
-      <div style="background:#09090c;border:1px solid rgba(34,197,94,0.3);border-radius:16px;padding:20px 24px;margin-bottom:20px;text-align:left;">
+      <div style="background:#09090c;border:1px solid rgba(34,197,94,0.35);border-radius:16px;padding:20px 24px;margin-bottom:24px;text-align:left;max-width:620px;margin-left:auto;margin-right:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:11px;font-weight:700;color:#86868b;letter-spacing:0.06em;text-transform:uppercase;">AKTİF DİJİTAL LİSANS ANAHTARLARINIZ</span>
+          <span style="font-size:11px;font-weight:700;color:#86868b;letter-spacing:0.06em;text-transform:uppercase;">AKTİF DİJİTAL LİSANS ANAHTARINIZ</span>
           <span style="background:rgba(34,197,94,0.15);color:#4ade80;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;">Ömür Boyu Aktif</span>
         </div>
-        ${licenseKeys.map(l => `
+        ${licenseKeys.map(k => `
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;">
             <div>
-              <div style="font-size:13px;font-weight:700;color:#fff;">${l.name}</div>
-              <code style="font-size:15.5px;color:#60a5fa;font-family:'JetBrains Mono',monospace;font-weight:800;letter-spacing:0.05em;">${l.key}</code>
+              <div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:4px;">${order.product}</div>
+              <code style="font-size:15px;color:#60a5fa;font-family:'JetBrains Mono',monospace;font-weight:800;letter-spacing:0.05em;">${k}</code>
             </div>
-            <button onclick="navigator.clipboard.writeText('${l.key}');this.textContent='Kopyalandı!';" class="btn-action-glass" style="padding:7px 16px;font-size:12.5px;font-weight:600;">Kopyala</button>
+            <button onclick="navigator.clipboard.writeText('${k}');this.textContent='Kopyalandı!';" class="btn-action-glass" style="padding:7px 16px;font-size:12.5px;font-weight:600;">Kopyala</button>
           </div>
         `).join('')}
         <div style="font-size:12px;color:#94a3b8;margin-top:10px;line-height:1.5;">
@@ -1491,7 +1569,7 @@ function processPayment() {
       </div>
 
       <!-- İndirme & Eylem Butonları -->
-      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;">
+      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;">
         <a href="downloads/ClosyBotManager.zip" download class="btn-action-primary" style="padding:12px 22px;font-size:13px;text-decoration:none;border-radius:12px;display:inline-flex;align-items:center;gap:8px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span>Masaüstü Panelini İndir</span>
@@ -1505,34 +1583,93 @@ function processPayment() {
         </a>
       </div>
 
-      <!-- Discord Destek & Ticket Kutusu -->
-      <div style="background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.35);border-radius:16px;padding:20px;text-align:left;margin-bottom:20px;">
+      <!-- Discord Destek Kutusu -->
+      <div style="background:rgba(88,101,242,0.1);border:1px solid rgba(88,101,242,0.35);border-radius:16px;padding:20px;text-align:left;max-width:620px;margin:0 auto;">
         <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#818cf8;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#818cf8"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
           <span>BOT KURULUMU, AÇIK KAYNAK KOD &amp; TEKNİK DESTEK</span>
         </div>
         <p style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:0 0 10px;">
-          Botunuzun açık kaynak kodları, token girişi ve birebir sunucu kurulumu için Discord kanallarımıza katılıp Ticket açabilirsiniz:
+          Botunuzun açık kaynak kodları, token girişi ve birebir sunucu kurulumu için Discord sunucumuzdan Ticket açabilirsiniz:
         </p>
-        <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.7;">
-          <div>• <b>Açık Kaynak Kod:</b> İsteyen tüm müşterilerimize botun açık kaynak kodları eksiksiz teslim edilir.</div>
-          <div>• <b>Birebir Kurulum:</b> Kurmayı bilmiyorsanız botu Discord sunucunuza bizzat biz kuruyoruz!</div>
-        </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;padding:9px 18px;font-size:13px;font-weight:700;border-radius:10px;">
             <span>Discord: discord.gg/closydev (Ticket Aç)</span>
           </a>
-          <a href="${shopierStoreUrl}" target="_blank" rel="noopener noreferrer" class="btn-action-glass" style="text-decoration:none;padding:9px 18px;font-size:13px;font-weight:600;border-radius:10px;color:#a1a1aa;">
-            <span>Shopier Ödeme Sayfası (İsteğe Bağlı)</span>
-          </a>
         </div>
       </div>
+
     </div>
   `;
+}
 
-  // Clear cart
-  localStorage.removeItem('digistore_cart');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function startPaymentPolling(orderId, email, fullName, total) {
+  if (paymentCheckTimer) clearInterval(paymentCheckTimer);
+
+  paymentCheckTimer = setInterval(async () => {
+    try {
+      if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+        await DigiStoreDB.syncRemoteOrders();
+      }
+
+      const res = await fetch((typeof DigiStoreDB !== 'undefined' ? DigiStoreDB.getApiBaseUrl() : '') + '/api/orders');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.orders)) {
+          const matched = data.orders.find(o => String(o.id) === String(orderId));
+          if (matched && matched.status === 'completed') {
+            clearInterval(paymentCheckTimer);
+            paymentCheckTimer = null;
+            renderOrderSuccess(matched);
+            return;
+          }
+        }
+      }
+
+      if (typeof DigiStoreDB !== 'undefined') {
+        const local = DigiStoreDB.getOrderById(orderId);
+        if (local && local.status === 'completed') {
+          clearInterval(paymentCheckTimer);
+          paymentCheckTimer = null;
+          renderOrderSuccess(local);
+          return;
+        }
+      }
+    } catch (e) {}
+  }, 2500);
+}
+
+async function checkPaymentStatusNow(orderId) {
+  const pulseText = document.getElementById('livePulseText');
+  if (pulseText) pulseText.innerHTML = '<span>Kontrol ediliyor...</span>';
+
+  try {
+    if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
+      await DigiStoreDB.syncRemoteOrders();
+    }
+    const res = await fetch((typeof DigiStoreDB !== 'undefined' ? DigiStoreDB.getApiBaseUrl() : '') + '/api/orders');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.orders)) {
+        const matched = data.orders.find(o => String(o.id) === String(orderId));
+        if (matched && matched.status === 'completed') {
+          renderOrderSuccess(matched);
+          return;
+        }
+      }
+    }
+    const local = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getOrderById(orderId) : null;
+    if (local && local.status === 'completed') {
+      renderOrderSuccess(local);
+      return;
+    }
+  } catch (e) {}
+
+  if (pulseText) {
+    pulseText.innerHTML = '<span style="color:#fbbf24;">Henüz Onaylanmadı (Ödeme Bekleniyor)</span>';
+    setTimeout(() => {
+      if (pulseText) pulseText.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#38bdf8;box-shadow:0 0 8px #38bdf8;"></span><span>Ödeme Bekleniyor...</span>';
+    }, 3000);
+  }
 }
 
 // ─── IOS ALERT & MODAL POPUP ─────────────────────────────────────────
@@ -1663,6 +1800,39 @@ function populateFromUserProfile() {
 // Initialize on page load
 initSummary();
 populateFromUserProfile();
+
+// URL parametresi ile Shopier donus kontrolu
+try {
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramOrderId = urlParams.get('order_id');
+  if (paramOrderId) {
+    setTimeout(async () => {
+      if (typeof DigiStoreDB !== 'undefined') {
+        await DigiStoreDB.syncRemoteOrders();
+        const o = DigiStoreDB.getOrderById(paramOrderId);
+        if (o) {
+          document.getElementById('panelStep1').style.display = 'none';
+          document.getElementById('panelStep2').style.display = 'none';
+          document.getElementById('panelStep3').style.display = 'block';
+
+          document.getElementById('step1').className = 'step-circle step-done';
+          document.getElementById('step2').className = 'step-circle step-done';
+          document.getElementById('step3').className = 'step-circle step-active';
+          document.getElementById('bar1').style.width = '100%';
+          document.getElementById('bar2').style.width = '100%';
+
+          if (o.status === 'completed') {
+            renderOrderSuccess(o);
+          } else {
+            const shopierStoreUrl = 'https://www.shopier.com/closydev/50891803';
+            renderPendingPaymentScreen(o.id, o.amount, o.email, o.customer, shopierStoreUrl);
+            startPaymentPolling(o.id, o.email, o.customer, o.amount);
+          }
+        }
+      }
+    }, 400);
+  }
+} catch (e) {}
 
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.onUpdate((topic) => {

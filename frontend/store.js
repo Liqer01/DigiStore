@@ -1034,6 +1034,7 @@
       const userOrders = this.getUserOrders(userEmail);
       const licenses = [];
       userOrders.forEach(o => {
+        if (o.status !== 'completed') return;
         const isRefunded = o.status === 'refunded';
         const licenseStatus = isRefunded ? 'revoked' : 'active';
         (o.licenseKeys || []).forEach(k => {
@@ -1057,9 +1058,14 @@
       const orders = this.getOrders();
       for (const o of orders) {
         if (o.licenseKeys && o.licenseKeys.some(k => k.toUpperCase() === cleanKey)) {
-          const isValid = o.status !== 'refunded';
+          if (o.status !== 'completed') {
+            return {
+              valid: false,
+              reason: o.status === 'pending' ? 'Bu lisansa ait siparişin ödemesi henüz onaylanmamıştır.' : 'Bu lisans iptal edilmiş veya iade edilmiştir.'
+            };
+          }
           return {
-            valid: isValid,
+            valid: true,
             key: cleanKey,
             orderId: o.id,
             customer: o.customer || 'Değerli Müşterimiz',
@@ -1160,6 +1166,9 @@
 
     addOrder(orderData) {
       const orders = this.getOrders();
+      const orderStatus = orderData.status || 'pending';
+      const isCompleted = orderStatus === 'completed';
+
       const newOrder = {
         id: orderData.id || ('DS-' + Math.floor(100000 + Math.random() * 900000)),
         customer: orderData.customer || 'İsimsiz Müşteri',
@@ -1168,31 +1177,33 @@
         product: orderData.items && orderData.items.length ? (orderData.items[0].name + (orderData.items.length > 1 ? ` (+${orderData.items.length - 1})` : '')) : 'Dijital Lisans Paketi',
         items: orderData.items || [],
         amount: Number(orderData.amount) || 0,
-        status: orderData.status || 'completed',
+        status: orderStatus,
         date: orderData.date || 'Bugün ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-        method: orderData.method || 'Kredi Kartı',
-        licenseKeys: orderData.licenseKeys || ['CLOSY-KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase()],
+        method: orderData.method || 'Shopier 3D Secure',
+        licenseKeys: isCompleted ? (orderData.licenseKeys || []) : [],
         invoiceType: orderData.invoiceType || 'Bireysel'
       };
 
       orders.unshift(newOrder);
       this.saveOrders(orders);
 
-      // Increment product sales count
-      const products = this.getProducts();
-      if (newOrder.items && newOrder.items.length) {
-        newOrder.items.forEach(it => {
-          const prod = products.find(p => String(p.id) === String(it.id));
-          if (prod) {
-            prod.downloads = (prod.downloads || 0) + (it.qty || 1);
-          }
-        });
-        this.saveProducts(products);
-      }
+      // Increment product sales count only when payment is completed
+      if (isCompleted) {
+        const products = this.getProducts();
+        if (newOrder.items && newOrder.items.length) {
+          newOrder.items.forEach(it => {
+            const prod = products.find(p => String(p.id) === String(it.id));
+            if (prod) {
+              prod.downloads = (prod.downloads || 0) + (it.qty || 1);
+            }
+          });
+          this.saveProducts(products);
+        }
 
-      // Send Order Delivery & Active License Email (No pending/approval wait!)
-      const emailRecord = this.sendOrderApprovalEmail(newOrder);
-      newOrder.emailId = emailRecord.id;
+        // Send Order Delivery & Active License Email only when completed
+        const emailRecord = this.sendOrderApprovalEmail(newOrder);
+        newOrder.emailId = emailRecord.id;
+      }
 
       // Asynchronously sync to backend orders API
       try {
@@ -1219,9 +1230,15 @@
               if (idx === -1) {
                 local.unshift(ro);
                 changed = true;
-              } else if (ro.status && local[idx].status !== ro.status) {
-                local[idx].status = ro.status;
-                changed = true;
+              } else {
+                if (ro.status && local[idx].status !== ro.status) {
+                  local[idx].status = ro.status;
+                  changed = true;
+                }
+                if (ro.licenseKeys && ro.licenseKeys.length && (!local[idx].licenseKeys || !local[idx].licenseKeys.length)) {
+                  local[idx].licenseKeys = ro.licenseKeys;
+                  changed = true;
+                }
               }
             });
             if (changed) {
@@ -1241,15 +1258,34 @@
       if (o) {
         const prevStatus = o.status;
         o.status = newStatus;
-        this.saveOrders(orders);
 
         if (newStatus === 'completed' && prevStatus !== 'completed') {
+          // Generate unique license keys if missing
+          if (!o.licenseKeys || !o.licenseKeys.length) {
+            const items = (o.items && o.items.length) ? o.items : [{ name: o.product || 'Bot Paketi' }];
+            o.licenseKeys = items.map(() => 
+              'CLOSY-' + Array.from({length:4}, () => Math.random().toString(36).substring(2,6).toUpperCase()).join('-')
+            );
+          }
+
+          // Increment downloads count
+          const products = this.getProducts();
+          if (o.items && o.items.length) {
+            o.items.forEach(it => {
+              const prod = products.find(p => String(p.id) === String(it.id));
+              if (prod) prod.downloads = (prod.downloads || 0) + (it.qty || 1);
+            });
+            this.saveProducts(products);
+          }
+
           try {
             this.sendOrderApprovalEmail(o);
           } catch (err) {
             console.error('Approval email error:', err);
           }
         }
+
+        this.saveOrders(orders);
 
         try {
           fetch(this.getApiBaseUrl() + '/api/orders', {
@@ -1805,6 +1841,7 @@ DigiStore Bilişim Ticaret A.Ş.`;
       const licenses = [];
 
       orders.forEach(o => {
+        if (o.status !== 'completed') return;
         if (o.licenseKeys && o.licenseKeys.length) {
           o.licenseKeys.forEach(k => {
             licenses.push({

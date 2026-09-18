@@ -1,4 +1,14 @@
-const nodemailer = require('nodemailer');
+const path = require('path');
+let nodemailer;
+try {
+  nodemailer = require('nodemailer');
+} catch (e) {
+  try {
+    nodemailer = require(path.join(__dirname, '../backend/node_modules/nodemailer'));
+  } catch (err) {
+    nodemailer = null;
+  }
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
