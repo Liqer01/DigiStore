@@ -3124,9 +3124,12 @@ window.alert = function(msg) {
 // Listen to storage events across tabs
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.onUpdate((topic) => {
+    // Destek chati degisimlerinde sayfayi yeniden cizme (3.5sn polling titremeyi engelle)
+    if (topic === 'digistore_support_chats') return;
     renderAllData();
   });
 }
+
 
 // Initial render & Hash navigation
 renderAllData();
