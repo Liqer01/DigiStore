@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.2.0"></script>
+<script src="store.js?v=3.3.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2954,6 +2954,8 @@ handleHeaderScroll();
 
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.onUpdate((topic) => {
+    // Destek chati degisimlerinde vitrini ve filtreleri yeniden cizme (4-5 saniyelik titremeyi onle)
+    if (topic === 'digistore_support_chats') return;
     renderCategoryFilters();
     renderStorefrontProducts();
     renderNavUser();
@@ -2963,6 +2965,7 @@ if (typeof DigiStoreDB !== 'undefined') {
 
 // Sekmeler Arasi Canli Senkronizasyon
 window.addEventListener('storage', (e) => {
+  if (e.key === 'digistore_support_chats') return;
   if (e.key && e.key.startsWith('digistore_')) {
     renderCategoryFilters();
     renderStorefrontProducts();

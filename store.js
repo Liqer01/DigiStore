@@ -2621,9 +2621,13 @@ pause
           });
 
           const merged = Array.from(chatMap.values()).sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
-          localStorage.setItem('digistore_support_chats', JSON.stringify(merged));
+          const newJson = JSON.stringify(merged);
+          const oldJson = localStorage.getItem('digistore_support_chats');
           window.__adminSupportOnline = !!data.adminOnline;
-          this.broadcastChange('digistore_support_chats');
+          if (oldJson !== newJson) {
+            localStorage.setItem('digistore_support_chats', newJson);
+            this.broadcastChange('digistore_support_chats');
+          }
         }
       } catch (err) {
         // Ağ veya statik çalıştırma toleransı
