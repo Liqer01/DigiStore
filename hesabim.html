@@ -663,28 +663,28 @@
     transform: scale(0.985);
   }
 
-  /* Closy Cyber Top-Left Toast Notification System */
+  /* Closy Elite Dynamic Island Toast */
   .dynamic-island {
     position: fixed;
-    top: 24px;
-    left: 24px;
-    transform: translateX(-130%) scale(0.96);
-    background: rgba(10, 10, 15, 0.94);
-    backdrop-filter: blur(28px) saturate(190%);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-left: 3.5px solid #3b82f6;
-    border-radius: 18px;
-    padding: 12px 18px 12px 14px;
+    top: 20px;
+    left: 20px;
+    transform: translateX(-140%) scale(0.92);
+    background: rgba(12, 12, 18, 0.88);
+    backdrop-filter: blur(32px) saturate(220%);
+    -webkit-backdrop-filter: blur(32px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    padding: 8px 18px 8px 9px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(59, 130, 246, 0.2);
-    z-index: 999998;
+    gap: 13px;
+    box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    z-index: 999999;
     opacity: 0;
     pointer-events: none;
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, border-left-color 0.3s ease, box-shadow 0.3s ease;
-    max-width: 420px;
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    max-width: 440px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   .dynamic-island.active {
@@ -695,70 +695,67 @@
 
   .island-brand-box {
     position: relative;
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: #09090e;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(59, 130, 246, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-    overflow: visible;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
   }
 
-  .island-brand-img {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    border-radius: 8px;
-    filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.6));
-  }
-
-  .island-status-dot {
-    position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #34c759;
-    border: 2px solid #0a0a0f;
-    box-shadow: 0 0 8px #34c759;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+  .island-brand-svg {
+    width: 17px;
+    height: 17px;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
   }
 
   .island-text {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    flex: 1;
   }
 
   .island-title {
     font-size: 13.5px;
     font-weight: 700;
     color: #ffffff;
-    letter-spacing: -0.2px;
-    line-height: 1.3;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    white-space: nowrap;
   }
 
   .island-sub {
-    font-size: 12px;
+    font-size: 11.5px;
     color: #94a3b8;
-    line-height: 1.35;
+    line-height: 1.3;
     margin-top: 2px;
-    word-break: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+
+  .island-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    margin-left: 4px;
+    flex-shrink: 0;
   }
 
   @media (max-width: 640px) {
     .dynamic-island {
-      top: 16px;
-      left: 16px;
-      right: 16px;
-      max-width: calc(100vw - 32px);
-      transform: translateY(-120%) scale(0.96);
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      max-width: calc(100vw - 28px);
+      transform: translateY(-130%) scale(0.92);
     }
     .dynamic-island.active {
       transform: translateY(0) scale(1);
@@ -1057,16 +1054,18 @@
 <div class="dashboard-ambient-glow" style="top:-140px;left:50%;transform:translateX(-50%);width:960px;height:520px;background:radial-gradient(circle, rgba(168,85,247,0.09) 0%, rgba(59,130,246,0.04) 50%, transparent 75%);filter:blur(70px);"></div>
 <div class="dashboard-ambient-glow" style="bottom:5%;right:2%;width:550px;height:420px;background:radial-gradient(circle, rgba(10,132,255,0.05) 0%, transparent 70%);filter:blur(65px);"></div>
 
-<!-- Closy Cyber Top-Left Notification Toast -->
+<!-- Closy Minimal Pill Notification Toast -->
 <div id="dynamicIsland" class="dynamic-island">
   <div class="island-brand-box">
-    <img src="logo-icon.png" alt="Closy" class="island-brand-img" onerror="this.onerror=null;this.src='logo.png';">
-    <span class="island-status-dot" id="islandStatusDot"></span>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="island-brand-svg">
+      <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+    </svg>
   </div>
   <div class="island-text">
     <span class="island-title" id="islandTitle">Bildirim</span>
     <span class="island-sub" id="islandSub">İşlem tamamlandı</span>
   </div>
+  <div class="island-indicator" id="islandIndicator"></div>
 </div>
 
 <!-- Apple Ultra Cyber Confirmation / Alert Modal -->
@@ -3160,40 +3159,19 @@ function showDynamicIsland(title, sub, type = 'success') {
 
   const titleEl = document.getElementById('islandTitle');
   const subEl = document.getElementById('islandSub');
-  const dotEl = document.getElementById('islandStatusDot');
+  const indEl = document.getElementById('islandIndicator');
 
   if (titleEl) titleEl.textContent = title;
   if (subEl) subEl.textContent = sub;
 
-  // Bildirim turune gore sol neon serit ve durum noktasi parlamasi
-  if (type === 'success') {
-    island.style.borderLeftColor = '#34c759';
-    island.style.boxShadow = '0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(52, 199, 89, 0.25)';
-    if (dotEl) {
-      dotEl.style.background = '#34c759';
-      dotEl.style.boxShadow = '0 0 8px #34c759';
-    }
-  } else if (type === 'copy') {
-    island.style.borderLeftColor = '#3b82f6';
-    island.style.boxShadow = '0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(59, 130, 246, 0.25)';
-    if (dotEl) {
-      dotEl.style.background = '#3b82f6';
-      dotEl.style.boxShadow = '0 0 8px #3b82f6';
-    }
-  } else if (type === 'error') {
-    island.style.borderLeftColor = '#ef4444';
-    island.style.boxShadow = '0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(239, 68, 68, 0.25)';
-    if (dotEl) {
-      dotEl.style.background = '#ef4444';
-      dotEl.style.boxShadow = '0 0 8px #ef4444';
-    }
-  } else {
-    island.style.borderLeftColor = '#f59e0b';
-    island.style.boxShadow = '0 20px 45px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(245, 158, 11, 0.25)';
-    if (dotEl) {
-      dotEl.style.background = '#f59e0b';
-      dotEl.style.boxShadow = '0 0 8px #f59e0b';
-    }
+  let color = '#22c55e';
+  if (type === 'copy' || type === 'info') color = '#3b82f6';
+  else if (type === 'error') color = '#ef4444';
+  else if (type === 'warning') color = '#f59e0b';
+
+  if (indEl) {
+    indEl.style.background = color;
+    indEl.style.boxShadow = '0 0 10px ' + color;
   }
 
   island.classList.add('active');
