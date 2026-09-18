@@ -136,7 +136,29 @@
     }
   ];
 
-    const DEFAULT_ORDERS = [];
+    const DEFAULT_ORDERS = [
+      {
+        id: 'DS-359765',
+        customer: 'Eren Zeybek',
+        email: 'erenzeybek01@gmail.com',
+        phone: '+90 551 635 13 69',
+        product: 'Closy Yeni Nesil Discord Ticket Botu v14',
+        items: [
+          {
+            id: 'prod_ticket_v14',
+            name: 'Closy Yeni Nesil Discord Ticket Botu v14',
+            price: 118.8,
+            qty: 1
+          }
+        ],
+        amount: 118.8,
+        status: 'completed',
+        date: 'Bugün 19:52',
+        method: 'Kredi/Banka Kartı (Shopier 3D Secure)',
+        licenseKeys: ['CLOSY-TK84-9921-X48A-9921'],
+        invoiceType: 'Bireysel'
+      }
+    ];
 
   const DigiStoreDB = {
     // ─── INITIALIZATION ──────────────────────────────────────────────────
@@ -153,9 +175,15 @@
       if (!localStorage.getItem(STORAGE_KEY_PRODUCTS)) {
         this.saveProducts(DEFAULT_PRODUCTS);
       }
-      if (!localStorage.getItem(STORAGE_KEY_ORDERS)) {
+      
+      const existingOrders = this.getOrders();
+      if (!existingOrders || !existingOrders.length) {
         this.saveOrders(DEFAULT_ORDERS);
+      } else if (!existingOrders.some(o => String(o.id) === 'DS-359765')) {
+        existingOrders.unshift(DEFAULT_ORDERS[0]);
+        this.saveOrders(existingOrders);
       }
+
       if (!localStorage.getItem(STORAGE_KEY_USERS)) {
         this.saveUsers(DEFAULT_USERS);
       }
