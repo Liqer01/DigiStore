@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.15.0"></script>
+<script src="store.js?v=3.16.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -272,6 +272,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  /* Keep live support launcher strictly horizontal pill */
+  #digiSupportLauncher {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
   }
 
   /* Hide live support widget completely when cart is open */
@@ -2488,15 +2496,28 @@ function toggleCart() {
     s.style.right = '0px';
     o.style.display = 'block';
     document.body.classList.add('cart-open');
-    if (launcher) launcher.style.setProperty('display', 'none', 'important');
-    if (win) win.style.setProperty('display', 'none', 'important');
+    if (launcher) {
+      launcher.style.setProperty('display', 'none', 'important');
+      launcher.style.opacity = '0';
+      launcher.style.visibility = 'hidden';
+      launcher.style.pointerEvents = 'none';
+    }
+    if (win) win.style.display = 'none';
     updateCartUI();
   } else {
-    // Sepet kapanıyor -> Canlı destek launcher'ını geri getir
+    // Sepet kapanıyor -> Canlı destek launcher'ını yatay flex olarak geri getir
     s.style.right = '-440px';
     o.style.display = 'none';
     document.body.classList.remove('cart-open');
-    if (launcher) launcher.style.removeProperty('display');
+    if (launcher) {
+      launcher.style.removeProperty('display');
+      launcher.style.setProperty('display', 'flex', 'important');
+      launcher.style.flexDirection = 'row';
+      launcher.style.alignItems = 'center';
+      launcher.style.opacity = '1';
+      launcher.style.visibility = 'visible';
+      launcher.style.pointerEvents = 'auto';
+    }
   }
 }
 

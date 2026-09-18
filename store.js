@@ -2895,6 +2895,12 @@ pause
         color: #ffffff !important;
         box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
       }
+      #digiSupportLauncher {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+      }
     `;
     document.head.appendChild(styleEl);
 
