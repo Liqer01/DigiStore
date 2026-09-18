@@ -1078,27 +1078,74 @@
 
     <!-- 8. AYARLAR TAB -->
     <div id="tab-ayarlar" class="tab-content">
-      <div class="apple-card" style="max-width:680px;">
-        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Sistem &amp; Ödeme Entegrasyonu</h3>
-        <div style="display:flex;flex-direction:column;gap:14px;">
-          <div>
-            <label class="form-label">Mağaza Adı</label>
-            <input type="text" value="DigiStore" id="settingStoreName" />
-          </div>
-          <div>
-            <label class="form-label">Shopier API Anahtarı</label>
-            <input type="password" value="shp_live_992144883141094821" />
-          </div>
-          <div>
-            <label class="form-label">e-Arşiv Fatura Serisi</label>
-            <input type="text" value="DS2026" />
-          </div>
-          <div>
-            <button class="btn-pill-white" onclick="showDynamicIsland('Ayarlar Kaydedildi','Sistem yapılandırması başarıyla güncellendi','success')">
-              Değişiklikleri Kaydet
-            </button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+        
+        <!-- System Settings -->
+        <div class="apple-card">
+          <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Sistem &amp; Ödeme Entegrasyonu</h3>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div>
+              <label class="form-label">Mağaza Adı</label>
+              <input type="text" value="closydev." id="settingStoreName" />
+            </div>
+            <div>
+              <label class="form-label">Shopier API Anahtarı</label>
+              <input type="password" value="shp_live_992144883141094821" />
+            </div>
+            <div>
+              <label class="form-label">e-Arşiv Fatura Serisi</label>
+              <input type="text" value="CD2026" />
+            </div>
+            <div>
+              <button class="btn-pill-white" onclick="showDynamicIsland('Ayarlar Kaydedildi','Sistem yapılandırması başarıyla güncellendi','success')">
+                Değişiklikleri Kaydet
+              </button>
+            </div>
           </div>
         </div>
+
+        <!-- Coupon Management Card -->
+        <div class="apple-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h3 style="font-size:16px;font-weight:700;color:#fff;">İndirim &amp; Promosyon Kuponları</h3>
+            <span id="couponCountBadge" class="status-pill status-ok">0 Kupon</span>
+          </div>
+
+          <!-- New Coupon Form -->
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px;margin-bottom:16px;">
+            <div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:10px;">+ Yeni Kupon Tanımla</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+              <div>
+                <label class="form-label" style="font-size:11px;">Kupon Kodu</label>
+                <input type="text" id="newCouponCode" placeholder="Örn: YAZ20" style="text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11px;">İndirim Türü</label>
+                <select id="newCouponType" style="font-size:12px;padding:8px;">
+                  <option value="percent">Yüzde (%)</option>
+                  <option value="fixed">Sabit Tutar (₺)</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11px;">İndirim Değeri</label>
+                <input type="number" id="newCouponValue" placeholder="Örn: 20" style="font-size:12px;padding:8px;" />
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11px;">Min. Sepet Tutarı (₺)</label>
+                <input type="number" id="newCouponMinSpend" placeholder="0 (Yok)" value="0" style="font-size:12px;padding:8px;" />
+              </div>
+            </div>
+            <button class="btn-pill-white" style="width:100%;font-size:12px;padding:9px;" onclick="createAdminCoupon()">
+              Kuponu Oluştur
+            </button>
+          </div>
+
+          <!-- Existing Coupons List -->
+          <div id="adminCouponsList" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;"></div>
+        </div>
+
       </div>
     </div>
 
@@ -1339,7 +1386,85 @@ function renderAll() {
   renderCustomersView();
   renderLicensesView();
   renderSupportConversations();
+  renderCouponsView();
   populateCategorySelects();
+}
+
+// ─── ADMIN COUPON MANAGEMENT ────────────────────────────────────────
+function renderCouponsView() {
+  if (typeof DigiStoreDB === 'undefined' || !DigiStoreDB.getCoupons) return;
+  const coupons = DigiStoreDB.getCoupons();
+  const list = document.getElementById('adminCouponsList');
+  const badge = document.getElementById('couponCountBadge');
+  if (badge) badge.textContent = coupons.length + ' Kupon';
+  if (!list) return;
+
+  if (!coupons.length) {
+    list.innerHTML = '<div style="text-align:center;padding:24px 10px;color:#86868b;font-size:12.5px;">Henüz tanımlanmış kupon bulunmuyor.</div>';
+    return;
+  }
+
+  list.innerHTML = coupons.map(c => `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#22c55e;font-size:13px;letter-spacing:0.04em;">${c.code}</span>
+          <span class="status-pill status-ok" style="font-size:10.5px;padding:2px 7px;">${c.type === 'percent' ? '%' + c.value + ' İndirim' : '₺' + c.value + ' Sabit'}</span>
+        </div>
+        <div style="font-size:11px;color:#86868b;margin-top:3px;">
+          ${c.minSpend ? 'Min. ₺' + c.minSpend + ' sepet · ' : 'Limitsiz · '}${c.description || ''}
+        </div>
+      </div>
+      <button class="btn-pill-dark" style="color:#ef4444;border-color:rgba(239,68,68,0.25);padding:5px 10px;font-size:11px;" onclick="deleteAdminCoupon('${c.code}')">
+        Sil
+      </button>
+    </div>
+  `).join('');
+}
+
+function createAdminCoupon() {
+  const codeEl = document.getElementById('newCouponCode');
+  const typeEl = document.getElementById('newCouponType');
+  const valEl = document.getElementById('newCouponValue');
+  const minEl = document.getElementById('newCouponMinSpend');
+
+  const code = (codeEl.value || '').trim();
+  const type = typeEl.value;
+  const value = Number(valEl.value) || 0;
+  const minSpend = Number(minEl.value) || 0;
+
+  if (!code) {
+    showDynamicIsland('Hata', 'Lütfen bir kupon kodu girin.', 'error');
+    return;
+  }
+  if (value <= 0) {
+    showDynamicIsland('Hata', 'Geçerli bir indirim değeri girin.', 'error');
+    return;
+  }
+
+  const res = DigiStoreDB.addCoupon({ code, type, value, minSpend });
+  if (!res.success) {
+    showDynamicIsland('Hata', res.error, 'error');
+    return;
+  }
+
+  codeEl.value = '';
+  valEl.value = '';
+  minEl.value = '0';
+  renderCouponsView();
+  showDynamicIsland('Kupon Eklendi', code + ' kuponu başarıyla oluşturuldu.', 'success');
+}
+
+function deleteAdminCoupon(code) {
+  openIosConfirm(
+    'Kuponu Sil',
+    code + ' kodlu kuponu silmek istediğinize emin misiniz?',
+    () => {
+      DigiStoreDB.deleteCoupon(code);
+      renderCouponsView();
+      showDynamicIsland('Kupon Silindi', code + ' kuponu kaldırıldı.', 'success');
+    }
+  );
 }
 
 // ─── STATS ──────────────────────────────────────────────────────────

@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.16.0"></script>
+<script src="store.js?v=3.18.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2111,9 +2111,38 @@
   <div id="cartItems" style="display:flex;flex-direction:column;gap:12px;flex:1;"></div>
 
   <div id="cartFooter" style="display:none;margin-top:20px;border-top:1px solid rgba(255,255,255,0.08);padding-top:18px;">
-    <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;color:#86868b;">
+    <!-- COUPON / PROMO CODE SECTION -->
+    <div id="cartCouponWrap" style="margin-bottom:16px;">
+      <div id="cartCouponInputBox" style="display:flex;gap:8px;">
+        <input type="text" id="cartCouponInput" placeholder="İndirim Kodu Girin" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;font-size:12.5px;color:#fff;text-transform:uppercase;font-family:var(--font-mono);outline:none;letter-spacing:0.04em;" onkeydown="if(event.key==='Enter') applyCartCoupon()">
+        <button onclick="applyCartCoupon()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 14px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+          Uygula
+        </button>
+      </div>
+      <div id="cartCouponError" style="display:none;font-size:11.5px;color:#ef4444;margin-top:6px;font-weight:500;"></div>
+      <div id="cartCouponApplied" style="display:none;align-items:center;justify-content:space-between;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:8px 12px;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="cartCouponCodeTag" style="font-weight:700;color:#22c55e;font-size:12px;font-family:var(--font-mono);"></span>
+          <span id="cartCouponDescTag" style="color:#86868b;font-size:11.5px;"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="cartCouponDiscountValue" style="color:#22c55e;font-weight:700;font-size:12.5px;font-family:var(--font-mono);"></span>
+          <button onclick="removeCartCoupon()" style="background:none;border:none;color:#ef4444;cursor:pointer;padding:2px;display:flex;align-items:center;" title="Kuponu Kaldır">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTALS -->
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#86868b;">
       <span>Ara Toplam</span>
       <span id="cartSubtotal" style="color:#fff;font-weight:600;">₺0</span>
+    </div>
+    <div id="cartDiscountRow" style="display:none;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#22c55e;">
+      <span>Kupon İndirimi</span>
+      <span id="cartDiscountAmount" style="font-weight:700;font-family:var(--font-mono);">-₺0</span>
     </div>
     <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#86868b;">
       <span>KDV (%20)</span>
@@ -2432,7 +2461,6 @@ function addToCart(id) {
 function updateCartUI() {
   const count = cart.reduce((s,x) => s + x.qty, 0);
   const total = cart.reduce((s,x) => s + x.price * x.qty, 0);
-  const kdv = total * 0.20;
 
   document.getElementById('cartCount').textContent = count;
   document.getElementById('cartTotalNav').textContent = '₺' + total.toLocaleString('tr-TR');
@@ -2475,10 +2503,91 @@ function updateCartUI() {
       </div>
     </div>`).join('');
 
+  // Coupon & Discount calculation
+  let discount = 0;
+  let appliedCoupon = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getAppliedCoupon() : null;
+  if (appliedCoupon && total > 0) {
+    const check = DigiStoreDB.validateCoupon(appliedCoupon.code, total);
+    if (check.valid) {
+      discount = check.discount;
+      appliedCoupon = check.coupon;
+    } else {
+      DigiStoreDB.removeAppliedCoupon();
+      appliedCoupon = null;
+    }
+  } else {
+    appliedCoupon = null;
+  }
+
+  // Update Coupon Card UI
+  const couponInputBox = document.getElementById('cartCouponInputBox');
+  const couponApplied = document.getElementById('cartCouponApplied');
+  const couponError = document.getElementById('cartCouponError');
+  const discountRow = document.getElementById('cartDiscountRow');
+
+  if (couponError) couponError.style.display = 'none';
+
+  if (appliedCoupon && discount > 0) {
+    if (couponInputBox) couponInputBox.style.display = 'none';
+    if (couponApplied) {
+      couponApplied.style.display = 'flex';
+      document.getElementById('cartCouponCodeTag').textContent = appliedCoupon.code;
+      document.getElementById('cartCouponDescTag').textContent = appliedCoupon.description || '';
+      document.getElementById('cartCouponDiscountValue').textContent = '-₺' + discount.toLocaleString('tr-TR');
+    }
+    if (discountRow) {
+      discountRow.style.display = 'flex';
+      document.getElementById('cartDiscountAmount').textContent = '-₺' + discount.toLocaleString('tr-TR');
+    }
+  } else {
+    if (couponInputBox) couponInputBox.style.display = 'flex';
+    if (couponApplied) couponApplied.style.display = 'none';
+    if (discountRow) discountRow.style.display = 'none';
+  }
+
+  const subtotalAfterDiscount = Math.max(0, total - discount);
+  const kdv = subtotalAfterDiscount * 0.20;
+  const grandTotal = subtotalAfterDiscount + kdv;
+
   document.getElementById('cartSubtotal').textContent = '₺' + total.toLocaleString('tr-TR');
-  document.getElementById('cartKdv').textContent = '₺' + (kdv).toFixed(0);
-  document.getElementById('cartTotal').textContent = '₺' + (total + kdv).toFixed(0);
+  document.getElementById('cartKdv').textContent = '₺' + kdv.toFixed(0);
+  document.getElementById('cartTotal').textContent = '₺' + grandTotal.toFixed(0);
   document.getElementById('cartFooter').style.display = 'block';
+}
+
+function applyCartCoupon() {
+  const input = document.getElementById('cartCouponInput');
+  const err = document.getElementById('cartCouponError');
+  if (!input) return;
+  const code = (input.value || '').trim();
+  if (!code) {
+    if (err) { err.textContent = 'Lütfen bir indirim kodu girin.'; err.style.display = 'block'; }
+    return;
+  }
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  if (total <= 0) {
+    if (err) { err.textContent = 'Kupon uygulamak için sepetinizde ürün bulunmalıdır.'; err.style.display = 'block'; }
+    return;
+  }
+  if (typeof DigiStoreDB === 'undefined') return;
+  const res = DigiStoreDB.validateCoupon(code, total);
+  if (!res.valid) {
+    if (err) { err.textContent = res.error; err.style.display = 'block'; }
+    return;
+  }
+  if (err) err.style.display = 'none';
+  input.value = '';
+  DigiStoreDB.setAppliedCoupon(res.coupon);
+  updateCartUI();
+  showToast('Tebrikler! ' + res.coupon.code + ' ile ₺' + res.discount + ' indirim uygulandı.');
+}
+
+function removeCartCoupon() {
+  if (typeof DigiStoreDB !== 'undefined') {
+    DigiStoreDB.removeAppliedCoupon();
+  }
+  updateCartUI();
+  showToast('İndirim kuponu kaldırıldı.');
 }
 
 function changeQty(id,delta){const i=cart.find(x=>x.id===id);if(i){i.qty+=delta;if(i.qty<=0)removeFromCart(id);else updateCartUI();}}

@@ -22,8 +22,17 @@
   const STORAGE_KEY_USERS = 'digistore_users_v3';
   const STORAGE_KEY_SESSION = 'digistore_session_v3';
   const STORAGE_KEY_EMAILS = 'digistore_emails_v3';
+  const STORAGE_KEY_COUPONS = 'closydev_coupons_v1';
+  const STORAGE_KEY_APPLIED_COUPON = 'closydev_applied_coupon';
 
-    const DEFAULT_USERS = [];
+  const DEFAULT_COUPONS = [
+    { code: 'CLOSY10', type: 'percent', value: 10, minSpend: 0, description: '%10 Genel İndirim' },
+    { code: 'CLOSY20', type: 'percent', value: 20, minSpend: 150, description: '150 TL Üzeri %20 İndirim' },
+    { code: 'DISCORD50', type: 'percent', value: 50, minSpend: 250, description: 'Discord Özel %50 İndirim' },
+    { code: 'HOSGELDIN', type: 'fixed', value: 25, minSpend: 80, description: '80 TL Üzeri 25 TL İndirim' }
+  ];
+
+  const DEFAULT_USERS = [];
 
   const DEFAULT_PROFILE = null;
   const ADMIN_ACCOUNT = {
@@ -1260,7 +1269,9 @@
         date: orderData.date || ('Bugün ' + this.getTurkeyTimeStr()),
         method: orderData.method || 'Shopier 3D Secure',
         licenseKeys: isCompleted ? (orderData.licenseKeys || []) : [],
-        invoiceType: orderData.invoiceType || 'Bireysel'
+        invoiceType: orderData.invoiceType || 'Bireysel',
+        couponCode: orderData.couponCode || null,
+        discountAmount: Number(orderData.discountAmount) || 0
       };
 
       orders.unshift(newOrder);
@@ -1294,6 +1305,112 @@
       } catch (e) {}
 
       return newOrder;
+    },
+
+    // ── CLOSYDEV COUPON & DISCOUNT ENGINE ──
+    getCoupons() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_COUPONS);
+        if (!raw) {
+          localStorage.setItem(STORAGE_KEY_COUPONS, JSON.stringify(DEFAULT_COUPONS));
+          return [...DEFAULT_COUPONS];
+        }
+        return JSON.parse(raw);
+      } catch(e) {
+        return [...DEFAULT_COUPONS];
+      }
+    },
+
+    saveCoupons(coupons) {
+      localStorage.setItem(STORAGE_KEY_COUPONS, JSON.stringify(coupons));
+      this.broadcastChange('coupons');
+    },
+
+    addCoupon({ code, type = 'percent', value = 10, minSpend = 0, description = '' }) {
+      if (!code) return { success: false, error: 'Kupon kodu gereklidir.' };
+      const cleanCode = String(code).trim().toUpperCase();
+      const coupons = this.getCoupons();
+      if (coupons.some(c => c.code.toUpperCase() === cleanCode)) {
+        return { success: false, error: 'Bu kupon kodu zaten tanımlı.' };
+      }
+      const newCoupon = {
+        code: cleanCode,
+        type: type === 'fixed' ? 'fixed' : 'percent',
+        value: Number(value) || 0,
+        minSpend: Number(minSpend) || 0,
+        description: description || (type === 'fixed' ? `₺${value} Sabit İndirim` : `%${value} İndirim`)
+      };
+      coupons.push(newCoupon);
+      this.saveCoupons(coupons);
+      return { success: true, coupon: newCoupon };
+    },
+
+    deleteCoupon(code) {
+      const cleanCode = String(code).trim().toUpperCase();
+      let coupons = this.getCoupons();
+      coupons = coupons.filter(c => c.code.toUpperCase() !== cleanCode);
+      this.saveCoupons(coupons);
+      const applied = this.getAppliedCoupon();
+      if (applied && applied.code && applied.code.toUpperCase() === cleanCode) {
+        this.removeAppliedCoupon();
+      }
+      return true;
+    },
+
+    validateCoupon(code, subtotal = 0) {
+      if (!code || typeof code !== 'string') {
+        return { valid: false, error: 'Lütfen bir indirim kodu girin.' };
+      }
+      const cleanCode = code.trim().toUpperCase();
+      const coupons = this.getCoupons();
+      const coupon = coupons.find(c => c.code.toUpperCase() === cleanCode);
+      if (!coupon) {
+        return { valid: false, error: 'Geçersiz veya süresi dolmuş kupon kodu.' };
+      }
+      const numSubtotal = Number(subtotal) || 0;
+      if (coupon.minSpend && numSubtotal < coupon.minSpend) {
+        return {
+          valid: false,
+          error: `Bu kupon minimum ₺${coupon.minSpend} tutarındaki sepetlerde geçerlidir.`
+        };
+      }
+      let discount = 0;
+      if (coupon.type === 'percent') {
+        discount = Math.round((numSubtotal * coupon.value) / 100);
+      } else {
+        discount = Math.min(coupon.value, numSubtotal);
+      }
+      return {
+        valid: true,
+        coupon: coupon,
+        discount: discount,
+        subtotalAfterDiscount: Math.max(0, numSubtotal - discount)
+      };
+    },
+
+    getAppliedCoupon() {
+      try {
+        const raw = sessionStorage.getItem(STORAGE_KEY_APPLIED_COUPON) || localStorage.getItem(STORAGE_KEY_APPLIED_COUPON);
+        return raw ? JSON.parse(raw) : null;
+      } catch(e) {
+        return null;
+      }
+    },
+
+    setAppliedCoupon(couponData) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY_APPLIED_COUPON, JSON.stringify(couponData));
+        localStorage.setItem(STORAGE_KEY_APPLIED_COUPON, JSON.stringify(couponData));
+      } catch(e) {}
+      this.broadcastChange('applied_coupon');
+    },
+
+    removeAppliedCoupon() {
+      try {
+        sessionStorage.removeItem(STORAGE_KEY_APPLIED_COUPON);
+        localStorage.removeItem(STORAGE_KEY_APPLIED_COUPON);
+      } catch(e) {}
+      this.broadcastChange('applied_coupon');
     },
 
     async syncRemoteOrders() {
