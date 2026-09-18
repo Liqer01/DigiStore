@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.14.0"></script>
+<script src="store.js?v=3.15.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -272,6 +272,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  /* Hide live support widget completely when cart is open */
+  body.cart-open #digiSupportLauncher,
+  body.cart-open #digiSupportWindow {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transform: translateY(20px) scale(0.9) !important;
   }
 
   @media (max-width: 520px) {
@@ -2082,7 +2092,7 @@
 </footer>
 
 <!-- SLIDING CART SIDEBAR -->
-<div id="cartSidebar" style="position:fixed;top:0;right:-440px;width:420px;height:100vh;background:#09090c;border-left:1px solid rgba(255,255,255,0.1);z-index:500;transition:right .3s cubic-bezier(0.16,1,0.3,1);padding:26px;overflow-y:auto;display:flex;flex-direction:column;">
+<div id="cartSidebar" style="position:fixed;top:0;right:-440px;width:420px;height:100vh;background:#09090c;border-left:1px solid rgba(255,255,255,0.1);z-index:100000;transition:right .3s cubic-bezier(0.16,1,0.3,1);padding:26px;overflow-y:auto;display:flex;flex-direction:column;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);">
     <h3 style="font-size:17px;font-weight:700;color:#fff;">Alışveriş Sepeti</h3>
     <button onclick="toggleCart()" style="background:rgba(255,255,255,0.06);border:none;color:#86868b;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">
@@ -2110,7 +2120,7 @@
     </button>
   </div>
 </div>
-<div id="cartOverlay" onclick="toggleCart()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:499;"></div>
+<div id="cartOverlay" onclick="toggleCart()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:99999;"></div>
 
 
 <!-- PRODUCT DETAIL MODAL -->
@@ -2431,17 +2441,28 @@ function updateCartUI() {
   }
 
   items.innerHTML = cart.map(p => `
-    <div style="display:flex;gap:12px;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px;">
+    <div style="display:flex;gap:12px;align-items:center;background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:12px 14px;transition:border-color 0.2s;">
       <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
-        <div style="font-size:13px;color:#86868b;">₺${p.price}</div>
+        <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${p.name}">${p.name}</div>
+        <div style="font-size:13px;color:#a1a1aa;margin-top:2px;font-weight:500;">₺${p.price}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <button onclick="changeQty(${p.id},-1)" style="width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#fff;cursor:pointer;">-</button>
-        <span style="font-size:12px;color:#fff;min-width:14px;text-align:center;">${p.qty}</span>
-        <button onclick="changeQty(${p.id},1)" style="width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#fff;cursor:pointer;">+</button>
-        <button onclick="removeFromCart(${p.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;margin-left:6px;display:flex;align-items:center;padding:4px;border-radius:6px;" title="Kaldır">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9999px;padding:2px 4px;gap:2px;">
+          <button onclick="changeQty(${p.id},-1)" style="width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:#d4d4d8;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#d4d4d8';" title="Azalt">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <span style="font-size:12px;font-weight:700;color:#ffffff;min-width:20px;text-align:center;font-family:var(--font-mono);user-select:none;line-height:1;">${p.qty}</span>
+          <button onclick="changeQty(${p.id},1)" style="width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:#d4d4d8;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#d4d4d8';" title="Artır">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+        </div>
+        <button onclick="removeFromCart(${p.id})" style="width:28px;height:28px;border-radius:8px;border:1px solid rgba(239,68,68,0.22);background:rgba(239,68,68,0.08);color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)';this.style.borderColor='rgba(239,68,68,0.45)';this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(239,68,68,0.08)';this.style.borderColor='rgba(239,68,68,0.22)';this.style.transform='scale(1)';" title="Sepetten Kaldır">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
         </button>
       </div>
     </div>`).join('');
@@ -2458,10 +2479,25 @@ function removeFromCart(id){cart=cart.filter(x=>x.id!==id);updateCartUI();}
 function toggleCart() {
   const s = document.getElementById('cartSidebar');
   const o = document.getElementById('cartOverlay');
+  const launcher = document.getElementById('digiSupportLauncher');
+  const win = document.getElementById('digiSupportWindow');
   const open = s.style.right === '0px';
-  s.style.right = open ? '-440px' : '0px';
-  o.style.display = open ? 'none' : 'block';
-  if(!open) updateCartUI();
+
+  if (!open) {
+    // Sepet açılıyor -> Canlı destek launcher ve penceresini gizle
+    s.style.right = '0px';
+    o.style.display = 'block';
+    document.body.classList.add('cart-open');
+    if (launcher) launcher.style.setProperty('display', 'none', 'important');
+    if (win) win.style.setProperty('display', 'none', 'important');
+    updateCartUI();
+  } else {
+    // Sepet kapanıyor -> Canlı destek launcher'ını geri getir
+    s.style.right = '-440px';
+    o.style.display = 'none';
+    document.body.classList.remove('cart-open');
+    if (launcher) launcher.style.removeProperty('display');
+  }
 }
 
 function goCheckout() {
