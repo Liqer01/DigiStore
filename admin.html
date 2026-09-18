@@ -2128,7 +2128,9 @@ window.alert = function(msg) {
 };
 
 // Listen to changes from storefront or checkout tabs
-DigiStoreDB.onUpdate(() => {
+DigiStoreDB.onUpdate((topic) => {
+  // Support chat polling renderAll tetiklemesin (titreme problemi)
+  if (topic === 'digistore_support_chats') return;
   renderAll();
 });
 
@@ -2149,7 +2151,7 @@ function updateLiveClock() {
 updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
-// Realtime Canlı Destek Bus Dinleyicisi (Müşteri mesajları anında admin ekranına düşer)
+// Realtime Canli Destek Bus Dinleyicisi (Musteri mesajlari aninda admin ekranina duşer)
 if (typeof BroadcastChannel !== 'undefined') {
   try {
     const adminSupportBus = new BroadcastChannel('digistore_support_bus');
@@ -2163,8 +2165,8 @@ if (typeof BroadcastChannel !== 'undefined') {
         updateStats();
 
         if (ev.data.type === 'new_message' && ev.data.sender === 'user') {
-          const senderTitle = (ev.data.userName || 'Müşteri') + (ev.data.userEmail ? ' (' + ev.data.userEmail + ')' : '');
-          showDynamicIsland('Yeni Canlı Destek Mesajı', senderTitle + ': ' + (ev.data.message?.text || ''), 'success');
+          const senderTitle = (ev.data.userName || 'Musteri') + (ev.data.userEmail ? ' (' + ev.data.userEmail + ')' : '');
+          showDynamicIsland('Yeni Canli Destek Mesaji', senderTitle + ': ' + (ev.data.message?.text || ''), 'success');
         }
       }
     };
@@ -2190,7 +2192,7 @@ try {
   console.error('Admin dashboard initial render error:', err);
 }
 
-// Canlı Destek Senkronizasyon Döngüsü (Her 2.5 saniyede sunucudan tüm yeni mesajları canlı çeker)
+// Canli Destek Senkronizasyon Dongusu — sadece support panelini guncelle, renderAll() CAGIRMA
 setInterval(async () => {
   if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncSupportWithServer === 'function') {
     await DigiStoreDB.syncSupportWithServer();
@@ -2198,14 +2200,19 @@ setInterval(async () => {
     renderActiveSupportChat();
     updateStats();
   }
-}, 2500);
+}, 4000);
 
-// Background order synchronizer (Polls every 8 seconds for live incoming orders)
+// Background order synchronizer — sadece yeni siparis geldiyse renderAll
 setInterval(() => {
   if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
-    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+    const beforeCount = (DigiStoreDB.getOrders() || []).length;
+    DigiStoreDB.syncRemoteOrders().then((orders) => {
+      if (orders && orders.length !== beforeCount) {
+        renderAll();
+      }
+    });
   }
-}, 8000);
+}, 12000);
 </script>
 </body>
 </html>
