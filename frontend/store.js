@@ -1222,19 +1222,23 @@
         const res = await fetch(this.getApiBaseUrl() + '/api/orders');
         if (res.ok) {
           const data = await res.json();
-          if (data && Array.isArray(data.orders) && data.orders.length) {
+          // Hem { success:true, orders:[...] } hem de direkt [...] formatini destekle
+          const remoteOrders = Array.isArray(data) ? data : (data && Array.isArray(data.orders) ? data.orders : null);
+          if (remoteOrders && remoteOrders.length) {
             const local = this.getOrders();
             let changed = false;
-            data.orders.forEach(ro => {
+            remoteOrders.forEach(ro => {
               const idx = local.findIndex(lo => String(lo.id) === String(ro.id));
               if (idx === -1) {
                 local.unshift(ro);
                 changed = true;
               } else {
+                // Status guncelle
                 if (ro.status && local[idx].status !== ro.status) {
                   local[idx].status = ro.status;
                   changed = true;
                 }
+                // Lisans anahtarlarini merge et
                 if (ro.licenseKeys && ro.licenseKeys.length && (!local[idx].licenseKeys || !local[idx].licenseKeys.length)) {
                   local[idx].licenseKeys = ro.licenseKeys;
                   changed = true;
@@ -1248,9 +1252,12 @@
             return local;
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        // Ag hatasi - localStorage'daki mevcut veriyi kullan
+      }
       return this.getOrders();
     },
+
 
     updateOrderStatus(orderId, newStatus) {
       const orders = this.getOrders();

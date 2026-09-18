@@ -2468,18 +2468,30 @@ function closeEmailModal() {
 function updateDashboardKpis() {
   if (typeof DigiStoreDB === 'undefined') return;
   const user = DigiStoreDB.getUserProfile() || {};
-  const orders = DigiStoreDB.getUserOrders(user.email);
-  const licenses = DigiStoreDB.getUserLicenses(user.email);
-  
+  const isAdmin = DigiStoreDB.isAdminOperator && DigiStoreDB.isAdminOperator();
+
+  // Admin ise tum siparisleri say, normal kullanici ise kendi email'i ile filtrele
+  let orders = [];
+  if (isAdmin) {
+    orders = DigiStoreDB.getOrders ? DigiStoreDB.getOrders() : [];
+  } else {
+    orders = user.email ? DigiStoreDB.getUserOrders(user.email) : [];
+  }
+
   const elOrders = document.getElementById('statTotalOrders');
   if (elOrders) elOrders.textContent = orders.length;
-  
+
+  // Aktif lisans sayisi: completed status + licenseKeys olan siparisler
+  let licenseCount = 0;
+  orders.forEach(o => {
+    if (o.status === 'completed' && o.licenseKeys && o.licenseKeys.length > 0) {
+      licenseCount += o.licenseKeys.length;
+    }
+  });
   const elLicenses = document.getElementById('statActiveLicenses');
-  if (elLicenses) {
-    const activeCount = licenses.filter(l => (l.status || '').toLowerCase() === 'aktif' || !l.status).length;
-    elLicenses.textContent = activeCount;
-  }
+  if (elLicenses) elLicenses.textContent = licenseCount;
 }
+
 
 function copyOrderId(id) {
   if (!id) return;
@@ -3135,10 +3147,26 @@ if (typeof DigiStoreDB !== 'undefined') {
 renderAllData();
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.initGoogleIdentityServices();
+
+  // Ilk yuklemede sunucudan siparisleri cek
   if (typeof DigiStoreDB.syncRemoteOrders === 'function') {
-    DigiStoreDB.syncRemoteOrders().then(() => renderAllData());
+    DigiStoreDB.syncRemoteOrders().then(() => {
+      renderAllData();
+      updateDashboardKpis();
+    });
   }
+
+  // Her 30 saniyede bir yenile — sayfa titremeden canlı senkronize kalir
+  setInterval(() => {
+    if (typeof DigiStoreDB.syncRemoteOrders === 'function') {
+      DigiStoreDB.syncRemoteOrders().then(() => {
+        renderAllData();
+        updateDashboardKpis();
+      });
+    }
+  }, 30000);
 }
+
 if (window.location.hash) {
   const initialTab = window.location.hash.replace('#', '');
   if (initialTab) {
