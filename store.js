@@ -217,6 +217,14 @@
         if (!list.some(u => u.email && u.email.toLowerCase() === 'admin@digistore.com')) {
           list.unshift(ADMIN_ACCOUNT);
         }
+        list.forEach(u => {
+          if (u.email && u.email.toLowerCase() === 'erenzeybek01@gmail.com') {
+            u.isAdmin = false;
+            if (u.role === 'Yönetici (Admin)' || (u.role && u.role.toLowerCase().includes('admin'))) {
+              u.role = 'Müşteri';
+            }
+          }
+        });
         return list;
       } catch (e) {
         return [ADMIN_ACCOUNT];
@@ -241,7 +249,10 @@
     isAdmin() {
       if (!this.isLoggedIn()) return false;
       const u = this.getCurrentUser();
-      return !!(u && (u.isAdmin === true || (u.email && u.email.toLowerCase() === 'admin@digistore.com') || u.role === 'Yönetici (Admin)'));
+      if (!u) return false;
+      const email = (u.email || '').toLowerCase().trim();
+      if (email === 'erenzeybek01@gmail.com') return false;
+      return !!(u.isAdmin === true || email === 'admin@digistore.com' || u.role === 'Yönetici (Admin)');
     },
 
     isLoggedIn() {
@@ -1060,13 +1071,12 @@
         if (matched.length > 0) return matched;
       }
 
-      // Eger dogrudan eslesme yoksa ama kullanici admin / sistem yoneticisi ise tum siparisleri goster
-      if (this.isAdminOperator() || norm === 'erenzeybek01@gmail.com' || norm === 'admin@digistore.com') {
+      // Eger dogrudan eslesme yoksa ama kullanici sistem yoneticisi ise tum siparisleri goster
+      if (this.isAdmin()) {
         return orders;
       }
 
-      // Tarayicida siparisler varsa (misafir alisveris veya sonradan Google ile giris yapilmis durumlar)
-      return orders;
+      return [];
     },
 
     getUserLicenses(userEmail) {
@@ -2330,17 +2340,14 @@ pause
       };
     },
 
-    // ─── LIVE SUPPORT (CANLI DESTEK - GERCEK YONETICI admin@digistore.com) ───
+    // ─── LIVE SUPPORT (CANLI DESTEK - GERCEK SISTEM YONETICISI) ───
     isAdminOperator() {
+      if (!this.isLoggedIn()) return false;
       const user = (typeof this.getUserProfile === 'function') ? this.getUserProfile() : null;
       if (!user) return false;
       const email = (user.email || '').toLowerCase().trim();
-      const role = (user.role || '').toLowerCase().trim();
-      return email === 'admin@digistore.com' || 
-             email === 'erenzeybek01@gmail.com' || 
-             role.includes('admin') || 
-             role.includes('yonetici') || 
-             role.includes('yönetici');
+      if (email === 'erenzeybek01@gmail.com') return false;
+      return this.isAdmin();
     },
 
     deduplicateMessages(messages) {
