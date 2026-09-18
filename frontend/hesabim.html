@@ -29,7 +29,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=2.5"></script>
+<script src="store.js?v=3.14.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -663,59 +663,103 @@
     transform: scale(0.985);
   }
 
-  /* Dynamic Island */
+  /* Closy Elite Dynamic Island Toast */
   .dynamic-island {
     position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-90px) scale(0.9);
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    top: 20px;
+    left: 20px;
+    transform: translateX(-140%) scale(0.92);
+    background: rgba(12, 12, 18, 0.88);
+    backdrop-filter: blur(32px) saturate(220%);
+    -webkit-backdrop-filter: blur(32px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 9999px;
-    padding: 10px 18px;
+    padding: 8px 18px 8px 9px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    z-index: 999998;
+    gap: 13px;
+    box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    z-index: 999999;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    max-width: 440px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   .dynamic-island.active {
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
 
-  .island-icon {
-    width: 26px;
-    height: 26px;
+  .island-brand-box {
+    position: relative;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(59, 130, 246, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+  }
+
+  .island-brand-svg {
+    width: 17px;
+    height: 17px;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
   }
 
   .island-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .island-title {
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    white-space: nowrap;
   }
 
   .island-sub {
     font-size: 11.5px;
-    color: #86868b;
-    line-height: 1.2;
+    color: #94a3b8;
+    line-height: 1.3;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+
+  .island-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .dynamic-island {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      max-width: calc(100vw - 28px);
+      transform: translateY(-130%) scale(0.92);
+    }
+    .dynamic-island.active {
+      transform: translateY(0) scale(1);
+    }
   }
   /* Apple-Grade OAuth Provider Buttons */
   .btn-oauth-provider {
@@ -935,6 +979,92 @@
   .light-theme .brand-text {
     color: #09090b !important;
   }
+  /* ─── ULTRA-COOL WHITE LIGHT SWEEP & BEAM FOR CLOSYDEV. ─── */
+  @keyframes whiteLightSweep {
+    0% {
+      background-position: -200% center;
+    }
+    30%, 100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes whiteLaserBeam {
+    0% {
+      left: -150%;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    40% {
+      left: 200%;
+      opacity: 1;
+    }
+    41%, 100% {
+      left: 200%;
+      opacity: 0;
+    }
+  }
+
+  .brand-light-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    overflow: hidden;
+    padding: 3px 6px;
+    border-radius: 8px;
+    user-select: none;
+    text-decoration: none;
+  }
+  .brand-light-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 25%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.08) 75%,
+      transparent 100%
+    );
+    transform: skewX(-25deg);
+    animation: whiteLaserBeam 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    filter: blur(1.5px);
+  }
+
+  .brand-text {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1;
+    white-space: nowrap;
+    background: linear-gradient(
+      115deg,
+      #cbd5e1 0%,
+      #ffffff 28%,
+      #ffffff 42%,
+      rgba(255, 255, 255, 0.35) 47%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 1) 53%,
+      #ffffff 58%,
+      #cbd5e1 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: whiteLightSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.45));
+  }
+
   .light-theme .nav-brand-link svg path {
     fill: #09090b !important;
   }
@@ -1010,15 +1140,18 @@
 <div class="dashboard-ambient-glow" style="top:-140px;left:50%;transform:translateX(-50%);width:960px;height:520px;background:radial-gradient(circle, rgba(168,85,247,0.09) 0%, rgba(59,130,246,0.04) 50%, transparent 75%);filter:blur(70px);"></div>
 <div class="dashboard-ambient-glow" style="bottom:5%;right:2%;width:550px;height:420px;background:radial-gradient(circle, rgba(10,132,255,0.05) 0%, transparent 70%);filter:blur(65px);"></div>
 
-<!-- Dynamic Island -->
+<!-- Closy Minimal Pill Notification Toast -->
 <div id="dynamicIsland" class="dynamic-island">
-  <div class="island-icon" id="islandIcon">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <div class="island-brand-box">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="island-brand-svg">
+      <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+    </svg>
   </div>
   <div class="island-text">
     <span class="island-title" id="islandTitle">Bildirim</span>
     <span class="island-sub" id="islandSub">İşlem tamamlandı</span>
   </div>
+  <div class="island-indicator" id="islandIndicator"></div>
 </div>
 
 <!-- Apple Ultra Cyber Confirmation / Alert Modal -->
@@ -1260,7 +1393,7 @@
 <nav class="dash-nav-enter" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
   
   <!-- closydev. Brand Logo -->
-  <a href="index.html" class="nav-brand-link" title="closydev." style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+  <a href="index.html" class="nav-brand-link brand-light-wrap" title="closydev." style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,255,255,0.6));">
       <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
     </svg>
@@ -1713,7 +1846,7 @@
               <span>6698 Sayılı KVKK Kapsamında Veri Sahibi Hakları (Madde 11)</span>
             </h3>
             <p style="font-size:12.5px;color:#86868b;margin-top:4px;line-height:1.5;">
-              DigiStore Bilişim Ticaret A.Ş. nezdinde saklanan tüm kişisel kimlik, işlem ve sipariş verilerinizi anında resmi JSON olarak indirebilir veya Unutulma Hakkı kapsamında sildirebilirsiniz.
+              closydev. Bilişim ve Teknoloji Ticaret A.Ş. nezdinde saklanan tüm kişisel kimlik, işlem ve sipariş verilerinizi anında resmi JSON olarak indirebilir veya Unutulma Hakkı kapsamında sildirebilirsiniz.
             </p>
           </div>
           <span class="status-badge badge-ok">
@@ -2711,7 +2844,7 @@ function downloadInvoice(orderId) {
   <div class="header">
     <div>
       <span class="gib-badge">e-ARŞİV FATURA</span>
-      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">DigiStore Bilişim Ticaret A.Ş.</h1>
+      <h1 style="font-size: 22px; margin: 0 0 6px; color: #0f172a;">closydev. Bilişim ve Teknoloji Ticaret A.Ş.</h1>
       <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.5;">
         Büyükdere Cad. No: 193 Levent, Beşiktaş / İstanbul<br/>
         Vergi Dairesi: Boğaziçi V.D. | VKN: 2940884210 | Mersis: 029408842100001
@@ -3110,21 +3243,26 @@ function showDynamicIsland(title, sub, type = 'success') {
   const island = document.getElementById('dynamicIsland');
   if (!island) return;
 
-  document.getElementById('islandTitle').textContent = title;
-  document.getElementById('islandSub').textContent = sub;
+  const titleEl = document.getElementById('islandTitle');
+  const subEl = document.getElementById('islandSub');
+  const indEl = document.getElementById('islandIndicator');
 
-  const icon = document.getElementById('islandIcon');
-  if (type === 'success') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
-  } else if (type === 'copy') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-  } else {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
+
+  let color = '#22c55e';
+  if (type === 'copy' || type === 'info') color = '#3b82f6';
+  else if (type === 'error') color = '#ef4444';
+  else if (type === 'warning') color = '#f59e0b';
+
+  if (indEl) {
+    indEl.style.background = color;
+    indEl.style.boxShadow = '0 0 10px ' + color;
   }
 
   island.classList.add('active');
   if (islandTimeout) clearTimeout(islandTimeout);
-  islandTimeout = setTimeout(() => { island.classList.remove('active'); }, 3200);
+  islandTimeout = setTimeout(() => { island.classList.remove('active'); }, 3400);
 }
 
 window.alert = function(msg) {

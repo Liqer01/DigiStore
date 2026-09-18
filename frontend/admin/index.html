@@ -478,68 +478,120 @@
     background: rgba(255, 255, 255, 0.12);
   }
 
-  /* Dynamic Island */
+  /* Closy Elite Dynamic Island Toast */
   .dynamic-island {
     position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-90px) scale(0.9);
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    top: 20px;
+    left: 20px;
+    transform: translateX(-140%) scale(0.92);
+    background: rgba(12, 12, 18, 0.88);
+    backdrop-filter: blur(32px) saturate(220%);
+    -webkit-backdrop-filter: blur(32px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 9999px;
-    padding: 10px 18px;
+    padding: 8px 18px 8px 9px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    z-index: 999998;
+    gap: 13px;
+    box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    z-index: 999999;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    max-width: 440px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
+
   .dynamic-island.active {
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
-  .island-icon {
-    width: 26px;
-    height: 26px;
+
+  .island-brand-box {
+    position: relative;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(59, 130, 246, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
   }
+
+  .island-brand-svg {
+    width: 17px;
+    height: 17px;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
+  }
+
   .island-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
+
   .island-title {
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    white-space: nowrap;
   }
+
   .island-sub {
     font-size: 11.5px;
-    color: #86868b;
-    line-height: 1.2;
+    color: #94a3b8;
+    line-height: 1.3;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+
+  .island-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .dynamic-island {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      max-width: calc(100vw - 28px);
+      transform: translateY(-130%) scale(0.92);
+    }
+    .dynamic-island.active {
+      transform: translateY(0) scale(1);
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- Dynamic Island -->
+<!-- Closy Minimal Pill Notification Toast -->
 <div id="dynamicIsland" class="dynamic-island">
-  <div class="island-icon" id="islandIcon">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <div class="island-brand-box">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="island-brand-svg">
+      <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+    </svg>
   </div>
   <div class="island-text">
     <span class="island-title" id="islandTitle">Yönetim Bildirimi</span>
     <span class="island-sub" id="islandSub">İşlem başarıyla tamamlandı</span>
   </div>
+  <div class="island-indicator" id="islandIndicator"></div>
 </div>
 
 <!-- iOS Alert Modal -->
@@ -629,7 +681,7 @@
 
     <div class="nav-item" onclick="switchTab('guard',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-      DigiGuard Kalkanı
+      ClosyGuard Kalkanı
       <span style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;"></span>
     </div>
 
@@ -746,7 +798,7 @@
           </table>
         </div>
 
-        <!-- Right: Quick Actions & DigiGuard -->
+        <!-- Right: Quick Actions & ClosyGuard -->
         <div style="display:flex;flex-direction:column;gap:20px;">
           
           <div class="apple-card">
@@ -986,11 +1038,11 @@
       </div>
     </div>
 
-    <!-- 7. DIGIGUARD TAB -->
+    <!-- 7. CLOSYGUARD TAB -->
     <div id="tab-guard" class="tab-content">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
         <div class="apple-card">
-          <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">DigiGuard v4.5 WAF Güvenlik Matrisi</h3>
+          <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">ClosyGuard v4.5 WAF Güvenlik Matrisi</h3>
           <p style="font-size:13px;color:#86868b;margin-bottom:20px;">Saldırı vektörlerine karşı aktif koruma filtreleri.</p>
           <div style="display:flex;flex-direction:column;gap:12px;">
             <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;">
@@ -1975,7 +2027,7 @@ function handleSupportAdminSend(e) {
   if (!text) return;
   inp.value = '';
 
-  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'admin@digistore.com');
+  DigiStoreDB.sendAgentSupportMessage(currentSelectedChatId, text, 'destek@closydev.site');
   renderSupportConversations();
   renderActiveSupportChat();
   showDynamicIsland('Mesaj Gönderildi', 'Müşteriye canlı iletildi', 'success');
@@ -2021,7 +2073,7 @@ function switchTab(id, el) {
     musteriler: "Müşteri Portföyü",
     lisanslar: "Lisans Anahtarları",
     destek: "Canlı Destek Masası",
-    guard: "DigiGuard Kalkan Monitörü",
+    guard: "ClosyGuard Kalkan Monitörü",
     ayarlar: "Sistem Ayarları"
   };
   document.getElementById("pageTitle").textContent = titles[id] || "Yönetim Paneli";
@@ -2094,28 +2146,34 @@ function handleBackdropClick(e) {
   if (e.target.id === 'iosAlertBackdrop') closeIosAlert();
 }
 
+// Closy Cyber Top-Left Notification Toast
 let islandTimeout = null;
 function showDynamicIsland(title, sub, type = 'success') {
   const island = document.getElementById('dynamicIsland');
   if (!island) return;
 
-  document.getElementById('islandTitle').textContent = title;
-  document.getElementById('islandSub').textContent = sub;
+  const titleEl = document.getElementById('islandTitle');
+  const subEl = document.getElementById('islandSub');
+  const indEl = document.getElementById('islandIndicator');
 
-  const icon = document.getElementById('islandIcon');
-  if (type === 'success') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
-  } else if (type === 'copy') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-  } else {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
+
+  let color = '#22c55e';
+  if (type === 'copy' || type === 'info') color = '#3b82f6';
+  else if (type === 'error') color = '#ef4444';
+  else if (type === 'warning') color = '#f59e0b';
+
+  if (indEl) {
+    indEl.style.background = color;
+    indEl.style.boxShadow = '0 0 10px ' + color;
   }
 
   island.classList.add('active');
   if (islandTimeout) clearTimeout(islandTimeout);
   islandTimeout = setTimeout(() => {
     island.classList.remove('active');
-  }, 3200);
+  }, 3400);
 }
 
 // Global window.alert interceptor
@@ -2128,7 +2186,9 @@ window.alert = function(msg) {
 };
 
 // Listen to changes from storefront or checkout tabs
-DigiStoreDB.onUpdate(() => {
+DigiStoreDB.onUpdate((topic) => {
+  // Support chat polling renderAll tetiklemesin (titreme problemi)
+  if (topic === 'digistore_support_chats') return;
   renderAll();
 });
 
@@ -2149,7 +2209,7 @@ function updateLiveClock() {
 updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
-// Realtime Canlı Destek Bus Dinleyicisi (Müşteri mesajları anında admin ekranına düşer)
+// Realtime Canli Destek Bus Dinleyicisi (Musteri mesajlari aninda admin ekranina duşer)
 if (typeof BroadcastChannel !== 'undefined') {
   try {
     const adminSupportBus = new BroadcastChannel('digistore_support_bus');
@@ -2163,8 +2223,8 @@ if (typeof BroadcastChannel !== 'undefined') {
         updateStats();
 
         if (ev.data.type === 'new_message' && ev.data.sender === 'user') {
-          const senderTitle = (ev.data.userName || 'Müşteri') + (ev.data.userEmail ? ' (' + ev.data.userEmail + ')' : '');
-          showDynamicIsland('Yeni Canlı Destek Mesajı', senderTitle + ': ' + (ev.data.message?.text || ''), 'success');
+          const senderTitle = (ev.data.userName || 'Musteri') + (ev.data.userEmail ? ' (' + ev.data.userEmail + ')' : '');
+          showDynamicIsland('Yeni Canli Destek Mesaji', senderTitle + ': ' + (ev.data.message?.text || ''), 'success');
         }
       }
     };
@@ -2190,7 +2250,7 @@ try {
   console.error('Admin dashboard initial render error:', err);
 }
 
-// Canlı Destek Senkronizasyon Döngüsü (Her 2.5 saniyede sunucudan tüm yeni mesajları canlı çeker)
+// Canli Destek Senkronizasyon Dongusu — sadece support panelini guncelle, renderAll() CAGIRMA
 setInterval(async () => {
   if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncSupportWithServer === 'function') {
     await DigiStoreDB.syncSupportWithServer();
@@ -2198,14 +2258,19 @@ setInterval(async () => {
     renderActiveSupportChat();
     updateStats();
   }
-}, 2500);
+}, 4000);
 
-// Background order synchronizer (Polls every 8 seconds for live incoming orders)
+// Background order synchronizer — sadece yeni siparis geldiyse renderAll
 setInterval(() => {
   if (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.syncRemoteOrders === 'function') {
-    DigiStoreDB.syncRemoteOrders().then(() => renderAll());
+    const beforeCount = (DigiStoreDB.getOrders() || []).length;
+    DigiStoreDB.syncRemoteOrders().then((orders) => {
+      if (orders && orders.length !== beforeCount) {
+        renderAll();
+      }
+    });
   }
-}, 8000);
+}, 12000);
 </script>
 </body>
 </html>

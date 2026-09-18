@@ -1,5 +1,5 @@
-﻿/**
- * DigiGuard Anti-DevTools & Source Protection
+/**
+ * ClosyGuard Anti-DevTools & Source Protection
  * Blocks F12, Inspect Shortcuts, Right-Click, and Neutralizes Console
  */
 (function() {

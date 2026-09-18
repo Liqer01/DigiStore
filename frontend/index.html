@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=2.5"></script>
+<script src="store.js?v=3.14.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,12 +138,71 @@
     flex-shrink: 0;
   }
 
+  /* ─── ULTRA-COOL WHITE LIGHT SWEEP & BEAM FOR CLOSYDEV. ─── */
+  @keyframes whiteLightSweep {
+    0% {
+      background-position: -200% center;
+    }
+    30%, 100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes whiteLaserBeam {
+    0% {
+      left: -150%;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    40% {
+      left: 200%;
+      opacity: 1;
+    }
+    41%, 100% {
+      left: 200%;
+      opacity: 0;
+    }
+  }
+
+  .brand-light-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    overflow: hidden;
+    padding: 3px 6px;
+    border-radius: 8px;
+    user-select: none;
+    text-decoration: none;
+  }
+  .brand-light-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 25%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.08) 75%,
+      transparent 100%
+    );
+    transform: skewX(-25deg);
+    animation: whiteLaserBeam 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+    filter: blur(1.5px);
+  }
+
   .brand-text {
     display: inline-block;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.04em;
-    color: #ffffff;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     line-height: 1;
     white-space: nowrap;
@@ -151,6 +210,48 @@
     max-width: 140px;
     opacity: 1;
     overflow: hidden;
+    background: linear-gradient(
+      115deg,
+      #cbd5e1 0%,
+      #ffffff 28%,
+      #ffffff 42%,
+      rgba(255, 255, 255, 0.35) 47%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 1) 53%,
+      #ffffff 58%,
+      #cbd5e1 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: whiteLightSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+  }
+
+  .footer-brand-text {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1;
+    white-space: nowrap;
+    background: linear-gradient(
+      115deg,
+      #cbd5e1 0%,
+      #ffffff 28%,
+      #ffffff 42%,
+      rgba(255, 255, 255, 0.35) 47%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 1) 53%,
+      #ffffff 58%,
+      #cbd5e1 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: whiteLightSweep 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.45));
   }
 
   /* When scrolled down, closydev. text hides completely as requested */
@@ -482,55 +583,103 @@
     box-shadow: 0 4px 18px rgba(10, 132, 255, 0.4) !important;
   }
 
-  /* Dynamic Island */
+  /* Closy Elite Dynamic Island Toast */
   .dynamic-island {
     position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-90px) scale(0.9);
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    top: 20px;
+    left: 20px;
+    transform: translateX(-140%) scale(0.92);
+    background: rgba(12, 12, 18, 0.88);
+    backdrop-filter: blur(32px) saturate(220%);
+    -webkit-backdrop-filter: blur(32px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 9999px;
-    padding: 10px 18px;
+    padding: 8px 18px 8px 9px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    z-index: 999998;
+    gap: 13px;
+    box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    z-index: 999999;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    max-width: 440px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
+
   .dynamic-island.active {
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
-  .island-icon {
-    width: 26px;
-    height: 26px;
+
+  .island-brand-box {
+    position: relative;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(59, 130, 246, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
   }
+
+  .island-brand-svg {
+    width: 17px;
+    height: 17px;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
+  }
+
   .island-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
+
   .island-title {
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    white-space: nowrap;
   }
+
   .island-sub {
     font-size: 11.5px;
-    color: #86868b;
-    line-height: 1.2;
+    color: #94a3b8;
+    line-height: 1.3;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+
+  .island-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .dynamic-island {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      max-width: calc(100vw - 28px);
+      transform: translateY(-130%) scale(0.92);
+    }
+    .dynamic-island.active {
+      transform: translateY(0) scale(1);
+    }
   }
 
   /* Auth Modal & Google Button Styles */
@@ -1132,15 +1281,18 @@
 </head>
 <body>
 
-<!-- Dynamic Island -->
+<!-- Closy Minimal Pill Notification Toast -->
 <div id="dynamicIsland" class="dynamic-island">
-  <div class="island-icon" id="islandIcon">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <div class="island-brand-box">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="island-brand-svg">
+      <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+    </svg>
   </div>
   <div class="island-text">
     <span class="island-title" id="islandTitle">Bildirim</span>
     <span class="island-sub" id="islandSub">İşlem tamamlandı</span>
   </div>
+  <div class="island-indicator" id="islandIndicator"></div>
 </div>
 
 <!-- Apple Ultra Cyber Confirmation / Alert Modal -->
@@ -1351,7 +1503,7 @@
 <header id="mainHeader" class="main-header">
   <div class="header-inner">
     <!-- Left: closydev. Razor Cyber Lightning Emblem -->
-    <a href="index.html" class="nav-brand-link" title="closydev.">
+    <a href="index.html" class="nav-brand-link brand-light-wrap" title="closydev.">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.5));">
         <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
       </svg>
@@ -1597,7 +1749,7 @@
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Bilmeyene birebir ücretsiz sunucu kurulumu</span></div>
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>7/24 Anında lisans &amp; ZIP kod teslimatı</span></div>
         </div>
-        <button class="btn-pill-dark" style="width:100%;" onclick="window.location.href='https://www.shopier.com/closydev/50891803'">
+        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(1)">
           Hemen Satın Al (₺99)
         </button>
       </div>
@@ -1616,7 +1768,7 @@
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Yetkili claim (üstlenme) &amp; puanlama</span></div>
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Öncelikli Discord teknik destek</span></div>
         </div>
-        <button class="btn-pill-white" style="width:100%;" onclick="window.location.href='https://www.shopier.com/closydev/50891803'">
+        <button class="btn-pill-white" style="width:100%;" onclick="quickCheckout(2)">
           Pro Paketi Satın Al (₺149)
         </button>
       </div>
@@ -1632,7 +1784,7 @@
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Özel bot adı, avatarı &amp; aktivite durumu</span></div>
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>1 Yıl kesintisiz güncelleme &amp; bakım</span></div>
         </div>
-        <button class="btn-pill-dark" style="width:100%;" onclick="window.location.href='https://www.shopier.com/closydev/50891803'">
+        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(2)">
           Kurulumlu Paketi Al (₺249)
         </button>
       </div>
@@ -1653,7 +1805,7 @@
       Kullanıcılarımızın Deneyimleri
     </h2>
     <p style="font-size:16px;color:#86868b;margin:0 auto;">
-      Türkiye genelinde 2.400'den fazla geliştirici ve kullanıcı DigiStore'u tercih ediyor.
+      Türkiye genelinde 2.400'den fazla geliştirici ve kullanıcı closydev.'i tercih ediyor.
     </p>
   </div>
 
@@ -1753,7 +1905,7 @@
         Her detayında zarafet ve hız.
       </h2>
       <p style="font-size:16px;color:#86868b;line-height:1.6;">
-        DigiGuard Enterprise protokolleriyle donatılmış, tam şeffaf faturalandırma motoru.
+        ClosyGuard Enterprise protokolleriyle donatılmış, tam şeffaf faturalandırma motoru.
       </p>
     </div>
 
@@ -1869,18 +2021,18 @@
       
       <!-- Brand & Company Legal Info -->
       <div style="max-width:380px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.45));">
+        <div class="brand-light-wrap" style="margin-bottom:12px;margin-left:-6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));">
             <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
           </svg>
-          <span style="font-size:18px;font-weight:700;letter-spacing:-0.04em;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;">closydev<span style="color:#ffffff;">.</span></span>
+          <span class="footer-brand-text">closydev<span style="color:#ffffff;">.</span></span>
         </div>
         <p style="font-size:12.5px;color:#86868b;line-height:1.6;margin-bottom:12px;">
-          DigiStore Bilişim ve Teknoloji Ticaret A.Ş. — Orijinal dijital lisanslar, otomasyon yazılımları ve geliştirici araçları için resmi satış platformu.
+          closydev. Bilişim ve Teknoloji Ticaret A.Ş. — Orijinal dijital lisanslar, otomasyon yazılımları ve geliştirici araçları için resmi satış platformu.
         </p>
         <div style="font-size:11.5px;color:#64748b;line-height:1.6;">
           <b>MERSİS:</b> 029408842100001 · <b>VKN:</b> 2940884210<br/>
-          <b>Vergi Dairesi:</b> Boğaziçi V.D. · <b>KEP:</b> digistore@hs01.kep.tr<br/>
+          <b>Vergi Dairesi:</b> Boğaziçi V.D. · <b>KEP:</b> closydev@hs01.kep.tr<br/>
           <b>Adres:</b> Büyükdere Cad. No: 193 Levent, Beşiktaş / İstanbul
         </div>
       </div>
@@ -1912,7 +2064,7 @@
     <!-- Bottom Row: Trust badges & Copyright -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding-top:24px;">
       <div style="font-size:12px;color:#64748b;">
-        © 2026 DigiStore Bilişim Ticaret A.Ş. Tüm hakları saklıdır. GİB Onaylı e-Arşiv Fatura ve ETBİS Kayıtlıdır.
+        © 2026 closydev. Bilişim ve Teknoloji Ticaret A.Ş. Tüm hakları saklıdır. GİB Onaylı e-Arşiv Fatura ve ETBİS Kayıtlıdır.
       </div>
       <div style="display:flex;align-items:center;gap:14px;font-size:11.5px;color:#86868b;">
         <span style="display:flex;align-items:center;gap:5px;">
@@ -1960,36 +2112,6 @@
 </div>
 <div id="cartOverlay" onclick="toggleCart()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:499;"></div>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-  <div class="apple-glass" style="width:400px;border-radius:28px;padding:36px;position:relative;border:1px solid rgba(255,255,255,0.12);box-shadow:0 35px 80px rgba(0,0,0,0.9);">
-    <button onclick="closeModal('loginModal')" style="position:absolute;top:18px;right:18px;background:none;border:none;color:#86868b;cursor:pointer;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-    <div style="text-align:center;margin-bottom:26px;">
-      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1c1c1e,#0d0d0f);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 0 20px rgba(10,132,255,0.3);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#38bdf8"/>
-        </svg>
-      </div>
-      <h2 style="font-size:22px;font-weight:800;color:#fff;">DigiStore Giriş</h2>
-      <p style="font-size:13px;color:#86868b;margin-top:4px;">Lisans ve siparişlerinize erişin</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div>
-        <label style="font-size:11px;color:#86868b;font-weight:600;display:block;margin-bottom:6px;text-transform:uppercase;">E-Posta</label>
-        <input type="email" placeholder="ornek@email.com" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 14px;color:#fff;font-size:13px;outline:none;width:100%;"/>
-      </div>
-      <div>
-        <label style="font-size:11px;color:#86868b;font-weight:600;display:block;margin-bottom:6px;text-transform:uppercase;">Şifre</label>
-        <input type="password" placeholder="••••••••" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 14px;color:#fff;font-size:13px;outline:none;width:100%;"/>
-      </div>
-      <button class="btn-pill-white" style="margin-top:8px;padding:12px;font-size:13px;" onclick="closeModal('loginModal');showToast('Giriş başarılı.')">
-        Hesaba Giriş Yap
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- PRODUCT DETAIL MODAL -->
 <div id="productModal" class="modal">
@@ -2247,6 +2369,14 @@ function filterCategory(cat, scrollToSection = false) {
 }
 
 function addToCartWithFeedback(id, btn) {
+  if (typeof DigiStoreDB !== 'undefined' && !DigiStoreDB.isLoggedIn()) {
+    window.pendingCartItemId = id;
+    openAuthModal('login');
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Giriş Yapmalısınız', 'Sepete ürün eklemek için lütfen giriş yapın veya kayıt olun.', 'warning');
+    }
+    return;
+  }
   addToCart(id);
   if (btn) {
     const originalHtml = btn.innerHTML;
@@ -2264,6 +2394,15 @@ function addToCartWithFeedback(id, btn) {
 }
 
 function addToCart(id) {
+  if (typeof DigiStoreDB !== 'undefined' && !DigiStoreDB.isLoggedIn()) {
+    window.pendingCartItemId = id;
+    if (typeof closeModal === 'function') closeModal('productModal');
+    openAuthModal('login');
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Giriş Yapmalısınız', 'Sepete ürün eklemek için lütfen giriş yapın veya kayıt olun.', 'warning');
+    }
+    return;
+  }
   const p = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getProductById(id) : null;
   if (!p) return;
   const existing = cart.find(x => x.id === id);
@@ -2334,7 +2473,35 @@ function goCheckout() {
     });
     return;
   }
+  if (typeof DigiStoreDB !== 'undefined' && !DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Sipariş verebilmek ve lisans anahtarlarınızı hesabınızda güvenle teslim alabilmek için lütfen önce giriş yapın veya ücretsiz kayıt olun.',
+      type: 'warning',
+      confirmText: 'Giriş Yap / Kayıt Ol',
+      onConfirm: () => {
+        toggleCart();
+        openAuthModal('login');
+      }
+    });
+    return;
+  }
   localStorage.setItem('digistore_cart', JSON.stringify(cart));
+  window.location.href = 'odeme.html';
+}
+
+function quickCheckout(productId) {
+  if (typeof DigiStoreDB !== 'undefined' && !DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Sipariş verebilmek ve lisans anahtarlarınızı hesabınızda güvenle teslim alabilmek için lütfen önce giriş yapın veya ücretsiz kayıt olun.',
+      type: 'warning',
+      confirmText: 'Giriş Yap / Kayıt Ol',
+      onConfirm: () => openAuthModal('login')
+    });
+    return;
+  }
+  addToCart(productId);
   window.location.href = 'odeme.html';
 }
 
@@ -2512,7 +2679,7 @@ function switchAuthTab(tab) {
     registerForm.style.display = 'none';
     btnLogin.classList.add('active');
     btnRegister.classList.remove('active');
-    title.textContent = "DigiStore'a Giriş Yap";
+    title.textContent = "closydev'e Giriş Yap";
     sub.textContent = 'Tüm siparişleriniz ve lisanslarınız tek bir yerde.';
   } else {
     loginForm.style.display = 'none';
@@ -2538,6 +2705,12 @@ function handleLoginFormSubmit(e) {
     closeAuthModal();
     showDynamicIsland('Giriş Yapıldı', `Hoş geldin, ${res.user.name}!`, 'success');
     renderNavUser();
+    if (window.pendingCartItemId) {
+      const pid = window.pendingCartItemId;
+      window.pendingCartItemId = null;
+      addToCart(pid);
+      if (typeof toggleCart === 'function') toggleCart();
+    }
   } else {
     const err = document.getElementById('loginError');
     err.textContent = res.message;
@@ -2557,6 +2730,12 @@ function handleRegisterFormSubmit(e) {
     closeAuthModal();
     showDynamicIsland('Kayıt Başarılı', `Aramıza hoş geldin, ${res.user.name}!`, 'success');
     renderNavUser();
+    if (window.pendingCartItemId) {
+      const pid = window.pendingCartItemId;
+      window.pendingCartItemId = null;
+      addToCart(pid);
+      if (typeof toggleCart === 'function') toggleCart();
+    }
   } else {
     const err = document.getElementById('regError');
     err.textContent = res.message;
@@ -2582,6 +2761,12 @@ window.handleCredentialResponse = function(response) {
       renderNavUser();
       closeAuthModal();
       showDynamicIsland('Google Doğrulandı', `Hoş geldin, ${profile.name}!`, 'success');
+      if (window.pendingCartItemId) {
+        const pid = window.pendingCartItemId;
+        window.pendingCartItemId = null;
+        addToCart(pid);
+        if (typeof toggleCart === 'function') toggleCart();
+      }
     }
   } catch (err) {
     console.error('Google profil okuma hatası:', err);
@@ -2737,31 +2922,35 @@ function renderNavUser() {
   }
 }
 
-// iOS Dynamic Island Notification Pill
+// Closy Elite Dynamic Island Toast
 let islandTimeout = null;
 function showDynamicIsland(title, sub, type = 'success') {
   const island = document.getElementById('dynamicIsland');
   if (!island) return;
 
-  document.getElementById('islandTitle').textContent = title;
-  document.getElementById('islandSub').textContent = sub;
+  const titleEl = document.getElementById('islandTitle');
+  const subEl = document.getElementById('islandSub');
+  const indEl = document.getElementById('islandIndicator');
 
-  const icon = document.getElementById('islandIcon');
-  if (type === 'success') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
-  } else if (type === 'copy') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-  } else if (type === 'cart') {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`;
-  } else {
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  if (titleEl) titleEl.textContent = title;
+  if (subEl) subEl.textContent = sub;
+
+  let color = '#22c55e';
+  if (type === 'copy' || type === 'info') color = '#3b82f6';
+  else if (type === 'cart') color = '#ec4899';
+  else if (type === 'error') color = '#ef4444';
+  else if (type === 'warning') color = '#f59e0b';
+
+  if (indEl) {
+    indEl.style.background = color;
+    indEl.style.boxShadow = '0 0 10px ' + color;
   }
 
   island.classList.add('active');
   if (islandTimeout) clearTimeout(islandTimeout);
   islandTimeout = setTimeout(() => {
     island.classList.remove('active');
-  }, 3200);
+  }, 3400);
 }
 
 // Intercept ANY window.alert calls
@@ -2899,6 +3088,8 @@ handleHeaderScroll();
 
 if (typeof DigiStoreDB !== 'undefined') {
   DigiStoreDB.onUpdate((topic) => {
+    // Destek chati degisimlerinde vitrini ve filtreleri yeniden cizme (4-5 saniyelik titremeyi onle)
+    if (topic === 'digistore_support_chats') return;
     renderCategoryFilters();
     renderStorefrontProducts();
     renderNavUser();
@@ -2908,6 +3099,7 @@ if (typeof DigiStoreDB !== 'undefined') {
 
 // Sekmeler Arasi Canli Senkronizasyon
 window.addEventListener('storage', (e) => {
+  if (e.key === 'digistore_support_chats') return;
   if (e.key && e.key.startsWith('digistore_')) {
     renderCategoryFilters();
     renderStorefrontProducts();
