@@ -2427,9 +2427,9 @@ pause
             {
               id: 'm_init',
               sender: 'admin',
-              senderName: 'Site Yöneticisi (admin@digistore.com)',
-              senderEmail: 'admin@digistore.com',
-              text: 'Merhaba! DigiStore doğrudan yönetici canlı destek hattındasınız. Mesajınızı buraya yazabilirsiniz, site yöneticimiz admin@digistore.com doğrudan canlı olarak yanıtlayacaktır.',
+              senderName: 'closydev. Yetkili Destek',
+              senderEmail: 'destek@closydev.site',
+              text: 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya yazabilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.',
               time: timeStr
             }
           ]
@@ -2445,6 +2445,15 @@ pause
         if (userName && userName !== 'Müşteri' && chat.userName !== userName) {
           chat.userName = userName;
           changed = true;
+        }
+        if (chat.messages && chat.messages.length > 0) {
+          chat.messages.forEach(m => {
+            if (m.text && (m.text.includes('DigiStore doğrudan') || m.text.includes('admin@digistore.com'))) {
+              m.text = 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya yazabilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.';
+              m.senderName = 'closydev. Yetkili Destek';
+              changed = true;
+            }
+          });
         }
         if (changed) {
           this.saveSupportChats(chats);
@@ -2689,38 +2698,49 @@ pause
     const styleEl = document.createElement('style');
     styleEl.textContent = `
       @keyframes supportPulse {
-        0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6); }
-        70% { box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+        70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
       }
       @keyframes supportSlideUp {
-        from { opacity: 0; transform: translateY(16px) scale(0.96); }
+        from { opacity: 0; transform: translateY(18px) scale(0.96); }
         to { opacity: 1; transform: translateY(0) scale(1); }
       }
       #digiSupportWindow.open {
         display: flex !important;
-        animation: supportSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: supportSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .support-lightning-svg {
+        filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
       }
       .digi-chat-bubble-admin {
-        background: linear-gradient(135deg, #1f1b2e 0%, #161426 100%);
-        border: 1px solid rgba(168, 85, 247, 0.35);
-        color: #f5f5f7;
-        padding: 10px 14px;
-        border-radius: 14px 14px 14px 2px;
+        background: rgba(22, 22, 30, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left: 3px solid #a855f7;
+        color: #f1f5f9;
+        padding: 11px 15px;
+        border-radius: 16px 16px 16px 3px;
         font-size: 13px;
-        line-height: 1.45;
+        line-height: 1.5;
         word-break: break-word;
-        box-shadow: 0 4px 18px rgba(168, 85, 247, 0.15);
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
       }
       .digi-chat-bubble-user {
-        background: linear-gradient(135deg, #a855f7, #6366f1);
+        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+        border: 1px solid rgba(255, 255, 255, 0.16);
         color: #ffffff;
-        padding: 10px 14px;
-        border-radius: 14px 14px 2px 14px;
+        padding: 11px 15px;
+        border-radius: 16px 16px 3px 16px;
         font-size: 13px;
-        line-height: 1.42;
-        box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+        line-height: 1.45;
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
         word-break: break-word;
+      }
+      .digi-quick-chip:hover {
+        background: rgba(168, 85, 247, 0.15) !important;
+        border-color: rgba(168, 85, 247, 0.45) !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
       }
     `;
     document.head.appendChild(styleEl);
@@ -2728,76 +2748,81 @@ pause
     // Floating Button
     const launcher = document.createElement('div');
     launcher.id = 'digiSupportLauncher';
-    launcher.setAttribute('style', 'position:fixed;bottom:24px;right:24px;z-index:99980;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#121218 0%,#181824 100%);border:1px solid rgba(168,85,247,0.38);border-radius:9999px;padding:9px 18px 9px 12px;box-shadow:0 12px 36px rgba(0,0,0,0.7),0 0 20px rgba(168,85,247,0.22);cursor:pointer;transition:all .25s ease;user-select:none;');
-    launcher.onmouseover = function() { this.style.transform = 'translateY(-2px) scale(1.02)'; this.style.borderColor = 'rgba(168,85,247,0.6)'; };
-    launcher.onmouseout = function() { this.style.transform = 'translateY(0) scale(1)'; this.style.borderColor = 'rgba(168,85,247,0.38)'; };
+    launcher.setAttribute('style', 'position:fixed;bottom:24px;right:24px;z-index:99980;display:flex;align-items:center;gap:12px;background:rgba(12,12,18,0.88);backdrop-filter:blur(24px) saturate(200%);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.14);border-radius:9999px;padding:8px 18px 8px 10px;box-shadow:0 14px 40px -8px rgba(0,0,0,0.85),0 0 24px rgba(168,85,247,0.22),inset 0 1px 1px rgba(255,255,255,0.25);cursor:pointer;transition:all .25s ease;user-select:none;');
+    launcher.onmouseover = function() { this.style.transform = 'translateY(-2px) scale(1.02)'; this.style.borderColor = 'rgba(168,85,247,0.6)'; this.style.boxShadow = '0 18px 45px -8px rgba(0,0,0,0.9), 0 0 30px rgba(168,85,247,0.35)'; };
+    launcher.onmouseout = function() { this.style.transform = 'translateY(0) scale(1)'; this.style.borderColor = 'rgba(255,255,255,0.14)'; this.style.boxShadow = '0 14px 40px -8px rgba(0,0,0,0.85), 0 0 24px rgba(168,85,247,0.22)'; };
 
     launcher.innerHTML = `
-      <div style="position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(168,85,247,0.5);color:#ffffff;flex-shrink:0;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+      <div style="position:relative;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgba(168,85,247,0.35),rgba(59,130,246,0.35));border:1px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(168,85,247,0.4);color:#ffffff;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="support-lightning-svg">
+          <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+        </svg>
       </div>
       <div style="display:flex;flex-direction:column;line-height:1.2;">
         <span style="font-size:13.5px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">Canlı Destek</span>
-        <span id="digiSupportOnlineText" style="font-size:10px;color:#34c759;font-weight:600;display:flex;align-items:center;gap:4px;">
-          <span style="width:6px;height:6px;border-radius:50%;background:#34c759;animation:supportPulse 2s infinite;display:inline-block;"></span>
-          Yönetici Çevrimiçi
+        <span id="digiSupportOnlineText" style="font-size:10.5px;color:#22c55e;font-weight:600;display:flex;align-items:center;gap:5px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:supportPulse 2s infinite;display:inline-block;"></span>
+          Yetkili Çevrimiçi
         </span>
       </div>
-      <span id="digiSupportBadge" style="display:none;background:#ff3b30;color:#ffffff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9999px;box-shadow:0 0 8px rgba(255,59,48,0.5);margin-left:2px;">1</span>
+      <span id="digiSupportBadge" style="display:none;background:#ef4444;color:#ffffff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9999px;box-shadow:0 0 10px rgba(239,68,68,0.6);margin-left:2px;">1</span>
     `;
 
     // Chat Window
     const win = document.createElement('div');
     win.id = 'digiSupportWindow';
-    win.setAttribute('style', 'display:none;position:fixed;bottom:84px;right:24px;width:380px;max-width:calc(100vw - 32px);height:570px;max-height:calc(100vh - 105px);background:#0d0d12;border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,0.85),0 0 35px rgba(168,85,247,0.15);z-index:99981;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,\'Plus Jakarta Sans\',sans-serif;');
+    win.setAttribute('style', 'display:none;position:fixed;bottom:84px;right:24px;width:385px;max-width:calc(100vw - 32px);height:580px;max-height:calc(100vh - 105px);background:rgba(12,12,18,0.95);backdrop-filter:blur(32px) saturate(220%);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.12);border-radius:24px;box-shadow:0 24px 70px -10px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.06),0 0 35px rgba(168,85,247,0.18);z-index:99981;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,\'Plus Jakarta Sans\',sans-serif;');
 
     win.innerHTML = `
       <!-- Header -->
-      <div style="padding:14px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="position:relative;width:36px;height:36px;border-radius:10px;background:#050508;border:1px solid rgba(168,85,247,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(168,85,247,0.3);overflow:hidden;">
-            <img src="logo-icon.png" alt="DigiStore" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div style="padding:15px 18px;background:linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-30px;left:20px;width:140px;height:80px;background:radial-gradient(circle, rgba(168,85,247,0.25) 0%, transparent 70%);pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;gap:11px;position:relative;z-index:1;">
+          <div style="position:relative;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, rgba(168,85,247,0.35), rgba(59,130,246,0.35));border:1px solid rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(168,85,247,0.4);flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="support-lightning-svg">
+              <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
+            </svg>
           </div>
           <div>
-            <div style="font-size:14px;font-weight:700;color:#ffffff;display:flex;align-items:center;gap:6px;">
-              <span id="digiSupportHeaderTitle">DigiStore Canlı Destek</span>
-              <span id="digiSupportHeaderRole" style="font-size:8.5px;color:#a855f7;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);padding:1px 5px;border-radius:4px;font-weight:700;">YÖNETİCİ</span>
+            <div style="font-size:14.5px;font-weight:800;color:#ffffff;display:flex;align-items:center;gap:7px;letter-spacing:-0.02em;">
+              <span id="digiSupportHeaderTitle">closydev. Destek</span>
+              <span id="digiSupportHeaderRole" style="font-size:9px;color:#c084fc;background:rgba(168,85,247,0.16);border:1px solid rgba(168,85,247,0.35);padding:2px 6px;border-radius:6px;font-weight:800;letter-spacing:0.04em;">YETKİLİ</span>
             </div>
-            <div id="digiSupportHeaderSub" style="font-size:11px;color:#86868b;font-weight:500;display:flex;align-items:center;gap:4px;">
-              <span style="width:5px;height:5px;border-radius:50%;background:#34c759;display:inline-block;"></span>
-              Operatör: admin@digistore.com
+            <div id="digiSupportHeaderSub" style="font-size:11px;color:#94a3b8;font-weight:500;display:flex;align-items:center;gap:5px;margin-top:2px;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;display:inline-block;"></span>
+              Aktif Canlı Destek Hattı
             </div>
           </div>
         </div>
-        <button id="digiSupportCloseBtn" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#a1a1a6;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#a1a1a6';this.style.background='rgba(255,255,255,0.06)';">
+        <button id="digiSupportCloseBtn" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;z-index:1;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.14)';" onmouseout="this.style.color='#94a3b8';this.style.background='rgba(255,255,255,0.06)';">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
 
-      <!-- Operator Mode Indicator (if logged in as admin@digistore.com) -->
-      <div id="digiSupportOperatorBar" style="display:none;padding:8px 14px;background:rgba(168,85,247,0.12);border-bottom:1px solid rgba(168,85,247,0.25);font-size:11.5px;color:#c084fc;font-weight:600;display:flex;justify-content:space-between;align-items:center;">
-        <span>Yönetici Operatör Modu (admin@digistore.com)</span>
-        <select id="digiSupportCustomerSelect" style="background:#09090d;border:1px solid rgba(168,85,247,0.4);border-radius:8px;color:#fff;font-size:11px;padding:3px 8px;max-width:140px;outline:none;">
+      <!-- Operator Mode Indicator (if logged in as admin) -->
+      <div id="digiSupportOperatorBar" style="display:none;padding:9px 16px;background:rgba(168,85,247,0.12);border-bottom:1px solid rgba(168,85,247,0.22);font-size:11.5px;color:#c084fc;font-weight:600;display:flex;justify-content:space-between;align-items:center;">
+        <span>Yönetici Operatör Modu</span>
+        <select id="digiSupportCustomerSelect" style="background:#09090d;border:1px solid rgba(168,85,247,0.4);border-radius:8px;color:#fff;font-size:11px;padding:4px 8px;max-width:140px;outline:none;">
           <option value="">Müşteri Seçin...</option>
         </select>
       </div>
 
-      <!-- Quick Message Chips (puts question directly to admin) -->
-      <div id="digiSupportChipsContainer" style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;">
-        <button type="button" class="digi-quick-chip" data-msg="Siparişimin durumunu öğrenebilir miyim?" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Sipariş Durumu</button>
-        <button type="button" class="digi-quick-chip" data-msg="Lisans anahtarım hakkında bilgi almak istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Lisansım Nerede?</button>
-        <button type="button" class="digi-quick-chip" data-msg="Ödeme ve e-Arşiv faturası hakkında görüşmek istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:4px 10px;font-size:11px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .15s;">Ödeme &amp; Fatura</button>
+      <!-- Quick Message Chips -->
+      <div id="digiSupportChipsContainer" style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;">
+        <button type="button" class="digi-quick-chip" data-msg="Siparişimin durumunu öğrenebilir miyim?" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:5px 12px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s;">Sipariş Durumu</button>
+        <button type="button" class="digi-quick-chip" data-msg="Lisans anahtarım hakkında bilgi almak istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:5px 12px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s;">Lisansım Nerede?</button>
+        <button type="button" class="digi-quick-chip" data-msg="Ödeme ve e-Arşiv faturası hakkında görüşmek istiyorum." style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;color:#cbd5e1;padding:5px 12px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s;">Ödeme &amp; Fatura</button>
       </div>
 
       <!-- Messages Area -->
-      <div id="digiSupportMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#08080c;">
+      <div id="digiSupportMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#08080c;">
         <!-- Filled via JS -->
       </div>
 
       <!-- Input Bar -->
-      <form id="digiSupportForm" style="padding:12px 14px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:8px;align-items:center;">
-        <input type="text" id="digiSupportInput" placeholder="Yöneticiye iletmek istediğiniz mesajı yazın..." autocomplete="off" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:9px 14px;font-size:13px;color:#ffffff;outline:none;" />
-        <button type="submit" style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#6366f1);border:none;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 12px rgba(168,85,247,0.4);flex-shrink:0;">
+      <form id="digiSupportForm" style="padding:12px 14px;background:rgba(12,12,18,0.98);border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:10px;align-items:center;">
+        <input type="text" id="digiSupportInput" placeholder="Yetkili ekibe mesajınızı iletin..." autocomplete="off" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9999px;padding:10px 16px;font-size:13px;color:#ffffff;outline:none;transition:border-color .2s, box-shadow .2s;" onfocus="this.style.borderColor='rgba(168,85,247,0.5)';this.style.boxShadow='0 0 12px rgba(168,85,247,0.2)';" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none';" />
+        <button type="submit" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#9333ea,#4f46e5);border:none;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 14px rgba(147,51,234,0.45);flex-shrink:0;transition:transform .15s ease;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         </button>
       </form>
@@ -2849,13 +2874,13 @@ pause
         if (isOperator) {
           if (opBar) opBar.style.display = 'flex';
           if (chips) chips.style.display = 'none';
-          if (headerRole) headerRole.textContent = 'YÖNETİCİ OPERATÖR';
-          if (headerSub) headerSub.innerHTML = '<span style="color:#c084fc;">admin@digistore.com hesabı ile bağlısınız</span>';
+          if (headerRole) headerRole.textContent = 'OPERATÖR';
+          if (headerSub) headerSub.innerHTML = '<span style="color:#c084fc;">Yönetici Paneli Canlı Bağlantısı</span>';
           populateOperatorCustomerSelect();
         } else {
           if (opBar) opBar.style.display = 'none';
           if (chips) chips.style.display = 'flex';
-          if (headerRole) headerRole.textContent = 'YÖNETİCİ DESTEK';
+          if (headerRole) headerRole.textContent = 'YETKİLİ';
           const chat = DigiStoreDB.getUserChatSession();
           DigiStoreDB.markSupportReadByUser(chat.id);
         }
@@ -2929,7 +2954,7 @@ pause
           alert('Lütfen yanıt yazmak için üstten bir müşteri sohbeti seçin');
           return;
         }
-        DigiStoreDB.sendAgentSupportMessage(activeAdminTargetChatId, text, 'admin@digistore.com');
+        DigiStoreDB.sendAgentSupportMessage(activeAdminTargetChatId, text, 'destek@closydev.site');
       } else {
         DigiStoreDB.sendUserSupportMessage(text);
       }
@@ -2979,7 +3004,7 @@ pause
             return `
               <div style="align-self:flex-start;max-width:84%;display:flex;flex-direction:column;align-items:flex-start;">
                 <span style="font-size:10.5px;color:#86868b;margin-bottom:3px;padding-left:2px;">${chat.userName || 'Müşteri'}</span>
-                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:#f5f5f7;padding:9px 13px;border-radius:14px 14px 14px 2px;font-size:13px;line-height:1.45;word-break:break-word;">
+                <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:#f5f5f7;padding:10px 14px;border-radius:16px 16px 16px 3px;font-size:13px;line-height:1.45;word-break:break-word;">
                   ${m.text}
                 </div>
                 <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
@@ -3000,7 +3025,7 @@ pause
           if (isOperator) {
             return `
               <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
-                <span style="font-size:10px;color:#c084fc;font-weight:700;margin-bottom:2px;padding-right:2px;">Siz (admin@digistore.com)</span>
+                <span style="font-size:10px;color:#c084fc;font-weight:700;margin-bottom:2px;padding-right:2px;">Siz (Yetkili)</span>
                 <div class="digi-chat-bubble-user" style="background:linear-gradient(135deg,#7e22ce,#4338ca);">
                   ${m.text}
                 </div>
@@ -3011,8 +3036,8 @@ pause
             return `
               <div style="align-self:flex-start;max-width:86%;display:flex;flex-direction:column;align-items:flex-start;">
                 <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;padding-left:2px;">
-                  <span style="font-size:11px;color:#c084fc;font-weight:700;">Site Yöneticisi (admin@digistore.com)</span>
-                  <span style="background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.35);color:#d8b4fe;font-size:9px;padding:1px 4px;border-radius:4px;font-weight:800;">YETKİLİ</span>
+                  <span style="font-size:11px;color:#c084fc;font-weight:700;">closydev. Yetkili Destek</span>
+                  <span style="background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.35);color:#d8b4fe;font-size:8.5px;padding:1px 5px;border-radius:4px;font-weight:800;">EKİP</span>
                 </div>
                 <div class="digi-chat-bubble-admin">
                   ${m.text}
