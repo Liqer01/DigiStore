@@ -2346,7 +2346,37 @@ pause
     getSupportChats() {
       const raw = localStorage.getItem('digistore_support_chats');
       if (!raw) return [];
-      try { return JSON.parse(raw); } catch (e) { return []; }
+      try {
+        let chats = JSON.parse(raw);
+        if (Array.isArray(chats)) {
+          let dirty = false;
+          chats.forEach(c => {
+            if (Array.isArray(c.messages)) {
+              c.messages.forEach(m => {
+                if (m.text && (m.text.includes('DigiStore') || m.text.includes('admin@digistore.com'))) {
+                  m.text = m.text
+                    .replace(/Merhaba!\s*DigiStore doğrudan yönetici canlı destek hattındasınız\.\s*Mesajınızı buraya yazabilirsiniz,\s*site yöneticimiz admin@digistore\.com doğrudan canlı olarak yanıtlayacaktır\./g, 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya iletebilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.')
+                    .replace(/DigiStore doğrudan yönetici canlı destek hattındasınız/gi, 'closydev. resmi canlı destek hattındasınız')
+                    .replace(/site yöneticimiz admin@digistore\.com doğrudan canlı olarak yanıtlayacaktır/gi, 'yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır')
+                    .replace(/admin@digistore\.com/gi, 'destek@closydev.site')
+                    .replace(/DigiStore/gi, 'closydev.');
+                  dirty = true;
+                }
+                if (m.senderName && (m.senderName.includes('DigiStore') || m.senderName.includes('admin@digistore.com'))) {
+                  m.senderName = m.senderName.replace(/admin@digistore\.com/gi, 'destek@closydev.site').replace(/DigiStore/gi, 'closydev.');
+                  dirty = true;
+                }
+              });
+            }
+          });
+          if (dirty) {
+            localStorage.setItem('digistore_support_chats', JSON.stringify(chats));
+          }
+        }
+        return chats;
+      } catch (e) {
+        return [];
+      }
     },
 
     saveSupportChats(chats) {
@@ -2800,11 +2830,26 @@ pause
       </div>
 
       <!-- Operator Mode Indicator (if logged in as admin) -->
-      <div id="digiSupportOperatorBar" style="display:none;padding:9px 16px;background:rgba(168,85,247,0.12);border-bottom:1px solid rgba(168,85,247,0.22);font-size:11.5px;color:#c084fc;font-weight:600;display:flex;justify-content:space-between;align-items:center;">
-        <span>Yönetici Operatör Modu</span>
-        <select id="digiSupportCustomerSelect" style="background:#09090d;border:1px solid rgba(168,85,247,0.4);border-radius:8px;color:#fff;font-size:11px;padding:4px 8px;max-width:140px;outline:none;">
-          <option value="">Müşteri Seçin...</option>
-        </select>
+      <div id="digiSupportOperatorBar" style="display:none;padding:10px 16px;background:rgba(168,85,247,0.1);border-bottom:1px solid rgba(168,85,247,0.2);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:20;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7;display:inline-block;"></span>
+          <span style="font-size:11.5px;color:#d8b4fe;font-weight:700;letter-spacing:-0.01em;">Operatör Modu</span>
+        </div>
+
+        <!-- Custom Dropdown Container -->
+        <div style="position:relative;" id="digiCustDropdownWrap">
+          <button type="button" id="digiCustDropdownBtn" style="background:rgba(18,16,26,0.95);border:1px solid rgba(168,85,247,0.38);border-radius:9999px;color:#ffffff;font-size:11.5px;font-weight:600;padding:5px 12px 5px 8px;display:flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 0 12px rgba(168,85,247,0.2);outline:none;transition:all .15s ease;">
+            <span style="width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#ffffff;" id="digiCustActiveAvatar">M</span>
+            <span id="digiCustActiveLabel" style="max-width:115px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Müşteri Seçin...</span>
+            <span id="digiCustActiveBadge" style="display:none;background:#ef4444;color:#ffffff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:9999px;">0</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.5" style="transition:transform .2s;" id="digiCustDropdownArrow"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="digiCustDropdownMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;width:215px;background:#0d0d14;border:1px solid rgba(168,85,247,0.35);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,0.95), 0 0 25px rgba(168,85,247,0.25);padding:6px;max-height:220px;overflow-y:auto;z-index:99999;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
       </div>
 
       <!-- Quick Message Chips -->
@@ -2872,17 +2917,32 @@ pause
         const headerSub = document.getElementById('digiSupportHeaderSub');
 
         if (isOperator) {
-          if (opBar) opBar.style.display = 'flex';
-          if (chips) chips.style.display = 'none';
-          if (headerRole) headerRole.textContent = 'OPERATÖR';
-          if (headerSub) headerSub.innerHTML = '<span style="color:#c084fc;">Yönetici Paneli Canlı Bağlantısı</span>';
+          if (opBar) opBar.style.setProperty('display', 'flex', 'important');
+          if (chips) chips.style.setProperty('display', 'none', 'important');
+          if (headerRole) {
+            headerRole.textContent = 'SİSTEM YÖNETİCİSİ';
+            headerRole.style.color = '#c084fc';
+            headerRole.style.background = 'rgba(168,85,247,0.18)';
+            headerRole.style.borderColor = 'rgba(168,85,247,0.4)';
+          }
+          if (headerSub) headerSub.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7;display:inline-block;"></span> <span style="color:#d8b4fe;font-weight:600;">Sistem Yöneticisi Paneli</span>';
           populateOperatorCustomerSelect();
+          const inp = document.getElementById('digiSupportInput');
+          if (inp) inp.placeholder = 'Müşteriye yanıtınızı yazın...';
         } else {
-          if (opBar) opBar.style.display = 'none';
-          if (chips) chips.style.display = 'flex';
-          if (headerRole) headerRole.textContent = 'YETKİLİ';
+          if (opBar) opBar.style.setProperty('display', 'none', 'important');
+          if (chips) chips.style.setProperty('display', 'flex', 'important');
+          if (headerRole) {
+            headerRole.textContent = 'YETKİLİ';
+            headerRole.style.color = '#38bdf8';
+            headerRole.style.background = 'rgba(56,189,248,0.15)';
+            headerRole.style.borderColor = 'rgba(56,189,248,0.3)';
+          }
+          if (headerSub) headerSub.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;display:inline-block;"></span> Aktif Canlı Destek Hattı';
           const chat = DigiStoreDB.getUserChatSession();
           DigiStoreDB.markSupportReadByUser(chat.id);
+          const inp = document.getElementById('digiSupportInput');
+          if (inp) inp.placeholder = 'Yetkili ekibe mesajınızı iletin...';
         }
 
         renderWidgetMessages();
@@ -2912,28 +2972,107 @@ pause
       };
     });
 
-    // Customer selector for admin operator mode
-    const custSelect = document.getElementById('digiSupportCustomerSelect');
-    if (custSelect) {
-      custSelect.onchange = function() {
-        activeAdminTargetChatId = this.value || null;
-        renderWidgetMessages();
+    // Custom customer dropdown for admin operator mode
+    function toggleCustomerDropdown() {
+      const menu = document.getElementById('digiCustDropdownMenu');
+      const arrow = document.getElementById('digiCustDropdownArrow');
+      if (!menu) return;
+      const isOpen = menu.style.display === 'block';
+      if (isOpen) {
+        closeCustomerDropdown();
+      } else {
+        menu.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    function closeCustomerDropdown() {
+      const menu = document.getElementById('digiCustDropdownMenu');
+      const arrow = document.getElementById('digiCustDropdownArrow');
+      if (menu) menu.style.display = 'none';
+      if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+
+    const triggerBtn = document.getElementById('digiCustDropdownBtn');
+    if (triggerBtn) {
+      triggerBtn.onclick = function(e) {
+        e.stopPropagation();
+        toggleCustomerDropdown();
       };
     }
 
+    document.addEventListener('click', () => {
+      closeCustomerDropdown();
+    });
+
     function populateOperatorCustomerSelect() {
-      const select = document.getElementById('digiSupportCustomerSelect');
-      if (!select) return;
+      const menu = document.getElementById('digiCustDropdownMenu');
+      const label = document.getElementById('digiCustActiveLabel');
+      const avatar = document.getElementById('digiCustActiveAvatar');
+      const badge = document.getElementById('digiCustActiveBadge');
+      if (!menu) return;
+
       const chats = DigiStoreDB.getSupportChats();
-      select.innerHTML = '<option value="">Müşteri Seçin...</option>' + chats.map(c => `
-        <option value="${c.id}" ${c.id === activeAdminTargetChatId ? 'selected' : ''}>
-          ${c.userName || 'Müşteri'} (${c.unreadByAdmin || 0} yeni)
-        </option>
-      `).join('');
+      if (chats.length === 0) {
+        menu.innerHTML = '<div style="padding:10px;font-size:11.5px;color:#86868b;text-align:center;">Henüz müşteri yok</div>';
+        if (label) label.textContent = 'Müşteri Yok';
+        return;
+      }
+
       if (!activeAdminTargetChatId && chats.length > 0) {
         activeAdminTargetChatId = chats[0].id;
-        select.value = activeAdminTargetChatId;
       }
+
+      const activeChat = chats.find(c => c.id === activeAdminTargetChatId) || chats[0];
+      if (activeChat) {
+        activeAdminTargetChatId = activeChat.id;
+        if (label) label.textContent = activeChat.userName || 'Müşteri';
+        if (avatar) avatar.textContent = ((activeChat.userName || 'M').charAt(0)).toUpperCase();
+        if (badge) {
+          const unread = activeChat.unreadByAdmin || 0;
+          if (unread > 0) {
+            badge.textContent = unread;
+            badge.style.display = 'inline-block';
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+      }
+
+      menu.innerHTML = chats.map(c => {
+        const isSelected = c.id === activeAdminTargetChatId;
+        const unread = c.unreadByAdmin || 0;
+        const initial = ((c.userName || 'M').charAt(0)).toUpperCase();
+        return `
+          <div class="digi-cust-option" data-id="${c.id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:2px;${isSelected ? 'background:rgba(168,85,247,0.22);border:1px solid rgba(168,85,247,0.4);' : 'background:transparent;border:1px solid transparent;'}">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+              <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;">${initial}</div>
+              <span style="font-size:12px;color:#f1f5f9;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:115px;">${c.userName || 'Müşteri'}</span>
+            </div>
+            ${unread > 0 ? `<span style="background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:9999px;box-shadow:0 0 8px rgba(239,68,68,0.6);">${unread} yeni</span>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      menu.querySelectorAll('.digi-cust-option').forEach(opt => {
+        opt.onclick = function(e) {
+          e.stopPropagation();
+          activeAdminTargetChatId = this.getAttribute('data-id');
+          populateOperatorCustomerSelect();
+          renderWidgetMessages();
+          closeCustomerDropdown();
+        };
+        opt.onmouseover = function() {
+          if (this.getAttribute('data-id') !== activeAdminTargetChatId) {
+            this.style.background = 'rgba(255,255,255,0.06)';
+          }
+        };
+        opt.onmouseout = function() {
+          if (this.getAttribute('data-id') !== activeAdminTargetChatId) {
+            this.style.background = 'transparent';
+          }
+        };
+      });
     }
 
     // Form submit
@@ -2951,7 +3090,7 @@ pause
       const isOperator = DigiStoreDB.isAdminOperator();
       if (isOperator) {
         if (!activeAdminTargetChatId) {
-          alert('Lütfen yanıt yazmak için üstten bir müşteri sohbeti seçin');
+          alert('Lütfen yanıt yazmak için üstten bir müşteri seçin');
           return;
         }
         DigiStoreDB.sendAgentSupportMessage(activeAdminTargetChatId, text, 'destek@closydev.site');
@@ -2997,15 +3136,21 @@ pause
       if (!chat || !chat.messages) return;
 
       container.innerHTML = chat.messages.map(m => {
+        let cleanText = (m.text || '')
+          .replace(/Merhaba!\s*DigiStore doğrudan yönetici canlı destek hattındasınız\.\s*Mesajınızı buraya yazabilirsiniz,\s*site yöneticimiz admin@digistore\.com doğrudan canlı olarak yanıtlayacaktır\./g, 'Merhaba! closydev. resmi canlı destek hattındasınız. Mesajınızı buraya iletebilirsiniz, yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır.')
+          .replace(/DigiStore doğrudan yönetici canlı destek hattındasınız/gi, 'closydev. resmi canlı destek hattındasınız')
+          .replace(/site yöneticimiz admin@digistore\.com doğrudan canlı olarak yanıtlayacaktır/gi, 'yetkili ekibimiz doğrudan canlı olarak yanıtlayacaktır')
+          .replace(/admin@digistore\.com/gi, 'destek@closydev.site')
+          .replace(/DigiStore/gi, 'closydev.');
+
         const isUser = m.sender === 'user';
         if (isUser) {
-          // If current viewer is admin operator, user's messages appear on the left!
           if (isOperator) {
             return `
               <div style="align-self:flex-start;max-width:84%;display:flex;flex-direction:column;align-items:flex-start;">
                 <span style="font-size:10.5px;color:#86868b;margin-bottom:3px;padding-left:2px;">${chat.userName || 'Müşteri'}</span>
                 <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:#f5f5f7;padding:10px 14px;border-radius:16px 16px 16px 3px;font-size:13px;line-height:1.45;word-break:break-word;">
-                  ${m.text}
+                  ${cleanText}
                 </div>
                 <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
               </div>
@@ -3014,7 +3159,7 @@ pause
             return `
               <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
                 <div class="digi-chat-bubble-user">
-                  ${m.text}
+                  ${cleanText}
                 </div>
                 <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''} · İletildi</span>
               </div>
@@ -3025,9 +3170,9 @@ pause
           if (isOperator) {
             return `
               <div style="align-self:flex-end;max-width:82%;display:flex;flex-direction:column;align-items:flex-end;">
-                <span style="font-size:10px;color:#c084fc;font-weight:700;margin-bottom:2px;padding-right:2px;">Siz (Yetkili)</span>
+                <span style="font-size:10px;color:#c084fc;font-weight:700;margin-bottom:2px;padding-right:2px;">Siz (Sistem Yöneticisi)</span>
                 <div class="digi-chat-bubble-user" style="background:linear-gradient(135deg,#7e22ce,#4338ca);">
-                  ${m.text}
+                  ${cleanText}
                 </div>
                 <span style="font-size:10px;color:#86868b;margin-top:3px;padding-right:2px;">${m.time || ''}</span>
               </div>
@@ -3040,7 +3185,7 @@ pause
                   <span style="background:rgba(168,85,247,0.18);border:1px solid rgba(168,85,247,0.35);color:#d8b4fe;font-size:8.5px;padding:1px 5px;border-radius:4px;font-weight:800;">EKİP</span>
                 </div>
                 <div class="digi-chat-bubble-admin">
-                  ${m.text}
+                  ${cleanText}
                 </div>
                 <span style="font-size:10px;color:#86868b;margin-top:3px;padding-left:2px;">${m.time || ''}</span>
               </div>
