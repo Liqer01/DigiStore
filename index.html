@@ -96,8 +96,9 @@
     top: 14px;
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 32px);
-    max-width: 1120px;
+    width: -moz-fit-content;
+    width: fit-content;
+    max-width: calc(100% - 24px);
     z-index: 1000;
     border-radius: 9999px;
     background: rgba(10, 10, 14, 0.85);
@@ -109,24 +110,26 @@
   }
 
   .header-inner {
-    width: 100%;
+    width: auto;
     margin: 0 auto;
-    padding: 0 16px 0 18px;
-    height: 54px;
+    padding: 0 8px 0 14px;
+    height: 52px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
+    gap: 14px;
     flex-wrap: nowrap;
+    box-sizing: border-box;
   }
 
-  /* Scrolled State: Sleek pill & closydev. text hides smoothly, leaving only the star */
+  /* Scrolled State: Sleek compact capsule */
   .main-header.header-scrolled {
-    max-width: 930px;
+    width: -moz-fit-content;
+    width: fit-content;
     background: rgba(8, 8, 12, 0.94);
     border-color: rgba(255, 255, 255, 0.18);
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.1);
-    transform: translateX(-50%) scale(0.98);
+    transform: translateX(-50%) scale(0.99);
   }
 
   .nav-brand-link {
@@ -263,12 +266,12 @@
   }
 
   .main-header .cart-pill-btn {
-    padding: 6px 12px;
+    padding: 5px 10px;
     flex-shrink: 0;
   }
 
   #navUserName {
-    max-width: 110px;
+    max-width: 85px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -300,6 +303,8 @@
     .header-inner {
       padding: 0 10px;
       gap: 6px;
+      justify-content: space-between;
+      width: 100%;
     }
   }
 
@@ -307,15 +312,15 @@
   .nav-menu {
     display: flex;
     align-items: center;
-    gap: 2px;
-    flex-shrink: 1;
+    gap: 1px;
+    flex-shrink: 0;
   }
   .nav-menu-link {
     color: #a1a1aa;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
     text-decoration: none;
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: 9999px;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
@@ -324,6 +329,13 @@
   .nav-menu-link:hover {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.08);
+  }
+
+  @media (max-width: 1100px) {
+    .nav-menu-link {
+      padding: 4px 6px;
+      font-size: 11.5px;
+    }
   }
 
   @media (max-width: 980px) {
@@ -1541,7 +1553,7 @@
     </nav>
 
     <!-- Right: Theme, Cart, Hesabım / Giriş Yap & Admin Paneli -->
-    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
       <!-- Dark / Light Theme Toggle Button -->
       <button type="button" id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" title="Tema Değiştir" aria-label="Tema Değiştir">
         <!-- Sun Icon (Active in Dark mode) -->
@@ -1563,21 +1575,21 @@
       </button>
 
       <!-- Cart -->
-      <div class="cart-pill-btn" onclick="toggleCart()" title="Sepet">
+      <div class="cart-pill-btn" onclick="toggleCart()" title="Sepet" style="padding:5px 10px;">
         <svg width="15" height="15" fill="none" stroke="#f5f5f7" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
         </svg>
-        <span style="font-size:12px;font-weight:600;color:#f5f5f7;" id="cartTotalNav">₺0</span>
+        <span style="font-size:11.5px;font-weight:600;color:#f5f5f7;" id="cartTotalNav">₺0</span>
         <span style="background:#2997ff;color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;" id="cartCount">0</span>
       </div>
 
       <!-- Auth Controls (Logged in badge / Logged out Login button) -->
       <div id="navAuthContainer" style="position:relative;">
         <!-- Logged In Badge -->
-        <div id="navUserBadge" class="apple-glass" onclick="toggleNavUserDropdown(event)" style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:9999px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);transition:all 0.2s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.background='rgba(10,10,14,0.72)'" title="Hesabım">
-          <div id="navUserAvatar" style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg, #0a84ff, #5e5ce6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">Z</div>
-          <span id="navUserName" style="font-size:13px;font-weight:600;color:#f5f5f7;">Zeybe</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#86868b" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div id="navUserBadge" class="apple-glass" onclick="toggleNavUserDropdown(event)" style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:9999px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);transition:all 0.2s cubic-bezier(0.16,1,0.3,1);flex-shrink:0;" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.background='rgba(10,10,14,0.72)'" title="Hesabım">
+          <div id="navUserAvatar" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg, #0a84ff, #5e5ce6);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;">Z</div>
+          <span id="navUserName" style="font-size:12px;font-weight:600;color:#f5f5f7;">Zeybe</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#86868b" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </div>
 
         <!-- User Dropdown Menu -->
@@ -1621,7 +1633,7 @@
       </div>
 
       <!-- Admin Quick Pill (Sadece admin@digistore.com) -->
-      <a id="navAdminQuickLink" href="admin.html" class="btn-pill-white" style="display:none;padding:7px 18px;font-size:12.5px;text-decoration:none;">
+      <a id="navAdminQuickLink" href="admin.html" class="btn-pill-white" style="display:none;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;border-radius:9999px;">
         Admin Paneli
       </a>
     </div>
@@ -2062,8 +2074,8 @@
           closydev Topluluğuna Katılın
         </h3>
 
-        <p style="font-size: 14.5px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px;">
-          Satın aldığınız botların açık kaynak kodlarını teslim almak, VDS ve sunucu kurulum desteği talep etmek ya da <span id="discordDescMemberCount">topluluktaki</span> Discord geliştiricileriyle sohbet etmek için sunucumuza davetlisiniz.
+        <p style="font-size: 14.5px; color: #94a3b8; line-height: 1.65; margin-bottom: 24px;">
+          Satın aldığınız botların açık kaynak kodlarını teslim almak, ücretsiz birebir sunucu kurulum desteği almak ve projelerinizi güçlendirmek için resmi Discord sunucumuza davetlisiniz.
         </p>
 
         <!-- Stats Counter Badges -->
@@ -2115,39 +2127,51 @@
         background: rgba(14, 14, 20, 0.85);
         border: 1px solid rgba(88, 101, 242, 0.4);
         border-radius: 24px;
-        padding: 28px;
+        overflow: hidden;
         text-align: center;
-        min-width: 270px;
+        min-width: 280px;
         box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
       ">
-        <div style="width: 68px; height: 68px; border-radius: 20px; background: #5865F2; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5);">
-          <svg width="38" height="38" viewBox="0 0 127.14 96.36" fill="#FFFFFF">
-            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.91,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.91,96.12,53,91.08,65.69,84.69,65.69Z"/>
-          </svg>
+        <!-- Top Animated Banner -->
+        <div style="width: 100%; height: 95px; position: relative; background: #0b0c16; overflow: hidden;">
+          <img id="discordServerBannerImg" src="closydev-discord-banner.gif" alt="closydev Discord Banner" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.onerror=null; this.src='https://cdn.discordapp.com/banners/1540486566990839858/a_fc62ca26992d177596dbe783dbf0037d.gif?size=480';">
+          <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(14, 14, 20, 0.9) 100%);"></div>
         </div>
 
-        <h4 style="font-size: 17px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">discord.gg/closydev</h4>
-        <p style="font-size: 12px; color: #86868b; margin-bottom: 18px;">Tek tıkla aramıza katılın</p>
+        <!-- Card Body with Overlapping Avatar -->
+        <div style="padding: 0 24px 24px; position: relative; z-index: 1;">
+          <div style="width: 76px; height: 76px; border-radius: 24px; overflow: hidden; margin: -38px auto 14px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(88, 101, 242, 0.4); border: 3.5px solid #0e0e14; background: #000; position: relative;">
+            <img id="discordServerIconImg" src="closydev-discord-icon.gif" alt="closydev Discord Sunucu Logosu" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; display: block;" onerror="this.onerror=null; this.src='https://cdn.discordapp.com/icons/1540486566990839858/a_75635e896e2c1ddb9c63b31ed1abda71.gif?size=128';">
+          </div>
 
-        <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" style="
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          width: 100%;
-          padding: 13px 20px;
-          background: #5865F2;
-          color: #ffffff;
-          font-weight: 700;
-          font-size: 13.5px;
-          border-radius: 9999px;
-          text-decoration: none;
-          box-shadow: 0 4px 20px rgba(88, 101, 242, 0.45);
-          transition: all 0.25s ease;
-        " onmouseover="this.style.background='#4752c4';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#5865F2';this.style.transform='translateY(0)';">
-          <span>Discord'a Katıl</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
+          <h4 style="font-size: 17.5px; font-weight: 800; color: #ffffff; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>closydev.</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="#5865F2" style="flex-shrink:0;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </h4>
+          <p style="font-size: 12px; color: #86868b; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace;">discord.gg/closydev</p>
+
+          <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" style="
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px 20px;
+            background: #5865F2;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13.5px;
+            border-radius: 9999px;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.45);
+            transition: all 0.25s ease;
+          " onmouseover="this.style.background='#4752c4';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#5865F2';this.style.transform='translateY(0)';">
+            <span>Discord'a Katıl</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
       </div>
 
     </div>
@@ -3774,9 +3798,24 @@ async function updateDiscordLiveStats() {
     if (typeof total === 'number') {
       const totalEl = document.getElementById('discordTotalCount');
       if (totalEl) totalEl.textContent = total.toLocaleString('tr-TR');
+    }
 
-      const descEl = document.getElementById('discordDescMemberCount');
-      if (descEl) descEl.textContent = total.toLocaleString('tr-TR') + ' Discord geliştiricisiyle';
+    if (data.guild && data.guild.icon && data.guild.id) {
+      const iconExt = data.guild.icon.startsWith('a_') ? 'gif' : 'png';
+      const cdnUrl = `https://cdn.discordapp.com/icons/${data.guild.id}/${data.guild.icon}.${iconExt}?size=128`;
+      const iconImg = document.getElementById('discordServerIconImg');
+      if (iconImg) {
+        iconImg.src = cdnUrl;
+      }
+    }
+
+    if (data.guild && data.guild.banner && data.guild.id) {
+      const bannerExt = data.guild.banner.startsWith('a_') ? 'gif' : 'png';
+      const cdnBannerUrl = `https://cdn.discordapp.com/banners/${data.guild.id}/${data.guild.banner}.${bannerExt}?size=480`;
+      const bannerImg = document.getElementById('discordServerBannerImg');
+      if (bannerImg) {
+        bannerImg.src = cdnBannerUrl;
+      }
     }
 
     if (data.guild && typeof data.guild.premium_subscription_count === 'number') {
