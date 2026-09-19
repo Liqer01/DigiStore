@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.0">
 <script src="security.js"></script>
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-<script src="store.js?v=3.18.0"></script>
+<script src="store.js?v=3.19.0"></script>
 <script src="kvkk.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1537,6 +1537,7 @@
       <a href="#fiyatlandirma" class="nav-menu-link">Fiyatlandırma</a>
       <a href="#gorusler" class="nav-menu-link">Görüşler</a>
       <a href="#sss" class="nav-menu-link">SSS</a>
+      <a href="#discord" class="nav-menu-link">Discord</a>
     </nav>
 
     <!-- Right: Theme, Cart, Hesabım / Giriş Yap & Admin Paneli -->
@@ -2030,6 +2031,129 @@
   </div>
 </section>
 
+<!-- DISCORD COMMUNITY & LIVE SUPPORT WIDGET (MADDE 5) -->
+<section id="discord" style="padding: 40px 24px 80px; max-width: 1160px; margin: 0 auto;">
+  <div class="apple-card" style="
+    position: relative;
+    overflow: hidden;
+    padding: 44px 40px;
+    border-radius: 32px;
+    background: radial-gradient(120% 120% at 100% 0%, rgba(88, 101, 242, 0.18) 0%, rgba(14, 14, 22, 0.85) 60%, rgba(10, 10, 15, 0.95) 100%);
+    border: 1px solid rgba(88, 101, 242, 0.35);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px -10px rgba(88, 101, 242, 0.25);
+  ">
+    <!-- Discord Watermark Ambient Glow -->
+    <div style="position: absolute; right: -40px; bottom: -40px; opacity: 0.06; pointer-events: none;">
+      <svg width="340" height="340" viewBox="0 0 127.14 96.36" fill="#5865F2">
+        <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.91,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.91,96.12,53,91.08,65.69,84.69,65.69Z"/>
+      </svg>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 32px; position: relative; z-index: 1;">
+      
+      <!-- Left Info -->
+      <div style="max-width: 620px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(88, 101, 242, 0.15); border: 1px solid rgba(88, 101, 242, 0.35); padding: 5px 12px; border-radius: 9999px; margin-bottom: 16px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e;"></span>
+          <span style="font-size: 11px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.05em; text-transform: uppercase;">Resmi Discord Topluluğu</span>
+        </div>
+
+        <h3 style="font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.8px; margin-bottom: 12px; line-height: 1.25;">
+          closydev Topluluğuna Katılın
+        </h3>
+
+        <p style="font-size: 14.5px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px;">
+          Satın aldığınız botların açık kaynak kodlarını teslim almak, VDS ve sunucu kurulum desteği talep etmek ya da <span id="discordDescMemberCount">topluluktaki</span> Discord geliştiricileriyle sohbet etmek için sunucumuza davetlisiniz.
+        </p>
+
+        <!-- Stats Counter Badges -->
+        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 24px;">
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e;"></span>
+            <div>
+              <div id="discordOnlineCount" style="font-size: 15px; font-weight: 800; color: #ffffff; font-family: 'JetBrains Mono', monospace;">19</div>
+              <div style="font-size: 10.5px; color: #86868b; text-transform: uppercase; font-weight: 600;">Çevrimiçi Üye</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #5865F2; box-shadow: 0 0 8px #5865F2;"></span>
+            <div>
+              <div id="discordTotalCount" style="font-size: 15px; font-weight: 800; color: #ffffff; font-family: 'JetBrains Mono', monospace;">50</div>
+              <div style="font-size: 10.5px; color: #86868b; text-transform: uppercase; font-weight: 600;">Toplam Üye</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <div>
+              <div style="font-size: 15px; font-weight: 800; color: #ffffff;">7/24</div>
+              <div style="font-size: 10.5px; color: #86868b; text-transform: uppercase; font-weight: 600;">Canlı Ticket</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefits Pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <span style="font-size: 11.5px; color: #cbd5e1; background: rgba(88, 101, 242, 0.08); border: 1px solid rgba(88, 101, 242, 0.2); padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Birebir Kurulum Desteği
+          </span>
+          <span style="font-size: 11.5px; color: #cbd5e1; background: rgba(88, 101, 242, 0.08); border: 1px solid rgba(88, 101, 242, 0.2); padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5865F2" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Açık Kaynak Kod Dağıtımı
+          </span>
+          <span id="discordBoostPill" style="font-size: 11.5px; color: #cbd5e1; background: rgba(88, 101, 242, 0.08); border: 1px solid rgba(88, 101, 242, 0.2); padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>
+            <span id="discordBoostText">33 Boost (Seviye 3)</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Action Card -->
+      <div style="
+        background: rgba(14, 14, 20, 0.85);
+        border: 1px solid rgba(88, 101, 242, 0.4);
+        border-radius: 24px;
+        padding: 28px;
+        text-align: center;
+        min-width: 270px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      ">
+        <div style="width: 68px; height: 68px; border-radius: 20px; background: #5865F2; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5);">
+          <svg width="38" height="38" viewBox="0 0 127.14 96.36" fill="#FFFFFF">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.91,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.91,96.12,53,91.08,65.69,84.69,65.69Z"/>
+          </svg>
+        </div>
+
+        <h4 style="font-size: 17px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">discord.gg/closydev</h4>
+        <p style="font-size: 12px; color: #86868b; margin-bottom: 18px;">Tek tıkla aramıza katılın</p>
+
+        <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" style="
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          padding: 13px 20px;
+          background: #5865F2;
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 13.5px;
+          border-radius: 9999px;
+          text-decoration: none;
+          box-shadow: 0 4px 20px rgba(88, 101, 242, 0.45);
+          transition: all 0.25s ease;
+        " onmouseover="this.style.background='#4752c4';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#5865F2';this.style.transform='translateY(0)';">
+          <span>Discord'a Katıl</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER (LEGAL & KVKK COMPLIANT) -->
 <footer style="padding:60px 24px 40px;background:#000000;border-top:1px solid rgba(255,255,255,0.08);">
   <div class="reveal-scroll" style="max-width:1160px;margin:0 auto;">
@@ -2302,6 +2426,9 @@ function renderProducts(products) {
   grid.innerHTML = products.map((p, idx) => {
     const meta = catMetaMap[p.category] || { label: (p.category || 'DİJİTAL').toUpperCase(), color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.22)', glow: 'rgba(96,165,250,0.12)' };
     const featuresList = (p.features && p.features.length) ? p.features.slice(0, 2) : ['Anında Otomatik Aktivasyon', 'Ömür Boyu Güncelleme & Destek'];
+    const stats = (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.getProductRatingStats === 'function')
+      ? DigiStoreDB.getProductRatingStats(p.id)
+      : { average: Number(p.rating || 5).toFixed(1), count: p.reviews || 0 };
 
     return `
       <div class="apple-card" onclick="openProduct(${p.id})" style="
@@ -2370,9 +2497,11 @@ function renderProducts(products) {
 
           <!-- Rating & Instant Delivery Row -->
           <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #86868b;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span style="font-weight: 700; color: #ffffff;">${p.rating}</span>
-            <span style="color: #71717a;">(${p.reviews})</span>
+            <div style="display: inline-flex; align-items: center; gap: 4px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span style="font-weight: 700; color: #ffffff;">${stats.average}</span>
+            </div>
+            <span style="color: #71717a;">(${stats.count} Değerlendirme)</span>
             
             <span style="margin-left: auto; color: #34c759; font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
               <span style="width: 6px; height: 6px; border-radius: 50%; background: #34c759; box-shadow: 0 0 8px #34c759;"></span>
@@ -2671,28 +2800,269 @@ function quickCheckout(productId) {
   window.location.href = 'odeme.html';
 }
 
+let currentReviewRating = 5;
+
+function renderStarsRow(rating, size = 13) {
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    const fill = i <= Math.round(rating);
+    html += `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill ? '#fbbf24' : 'none'}" stroke="${fill ? '#fbbf24' : '#52525b'}" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  }
+  return html;
+}
+
+function setReviewScore(score) {
+  currentReviewRating = score;
+  const container = document.getElementById('reviewStarSelector');
+  if (!container) return;
+  const stars = container.querySelectorAll('.star-icon');
+  stars.forEach((s, idx) => {
+    if (idx < score) {
+      s.setAttribute('fill', '#fbbf24');
+      s.setAttribute('stroke', '#fbbf24');
+    } else {
+      s.setAttribute('fill', 'none');
+      s.setAttribute('stroke', '#52525b');
+    }
+  });
+  const label = document.getElementById('reviewScoreLabel');
+  if (label) {
+    label.textContent = score + ' / 5 Yıldız';
+  }
+}
+
+function submitProductReview(productId) {
+  if (typeof DigiStoreDB === 'undefined') return;
+  if (!DigiStoreDB.isLoggedIn()) {
+    showIosAlert({
+      title: 'Giriş Yapmalısınız',
+      message: 'Ürünü değerlendirebilmek ve yorum ekleyebilmek için lütfen önce giriş yapın veya kayıt olun.',
+      type: 'warning',
+      confirmText: 'Giriş Yap',
+      onConfirm: () => {
+        closeModal('productModal');
+        openAuthModal('login');
+      }
+    });
+    return;
+  }
+
+  const commentInput = document.getElementById('newReviewComment');
+  const comment = commentInput ? commentInput.value.trim() : '';
+
+  if (!comment || comment.length < 5) {
+    showIosAlert({
+      title: 'Yorum Çok Kısa',
+      message: 'Lütfen ürün hakkındaki deneyiminizi belirten en az 5 karakterlik bir yorum yazın.',
+      type: 'warning'
+    });
+    return;
+  }
+
+  const res = DigiStoreDB.addReview({
+    productId: productId,
+    rating: currentReviewRating,
+    comment: comment
+  });
+
+  if (res && res.success) {
+    showDynamicIsland('Değerlendirme Yayınlandı', 'Yorumunuz başarıyla eklendi.', 'success');
+    openProduct(productId);
+    renderStorefrontProducts();
+  } else {
+    showIosAlert({
+      title: 'Hata',
+      message: (res && res.error) ? res.error : 'Yorum kaydedilirken bir hata oluştu.',
+      type: 'error'
+    });
+  }
+}
+
 function openProduct(id) {
   const p = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getProductById(id) : null;
   if (!p) return;
+
+  const stats = (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.getProductRatingStats === 'function')
+    ? DigiStoreDB.getProductRatingStats(p.id)
+    : { average: Number(p.rating || 5).toFixed(1), count: p.reviews || 0, stars: { 5: p.reviews || 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
+
+  const reviews = (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.getReviews === 'function')
+    ? DigiStoreDB.getReviews(p.id)
+    : [];
+
+  const isLoggedIn = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.isLoggedIn() : false;
+  const isVerified = (typeof DigiStoreDB !== 'undefined' && typeof DigiStoreDB.isVerifiedBuyer === 'function')
+    ? DigiStoreDB.isVerifiedBuyer(p.id)
+    : false;
+
+  currentReviewRating = 5;
+
   document.getElementById('productModalContent').innerHTML = `
     <div>
-      <span style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;">${p.category}</span>
-      <h2 style="font-size:26px;font-weight:800;color:#fff;margin:6px 0 12px;">${p.name}</h2>
-      <p style="font-size:14px;color:#86868b;line-height:1.6;margin-bottom:20px;">${p.desc}</p>
+      <!-- Top Badges & Title -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:700;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:0.05em;">${p.category || 'DİJİTAL'}</span>
+        <div style="display:flex;align-items:center;gap:4px;">
+          ${renderStarsRow(stats.average, 13)}
+          <span style="font-size:12px;font-weight:700;color:#fff;margin-left:4px;">${stats.average}</span>
+          <span style="font-size:11.5px;color:#71717a;">(${stats.count})</span>
+        </div>
+      </div>
+
+      <h2 style="font-size:24px;font-weight:800;color:#fff;margin:6px 0 10px;line-height:1.3;">${p.name}</h2>
+      <p style="font-size:13.5px;color:#94a3b8;line-height:1.6;margin-bottom:18px;">${p.desc}</p>
       
-      <div style="background:rgba(255,255,255,0.03);padding:16px;border-radius:16px;margin-bottom:20px;">
-        <h4 style="font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;text-transform:uppercase;">Özellikler</h4>
-        ${p.features.map(f => `<div style="font-size:13px;color:#cbd5e1;display:flex;align-items:center;gap:8px;margin-bottom:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${f}</span></div>`).join('')}
+      <!-- Key Features -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);padding:14px 16px;border-radius:16px;margin-bottom:20px;">
+        <h4 style="font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">Ürün Özellikleri &amp; Teslimat</h4>
+        ${p.features && p.features.length ? p.features.map(f => `<div style="font-size:12.5px;color:#cbd5e1;display:flex;align-items:center;gap:8px;margin-bottom:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${f}</span></div>`).join('') : '<div style="font-size:12px;color:#86868b;">Anında dijital teslimat ve teknik destek.</div>'}
       </div>
 
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-        <span style="font-size:32px;font-weight:800;color:#fff;">₺${p.price}</span>
-        <span style="font-size:12px;color:#86868b;">(KDV Dahil, Anında Teslim)</span>
+      <!-- Pricing & Actions Row -->
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:16px 20px;border-radius:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:28px;">
+        <div>
+          ${p.oldPrice ? `<span style="font-size:11px;text-decoration:line-through;color:#71717a;display:block;">₺${p.oldPrice}</span>` : ''}
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="font-size:28px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;">₺${p.price}</span>
+            <span style="font-size:11.5px;color:#86868b;">(KDV Dahil, Anında Teslim)</span>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button onclick="addToCart(${p.id});closeModal('productModal');showToast('Ürün sepete eklendi');" class="btn-pill-white" style="padding:11px 20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            <span>Sepete Ekle</span>
+          </button>
+          <button onclick="closeModal('productModal');quickCheckout(${p.id});" style="padding:11px 20px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:9999px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.18)';" onmouseout="this.style.background='rgba(255,255,255,0.1)';">
+            Hemen Al
+          </button>
+        </div>
       </div>
 
-      <button onclick="addToCart(${p.id});closeModal('productModal')" class="btn-pill-white" style="width:100%;padding:14px;">
-        Sepete Ekle
-      </button>
+      <!-- REVIEWS & RATINGS SECTION -->
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div>
+            <h3 style="font-size:18px;font-weight:800;color:#fff;margin-bottom:3px;">Müşteri Değerlendirmeleri</h3>
+            <p style="font-size:12px;color:#86868b;">Doğrulanmış alıcı yorumları ve deneyimleri</p>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:#22c55e;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);padding:4px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            %100 Doğrulanmış
+          </span>
+        </div>
+
+        <!-- Rating Score Card -->
+        <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="font-size:38px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1;">
+              ${stats.average}
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;margin-bottom:4px;">
+                ${renderStarsRow(stats.average, 15)}
+              </div>
+              <div style="font-size:12px;color:#86868b;">
+                Toplam <strong style="color:#fff;">${stats.count}</strong> müşteri değerlendirmesi
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:11.5px;color:#86868b;display:flex;align-items:center;gap:8px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;"></span>
+            Tüm yorumlar sistem tarafından denetlenmektedir
+          </div>
+        </div>
+
+        <!-- Add Review Form / Login prompt -->
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:18px 20px;margin-bottom:22px;">
+          ${isLoggedIn ? `
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <h4 style="font-size:13.5px;font-weight:700;color:#fff;">Bu Ürünü Değerlendirin</h4>
+              ${isVerified ? `
+                <span style="font-size:11px;font-weight:700;color:#22c55e;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.28);padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Doğrulanmış Alıcı
+                </span>
+              ` : `
+                <span style="font-size:11px;font-weight:600;color:#86868b;background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:6px;">
+                  Kullanıcı Değerlendirmesi
+                </span>
+              `}
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+              <span style="font-size:12px;color:#86868b;">Puanınız:</span>
+              <div id="reviewStarSelector" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                ${[1, 2, 3, 4, 5].map(i => `
+                  <svg class="star-icon" onclick="setReviewScore(${i})" width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="2" style="cursor:pointer;transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.2)';" onmouseout="this.style.transform='scale(1)';">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                `).join('')}
+              </div>
+              <span id="reviewScoreLabel" style="font-size:12px;font-weight:700;color:#fbbf24;">5 / 5 Yıldız</span>
+            </div>
+
+            <textarea id="newReviewComment" rows="3" placeholder="Ürün hakkında deneyiminizi, kurulum kolaylığını ve botun çalışma performansını yazın..." style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 14px;color:#fff;font-size:13px;resize:vertical;margin-bottom:12px;outline:none;font-family:inherit;"></textarea>
+
+            <div style="display:flex;justify-content:flex-end;">
+              <button onclick="submitProductReview(${p.id})" class="btn-pill-white" style="padding:9px 20px;font-size:12.5px;font-weight:700;border-radius:9999px;">
+                Değerlendirmeyi Yayınla
+              </button>
+            </div>
+          ` : `
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <h4 style="font-size:13.5px;font-weight:700;color:#fff;margin-bottom:3px;">Bu Ürünü Satın Aldınız mı?</h4>
+                <p style="font-size:12px;color:#86868b;margin:0;">Deneyiminizi paylaşmak ve puan vermek için lütfen hesabınıza giriş yapın.</p>
+              </div>
+              <button onclick="closeModal('productModal');openAuthModal('login');" class="btn-pill-white" style="padding:8px 18px;font-size:12px;font-weight:700;border-radius:9999px;">
+                Giriş Yap / Kayıt Ol
+              </button>
+            </div>
+          `}
+        </div>
+
+        <!-- Customer Reviews List -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${reviews.length ? reviews.map(r => `
+            <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:16px 18px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">
+                    ${(r.author || 'M').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <span style="font-size:13.5px;font-weight:700;color:#fff;">${r.author}</span>
+                      ${r.verified ? `
+                        <span style="font-size:10px;font-weight:700;color:#22c55e;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);padding:1px 6px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          Doğrulanmış Alıcı
+                        </span>
+                      ` : ''}
+                    </div>
+                    <span style="font-size:11px;color:#71717a;">${r.date || 'Eylül 2026'}</span>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;">
+                  ${renderStarsRow(r.rating || 5, 12)}
+                </div>
+              </div>
+
+              <p style="font-size:13px;color:#cbd5e1;line-height:1.55;margin:0;">
+                ${r.comment}
+              </p>
+            </div>
+          `).join('') : `
+            <div style="text-align:center;padding:24px;color:#86868b;font-size:13px;">
+              Henüz bu ürün için bir değerlendirme yapılmamış. İlk değerlendirmeyi siz yapın!
+            </div>
+          `}
+        </div>
+
+      </div>
     </div>`;
   openModal('productModal');
 }
@@ -3385,9 +3755,43 @@ function initScrollReveals() {
   elements.forEach(el => observer.observe(el));
 }
 
+// Live Discord Stats Engine (closydev)
+async function updateDiscordLiveStats() {
+  try {
+    const res = await fetch('https://discord.com/api/v9/invites/closydev?with_counts=true');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data) return;
+
+    const online = data.approximate_presence_count;
+    const total = data.approximate_member_count;
+
+    if (typeof online === 'number') {
+      const onlineEl = document.getElementById('discordOnlineCount');
+      if (onlineEl) onlineEl.textContent = online.toLocaleString('tr-TR');
+    }
+
+    if (typeof total === 'number') {
+      const totalEl = document.getElementById('discordTotalCount');
+      if (totalEl) totalEl.textContent = total.toLocaleString('tr-TR');
+
+      const descEl = document.getElementById('discordDescMemberCount');
+      if (descEl) descEl.textContent = total.toLocaleString('tr-TR') + ' Discord geliştiricisiyle';
+    }
+
+    if (data.guild && typeof data.guild.premium_subscription_count === 'number') {
+      const boostEl = document.getElementById('discordBoostText');
+      if (boostEl) boostEl.textContent = data.guild.premium_subscription_count + ' Boost (Seviye 3)';
+    }
+  } catch (err) {
+    // Statik veya ag hatasi durumunda sessizce devam et
+  }
+}
+
 function startSiteAnimations() {
   initHeroTypewriter();
   initScrollReveals();
+  updateDiscordLiveStats();
 }
 
 if (document.readyState === 'loading') {
@@ -3395,6 +3799,9 @@ if (document.readyState === 'loading') {
 } else {
   startSiteAnimations();
 }
+
+// 30 saniyede bir canli olarak Discord sunucusundan guncelle
+setInterval(updateDiscordLiveStats, 30000);
 </script>
 </body>
 </html>

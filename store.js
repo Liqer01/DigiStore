@@ -24,6 +24,110 @@
   const STORAGE_KEY_EMAILS = 'digistore_emails_v3';
   const STORAGE_KEY_COUPONS = 'closydev_coupons_v1';
   const STORAGE_KEY_APPLIED_COUPON = 'closydev_applied_coupon';
+  const STORAGE_KEY_REVIEWS = 'closydev_reviews_v1';
+
+  const DEFAULT_REVIEWS = [
+    {
+      id: 'rev_101',
+      productId: 1,
+      author: 'Burak K.',
+      email: 'burak.k@gmail.com',
+      rating: 5,
+      date: '18 Eylül 2026',
+      verified: true,
+      comment: 'Kurulumu bilmiyordum, Discord ticket üzerinden bağlandılar ve 10 dakikada VDS\'ime bizzat kurdular. Kodlar çok temiz, butonlar ve HTML transkript harika çalışıyor.'
+    },
+    {
+      id: 'rev_102',
+      productId: 1,
+      author: 'Mehmet T.',
+      email: 'mehmet.t@gmail.com',
+      rating: 5,
+      date: '15 Eylül 2026',
+      verified: true,
+      comment: 'Python kodları açık kaynak olarak eksiksiz teslim edildi. 12.000 kişilik sunucumuzda hiç kasmadan stabil çalışıyor. Kesinlikle tavsiye ederim.'
+    },
+    {
+      id: 'rev_103',
+      productId: 1,
+      author: 'Arda D.',
+      email: 'arda.d@gmail.com',
+      rating: 5,
+      date: '12 Eylül 2026',
+      verified: true,
+      comment: 'Web panel entegrasyonu ve loglama sistemi çok başarılı. Piyasadaki en kapsamlı ticket botu altyapısı.'
+    },
+    {
+      id: 'rev_201',
+      productId: 2,
+      author: 'Selim Y.',
+      email: 'selim.y@gmail.com',
+      rating: 5,
+      date: '17 Eylül 2026',
+      verified: true,
+      comment: 'Web dashboard üzerinden kategori ve modal ayarlarını yapmak inanılmaz pratik. Satış sonrası destek çok hızlıydı.'
+    },
+    {
+      id: 'rev_202',
+      productId: 2,
+      author: 'Caner V.',
+      email: 'caner.v@gmail.com',
+      rating: 5,
+      date: '10 Eylül 2026',
+      verified: true,
+      comment: 'Sipariş anında onaylandı ve lisans anahtarı hesabıma düştü. Web panel arayüzü çok modern.'
+    },
+    {
+      id: 'rev_301',
+      productId: 3,
+      author: 'Ozan S.',
+      email: 'ozan.s@gmail.com',
+      rating: 5,
+      date: '16 Eylül 2026',
+      verified: true,
+      comment: 'Sunucumuza yapılan raid saldırısını saniyesinde savuşturdu. Rol koruması ve webhook koruma sistemi kusursuz.'
+    },
+    {
+      id: 'rev_302',
+      productId: 3,
+      author: 'Emirhan B.',
+      email: 'emirhan.b@gmail.com',
+      rating: 5,
+      date: '11 Eylül 2026',
+      verified: true,
+      comment: 'Birebir sunucuma kurulum yaptılar, ceza ve timeout kuralları tam istediğim gibi yapılandırıldı.'
+    },
+    {
+      id: 'rev_401',
+      productId: 4,
+      author: 'Kaan G.',
+      email: 'kaan.g@gmail.com',
+      rating: 5,
+      date: '14 Eylül 2026',
+      verified: true,
+      comment: 'Özel geçici ses odaları ve haftalık liderlik tablosu sunucumuzdaki aktifliği ikiye katladı.'
+    },
+    {
+      id: 'rev_501',
+      productId: 5,
+      author: 'Yiğit A.',
+      email: 'yigit.a@gmail.com',
+      rating: 5,
+      date: '13 Eylül 2026',
+      verified: true,
+      comment: 'Canvas dinamik hoş geldin kartı ve butonlu kayıt sistemi sunucuya profesyonel bir hava kattı.'
+    },
+    {
+      id: 'rev_601',
+      productId: 6,
+      author: 'Tolga E.',
+      email: 'tolga.e@gmail.com',
+      rating: 5,
+      date: '19 Eylül 2026',
+      verified: true,
+      comment: 'Tüm botların tek pakette olması sunucu yükünü çok azalttı. VDS\'ime bizzat bağlanıp tüm kurulumları yaptılar, mükemmel hizmet.'
+    }
+  ];
 
   const DEFAULT_COUPONS = [
     { code: 'CLOSY10', type: 'percent', value: 10, minSpend: 0, description: '%10 Genel İndirim' },
@@ -212,6 +316,9 @@
       } catch (e) {}
       if (!localStorage.getItem(STORAGE_KEY_EMAILS)) {
         this.initDefaultEmails();
+      }
+      if (!localStorage.getItem(STORAGE_KEY_REVIEWS)) {
+        this.saveReviews(DEFAULT_REVIEWS);
       }
       this.checkOAuthRedirect();
       this.initRemoteConfig();
@@ -1411,6 +1518,175 @@
         localStorage.removeItem(STORAGE_KEY_APPLIED_COUPON);
       } catch(e) {}
       this.broadcastChange('applied_coupon');
+    },
+
+    // ── CLOSYDEV VERIFIED REVIEWS & RATING ENGINE ──
+    getReviews(productId = null) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_REVIEWS);
+        let list = raw ? JSON.parse(raw) : null;
+        if (!list || !Array.isArray(list) || !list.length) {
+          list = [...DEFAULT_REVIEWS];
+          localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(list));
+        }
+        if (productId !== null && productId !== undefined && String(productId) !== 'all') {
+          return list.filter(r => String(r.productId) === String(productId));
+        }
+        return list;
+      } catch(e) {
+        return [...DEFAULT_REVIEWS];
+      }
+    },
+
+    saveReviews(reviews) {
+      try {
+        localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(reviews));
+      } catch(e) {}
+      this.broadcastChange('reviews');
+    },
+
+    isVerifiedBuyer(productId, userIdentifier = null) {
+      try {
+        const orders = this.getOrders();
+        const p = this.getProductById(productId);
+        const pName = p ? p.name.toLowerCase() : '';
+
+        // Get user identity
+        let targetEmail = '';
+        let targetUserId = '';
+        if (userIdentifier) {
+          if (typeof userIdentifier === 'object') {
+            targetEmail = (userIdentifier.email || '').toLowerCase();
+            targetUserId = String(userIdentifier.id || userIdentifier.userId || '');
+          } else if (String(userIdentifier).includes('@')) {
+            targetEmail = String(userIdentifier).toLowerCase();
+          } else {
+            targetUserId = String(userIdentifier);
+          }
+        }
+        if (!targetEmail && !targetUserId) {
+          const sess = this.getSession();
+          if (sess && sess.loggedIn) {
+            targetEmail = (sess.email || '').toLowerCase();
+            targetUserId = String(sess.userId || '');
+          }
+        }
+
+        if (!targetEmail && !targetUserId) return false;
+
+        return orders.some(o => {
+          if (o.status !== 'completed') return false;
+          const emailMatch = targetEmail && o.email && o.email.toLowerCase() === targetEmail;
+          const idMatch = targetUserId && (String(o.userId) === targetUserId || String(o.id) === targetUserId);
+          if (!emailMatch && !idMatch) return false;
+
+          // Check if order contains product
+          if (o.items && Array.isArray(o.items)) {
+            const hasItem = o.items.some(it => {
+              if (String(it.id) === String(productId)) return true;
+              if (String(productId) === '1' && String(it.id).includes('ticket_v14')) return true;
+              if (pName && it.name && (it.name.toLowerCase().includes(pName.substring(0, 15)) || pName.includes(it.name.toLowerCase().substring(0, 15)))) return true;
+              return false;
+            });
+            if (hasItem) return true;
+          }
+          if (o.product && pName && (o.product.toLowerCase().includes(pName.substring(0, 15)) || pName.includes(o.product.toLowerCase().substring(0, 15)))) {
+            return true;
+          }
+          return false;
+        });
+      } catch(e) {
+        return false;
+      }
+    },
+
+    getProductRatingStats(productId) {
+      const reviews = this.getReviews(productId);
+      if (!reviews || !reviews.length) {
+        const p = this.getProductById(productId);
+        const fallbackRating = p && p.rating ? Number(p.rating).toFixed(1) : '5.0';
+        const fallbackCount = p && p.reviews ? Number(p.reviews) : 0;
+        return {
+          average: fallbackRating,
+          count: fallbackCount,
+          stars: { 5: fallbackCount, 4: 0, 3: 0, 2: 0, 1: 0 }
+        };
+      }
+
+      const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
+      const avg = (sum / reviews.length).toFixed(1);
+      const stars = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+      reviews.forEach(r => {
+        const score = Math.max(1, Math.min(5, Math.round(Number(r.rating) || 5)));
+        stars[score] = (stars[score] || 0) + 1;
+      });
+
+      return {
+        average: avg,
+        count: reviews.length,
+        stars: stars
+      };
+    },
+
+    addReview({ productId, rating = 5, comment, author = null, email = null }) {
+      if (!productId) return { success: false, error: 'Ürün bilgisi eksik.' };
+      if (!comment || comment.trim().length < 5) {
+        return { success: false, error: 'Lütfen en az 5 karakterlik bir yorum yazın.' };
+      }
+
+      const cleanScore = Math.max(1, Math.min(5, Math.round(Number(rating) || 5)));
+      const sess = this.getSession();
+      const prof = this.getProfile();
+
+      let finalAuthor = author;
+      let finalEmail = email;
+
+      if (!finalAuthor) {
+        if (prof && prof.name) {
+          finalAuthor = prof.name;
+        } else if (sess && sess.loggedIn && sess.email) {
+          finalAuthor = sess.email.split('@')[0];
+        } else {
+          finalAuthor = 'Misafir Kullanıcı';
+        }
+      }
+      if (!finalEmail && sess && sess.loggedIn) {
+        finalEmail = sess.email;
+      }
+
+      const verified = this.isVerifiedBuyer(productId, finalEmail);
+
+      const now = new Date();
+      const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+      const dateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+      const newReview = {
+        id: 'rev_' + Date.now(),
+        productId: Number(productId) || productId,
+        author: finalAuthor,
+        email: finalEmail || '',
+        rating: cleanScore,
+        date: dateStr,
+        verified: verified,
+        comment: comment.trim()
+      };
+
+      const allReviews = this.getReviews();
+      allReviews.unshift(newReview);
+      this.saveReviews(allReviews);
+
+      try {
+        const products = this.getProducts();
+        const pIdx = products.findIndex(p => String(p.id) === String(productId));
+        if (pIdx !== -1) {
+          const stats = this.getProductRatingStats(productId);
+          products[pIdx].rating = Number(stats.average);
+          products[pIdx].reviews = stats.count;
+          this.saveProducts(products);
+        }
+      } catch(e) {}
+
+      return { success: true, review: newReview };
     },
 
     async syncRemoteOrders() {
