@@ -535,6 +535,7 @@
       grid-template-columns: 1fr !important;
       gap: 24px;
     }
+  }
   /* ====================================================================
      LIGHT & DARK THEME SYSTEM (odeme.html)
      ==================================================================== */
@@ -701,16 +702,26 @@
     }
   }
 
+  .nav-brand-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    text-decoration: none !important;
+    user-select: none !important;
+    flex-shrink: 0 !important;
+  }
+
   .brand-light-wrap {
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 9px !important;
     overflow: hidden;
     padding: 3px 6px;
     border-radius: 8px;
     user-select: none;
     text-decoration: none;
+    flex-shrink: 0;
   }
   .brand-light-wrap::after {
     content: '';
@@ -735,7 +746,7 @@
 
   .brand-text {
     display: inline-block;
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 800;
     letter-spacing: -0.04em;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1012,8 +1023,8 @@
 <nav style="background:rgba(0,0,0,0.85);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
   
   <!-- closydev. Brand Logo -->
-  <a href="index.html" class="nav-brand-link brand-light-wrap" title="closydev." style="text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(255,255,255,0.6));">
+  <a href="index.html" class="nav-brand-link brand-light-wrap" title="closydev." style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.5));">
       <path d="M13 2L3.5 13.5H11.5L10 22L20.5 10.5H12.5L13 2Z" fill="#FFFFFF"/>
     </svg>
     <span class="brand-text">

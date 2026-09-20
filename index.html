@@ -1664,7 +1664,7 @@
     </p>
 
     <!-- CTAs -->
-    <div id="heroCtas" class="hero-anim-fade" style="display:flex;gap:14px;justify-content:center;align-items:center;margin-bottom:48px;">
+    <div id="heroCtas" class="hero-anim-fade" style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:48px;flex-wrap:wrap;">
       <button class="btn-pill-white" onclick="document.getElementById('urunler').scrollIntoView({behavior:'smooth'})">
         Ürünleri İncele →
       </button>
@@ -2315,7 +2315,6 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
     <div id="productModalContent"></div>
-  </div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -2952,7 +2951,7 @@ function openProduct(id) {
           </div>
         </div>
 
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <button onclick="addToCart(${p.id});closeModal('productModal');showToast('Ürün sepete eklendi');" class="btn-pill-white" style="padding:11px 20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
             <span>Sepete Ekle</span>
