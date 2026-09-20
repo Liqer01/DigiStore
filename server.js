@@ -51,21 +51,10 @@ app.use('/api/auth/', guard.authLimiter);
 // 7. Sahte / Flood Sipariş Kalkanı
 app.use('/api/orders', guard.orderLimiter);
 
-// ?? 8. ADMIN IP WHITELIST GUARD ?????????????????????????????????????
-const ALLOWED_ADMIN_IPS = (process.env.ADMIN_ALLOWED_IPS || '188.119.11.236,127.0.0.1,::1').split(',').map(s => s.trim());
-app.use(['/admin', '/api/admin', '/api/admin-auth'], (req, res, next) => {
+// 8. ADMIN AUTH ENDPOINT (IP bağımsız - Hesap bazlı doğrulama)
+app.get('/api/admin-auth', (req, res) => {
   const clientIp = guard.getClientIP(req).replace('::ffff:', '').trim();
-  const isAllowed = ALLOWED_ADMIN_IPS.includes(clientIp) || clientIp === '127.0.0.1' || clientIp === '::1';
-  if (req.path === '/api/admin-auth') {
-    if (!isAllowed) {
-      return res.status(403).json({ allowed: false, clientIp, error: 'Erisim reddedildi: Bu panel sadece yetkili yonetici IP adresine aciktir.' });
-    }
-    return res.json({ allowed: true, clientIp });
-  }
-  if (!isAllowed) {
-    return res.status(403).send('403 Forbidden: Bu yonetim paneli sadece yetkili yonetici IP adresine aciktir.');
-  }
-  next();
+  res.json({ allowed: true, clientIp });
 });
 
 
