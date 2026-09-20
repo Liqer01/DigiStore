@@ -1299,71 +1299,16 @@
       if (!licenseKey) return { valid: false, reason: 'Lütfen geçerli bir lisans anahtarı giriniz.' };
       const cleanKey = String(licenseKey).trim().toUpperCase();
 
-      // 1. Veritabanındaki siparişler içinde ara
-      const orders = this.getOrders();
-      for (const o of orders) {
-        if (o.licenseKeys && o.licenseKeys.some(k => k.toUpperCase() === cleanKey)) {
-          if (o.status !== 'completed') {
-            return {
-              valid: false,
-              reason: o.status === 'pending' ? 'Bu lisansa ait siparişin ödemesi henüz onaylanmamıştır.' : 'Bu lisans iptal edilmiş veya iade edilmiştir.'
-            };
-          }
-          return {
-            valid: true,
-            key: cleanKey,
-            orderId: o.id,
-            customer: o.customer || 'Değerli Müşterimiz',
-            email: o.email || 'musteri@closydev.com',
-            product: o.product || 'Closy Ticket Botu v14',
-            botId: 'ticket-bot',
-            status: isComp ? 'active' : (isRef ? 'revoked' : 'pending'),
-            statusText: isComp ? 'Aktif & Doğrulandı' : (isRef ? 'İptal / İade Edildi' : 'Yönetici Onayı Bekliyor'),
-            date: o.date || 'Ömür Boyu',
-            isLifetime: true,
-            version: 'v14.0 Enterprise',
-            configTemplate: {
-              bot_token: '',
-              bot_adi: 'Closy Ticket',
-              embed_renk: '0x111216',
-              ticket_kategori_id: '',
-              ticket_log_kanal_id: '',
-              ticket_yetkili_rol_id: '',
-              ticket_panel_kanal_id: '',
-              sabit_ses_kanal_id: '',
-              stream_url: 'https://www.twitch.tv/closydev',
-              dm_bildirim: false,
-              web_port: 8080
-            }
-          };
-        }
-      }
-
-      // 2. Format doğrulama ve tanıma (CLOSY-XXXX veya DS-XXXX)
-      const validPrefix = cleanKey.startsWith('CLOSY-') || cleanKey.startsWith('DS-') || cleanKey.startsWith('CLO-');
-      const parts = cleanKey.split('-');
-      if (validPrefix && parts.length >= 3 && !cleanKey.includes('BURAYA')) {
-        let productName = 'Closy Ticket Botu v14';
-        let botId = 'ticket-bot';
-        if (cleanKey.includes('VOICE') || cleanKey.includes('PRIV')) {
-          productName = 'Closy Priv Voice Hub';
-          botId = 'voice-hub';
-        } else if (cleanKey.includes('GUARD') || cleanKey.includes('WELCOME')) {
-          productName = 'Closy Welcome & Guard Suite';
-          botId = 'guard-suite';
-        } else if (cleanKey.includes('VIP') || cleanKey.includes('BUNDLE')) {
-          productName = 'Closy VIP All-In-One Bundle';
-          botId = 'vip-bundle';
-        }
-
+      // 1. Sabit onaylı sistem lisansları
+      if (cleanKey === 'DS-TG7R-IRZG-VXZN-9SD2' || cleanKey === 'CLOSY-TK84-9921-X48A-9921') {
         return {
           valid: true,
           key: cleanKey,
-          orderId: 'DS-' + (cleanKey.length > 6 ? cleanKey.substring(cleanKey.length - 6) : '90144'),
-          customer: 'Closy Lisanslı Müşteri',
-          email: 'musteri@closydev.com',
-          product: productName,
-          botId: botId,
+          orderId: 'DS-359765',
+          customer: cleanKey === 'DS-TG7R-IRZG-VXZN-9SD2' ? 'Closy Kurucu & Yönetici' : 'Eren Zeybek',
+          email: cleanKey === 'DS-TG7R-IRZG-VXZN-9SD2' ? 'admin@closydev.site' : 'erenzeybek01@gmail.com',
+          product: 'Closy Yeni Nesil Discord Ticket Botu v14',
+          botId: 'ticket-bot',
           status: 'active',
           statusText: 'Aktif & Doğrulandı',
           date: 'Ömür Boyu (Lifetime)',
@@ -1378,16 +1323,56 @@
             ticket_yetkili_rol_id: '',
             ticket_panel_kanal_id: '',
             sabit_ses_kanal_id: '',
-            stream_url: 'https://www.twitch.tv/closydev',
+            stream_url: 'https://twitch.tv/closydev',
             dm_bildirim: false,
             web_port: 8080
           }
         };
       }
 
+      // 2. Veritabanındaki siparişler içinde ara
+      const orders = this.getOrders();
+      for (const o of orders) {
+        if (o.licenseKeys && o.licenseKeys.some(k => String(k).trim().toUpperCase() === cleanKey)) {
+          if (o.status !== 'completed') {
+            return {
+              valid: false,
+              reason: o.status === 'pending' ? 'Bu lisansa ait sipariş henüz yönetici tarafından onaylanmamıştır.' : 'Bu lisans iptal edilmiş veya iade edilmiştir.'
+            };
+          }
+          return {
+            valid: true,
+            key: cleanKey,
+            orderId: o.id,
+            customer: o.customer || 'Değerli Müşterimiz',
+            email: o.email || 'musteri@closydev.site',
+            product: o.product || 'Closy Ticket Botu v14',
+            botId: 'ticket-bot',
+            status: 'active',
+            statusText: 'Aktif & Doğrulandı',
+            date: o.date || 'Ömür Boyu',
+            isLifetime: true,
+            version: 'v14.0 Enterprise',
+            configTemplate: {
+              bot_token: '',
+              bot_adi: 'Closy Ticket',
+              embed_renk: '0x111216',
+              ticket_kategori_id: '',
+              ticket_log_kanal_id: '',
+              ticket_yetkili_rol_id: '',
+              ticket_panel_kanal_id: '',
+              sabit_ses_kanal_id: '',
+              stream_url: 'https://twitch.tv/closydev',
+              dm_bildirim: false,
+              web_port: 8080
+            }
+          };
+        }
+      }
+
       return {
         valid: false,
-        reason: "Geçersiz lisans formatı! Lisans anahtarınız 'CLOSY-XXXX-XXXX-XXXX' veya 'DS-XXXX-XXXX-XXXX' biçiminde olmalıdır."
+        reason: 'Geçersiz veya sistemde kayıtlı olmayan lisans anahtarı! Lütfen satın aldığınız aktif lisansı giriniz.'
       };
     },
 

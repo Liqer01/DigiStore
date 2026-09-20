@@ -2417,18 +2417,23 @@ function renderUserInvoices() {
 
 function getProductZipPath(productName) {
   const name = (productName || '').toLowerCase();
-  if (name.includes('ticket') || name.includes('closy') || name.includes('imza') || name.includes('bilet')) {
+  // SADECE TICKET BOTU SATIN ALANLARA TICKET BOTU INDIRME IZNI VERILIR
+  const isTicket = name.includes('ticket') || name.includes('bilet') || (name.includes('destek') && !name.includes('guard'));
+  const isMega = name.includes('mega') || name.includes('bundle') || name.includes('full discord sunucu');
+
+  if (isTicket) {
     return 'downloads/Closy_Ticket_Botu_v14.zip';
+  } else if (isMega) {
+    return 'downloads/4_Closy_VIP_All_In_One_Bundle.zip';
   } else if (name.includes('guard') || name.includes('moderasyon')) {
     return 'downloads/3_Closy_Welcome_ve_Guard_Suite.zip';
-  } else if (name.includes('ses') || name.includes('istatistik')) {
+  } else if (name.includes('ses') || name.includes('istatistik') || name.includes('voice')) {
     return 'downloads/1_Closy_Priv_Voice_Hub.zip';
   } else if (name.includes('kayıt') || name.includes('hoş geldin') || name.includes('başvuru')) {
     return 'downloads/5_Raven_Basvuru_Botu.zip';
-  } else if (name.includes('mega') || name.includes('full') || name.includes('bundle') || name.includes('vip')) {
-    return 'downloads/4_Closy_VIP_All_In_One_Bundle.zip';
   }
-  return 'downloads/Closy_Ticket_Botu_v14.zip';
+  // Diger tum urunlerde ticket botu kesinlikle verilmez
+  return null;
 }
 
 function renderUserDownloads() {
@@ -2449,20 +2454,21 @@ function renderUserDownloads() {
   list.innerHTML = orders.map((o, idx) => {
     const isPending = o.status !== 'completed';
     const zipPath = getProductZipPath(o.product);
-    const fileName = zipPath.split('/').pop();
+    const fileName = zipPath ? zipPath.split('/').pop() : 'Paket Bulunamadı';
+    const isTicket = zipPath && zipPath.includes('Closy_Ticket_Botu_v14.zip');
 
     return `
     <div class="apple-glass dash-card-anim" style="padding:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;animation-delay:${idx * 60}ms;">
-      <div style="width:48px;height:48px;border-radius:12px;background:${isPending ? 'rgba(234,179,8,0.12)' : 'rgba(52,199,89,0.12)'};border:1px solid ${isPending ? 'rgba(234,179,8,0.25)' : 'rgba(52,199,89,0.25)'};display:flex;align-items:center;justify-content:center;color:${isPending ? '#eab308' : '#34c759'};flex-shrink:0;">
+      <div style="width:48px;height:48px;border-radius:12px;background:${isPending ? 'rgba(234,179,8,0.12)' : (zipPath ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.12)')};border:1px solid ${isPending ? 'rgba(234,179,8,0.25)' : (zipPath ? 'rgba(52,199,89,0.25)' : 'rgba(255,59,48,0.25)')};display:flex;align-items:center;justify-content:center;color:${isPending ? '#eab308' : (zipPath ? '#34c759' : '#ff3b30')};flex-shrink:0;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
       </div>
 
       <div style="flex:1;min-width:240px;">
         <div style="font-size:15px;font-weight:700;color:#fff;">${o.product}</div>
-        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">Tam Açık Kaynak Kod &amp; Kurulum Arşivi · ${fileName}</div>
-        <div style="font-size:11.5px;color:${isPending ? '#eab308' : '#34c759'};margin-top:4px;display:flex;align-items:center;gap:5px;">
+        <div style="font-size:12.5px;color:#86868b;margin-top:2px;">${zipPath ? `Tam Kaynak Kod &amp; Kurulum Arşivi · ${fileName}` : 'Bu ürün için henüz indirme arşivi tanımlanmadı'}</div>
+        <div style="font-size:11.5px;color:${isPending ? '#eab308' : (zipPath ? '#34c759' : '#ff3b30')};margin-top:4px;display:flex;align-items:center;gap:5px;">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : 'Gerçek bot kaynak kodları (main.py, config.json, baslat.bat) indirilmeye hazır'}</span>
+          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : (zipPath ? 'Gerçek bot kaynak kodları ve kurulum dosyaları indirilmeye hazır' : 'Bu ürün için indirme mevcut değildir')}</span>
         </div>
       </div>
 
@@ -2474,12 +2480,14 @@ function renderUserDownloads() {
             </a>
             <span class="status-badge badge-wait">Onay Bekliyor</span>
           </div>
-        ` : `
-          <a href="${zipPath}" download="${fileName}" onclick="showDynamicIsland('İndirme Başlatıldı', '${fileName} indiriliyor. Bot kodları (main.py) arşivdedir.', 'success')" class="btn-action-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+        ` : (zipPath ? `
+          <a href="${zipPath}" download="${fileName}" onclick="showDynamicIsland('İndirme Başlatıldı', '${fileName} indiriliyor.', 'success')" class="btn-action-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             <span>İndir (ZIP)</span>
           </a>
-        `}
+        ` : `
+          <span class="status-badge" style="background:rgba(255,255,255,0.06);color:#86868b;border:1px solid rgba(255,255,255,0.1);">İndirme Yok</span>
+        `)}
       </div>
     </div>
     `;

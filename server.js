@@ -544,6 +544,52 @@ app.get('/api/config', (req, res) => {
 });
 
 // ── LISANS DOGRULAMA ────────────────────────────────────────────────
+app.all(['/api/license/verify', '/api/license-verify'], (req, res) => {
+  const body = req.body || {};
+  const query = req.query || {};
+  const key = String(body.license_key || body.licenseKey || query.key || query.license_key || '').trim().toUpperCase();
+
+  if (!key) {
+    return res.status(400).json({ valid: false, active: false, reason: 'Lisans anahtari bos birakilamaz.' });
+  }
+
+  // Sabit onayli lisanslar
+  if (key === 'DS-TG7R-IRZG-VXZN-9SD2' || key === 'CLOSY-TK84-9921-X48A-9921') {
+    return res.json({
+      valid: true,
+      active: true,
+      key: key,
+      product: 'Closy Yeni Nesil Discord Ticket Botu v14',
+      customer: 'Closy Yonetici',
+      status: 'active',
+      statusText: 'Aktif & Dogrulandi'
+    });
+  }
+
+  try {
+    const license = db.prepare('SELECT * FROM licenses WHERE license_key=?').get(key);
+    if (license) {
+      if (!license.is_active) {
+        return res.status(403).json({ valid: false, active: false, reason: 'Bu lisans devre disi birakilmistir veya iptal edilmistir.' });
+      }
+      if (license.expires_at && new Date(license.expires_at) < new Date()) {
+        return res.status(403).json({ valid: false, active: false, reason: 'Bu lisansin kullanim suresi dolmustur.' });
+      }
+      return res.json({
+        valid: true,
+        active: true,
+        key: key,
+        product_id: license.product_id,
+        email: license.user_email,
+        status: 'active',
+        statusText: 'Aktif & Dogrulandi'
+      });
+    }
+  } catch (e) {}
+
+  return res.status(404).json({ valid: false, active: false, reason: 'Gecersiz veya sistemde kayitli olmayan lisans anahtari!' });
+});
+
 app.get('/api/license/:key', (req, res) => {
   const license = db.prepare('SELECT * FROM licenses WHERE license_key=?').get(req.params.key);
   if (!license) return res.status(404).json({ valid: false, error: 'Lisans bulunamadı' });
