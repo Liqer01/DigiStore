@@ -1058,6 +1058,13 @@
     saveCategories(categories) {
       localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
       this.broadcastChange('categories');
+      try {
+        fetch(this.getApiBaseUrl() + '/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categories })
+        }).catch(() => {});
+      } catch (e) {}
     },
 
     addCategory(name, slug) {
@@ -1112,6 +1119,13 @@
     saveProducts(products) {
       localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
       this.broadcastChange('products');
+      try {
+        fetch(this.getApiBaseUrl() + '/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ products })
+        }).catch(() => {});
+      } catch (e) {}
     },
 
     addProduct(prodData) {
@@ -1173,6 +1187,46 @@
         return p.active;
       }
       return null;
+    },
+
+    // ─── CLOUD CATALOG SYNCHRONIZATION ─────────────────────────────────
+    async syncRemoteCatalog() {
+      try {
+        const [prodRes, catRes] = await Promise.all([
+          fetch(this.getApiBaseUrl() + '/api/products').catch(() => null),
+          fetch(this.getApiBaseUrl() + '/api/categories').catch(() => null)
+        ]);
+
+        let changedProducts = false;
+        let changedCategories = false;
+
+        if (prodRes && prodRes.ok) {
+          const prodData = await prodRes.json().catch(() => null);
+          const remoteProducts = Array.isArray(prodData) ? prodData : (prodData && Array.isArray(prodData.products) ? prodData.products : null);
+          if (remoteProducts && Array.isArray(remoteProducts) && remoteProducts.length > 0) {
+            const local = this.getProducts();
+            if (JSON.stringify(local) !== JSON.stringify(remoteProducts)) {
+              localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(remoteProducts));
+              changedProducts = true;
+            }
+          }
+        }
+
+        if (catRes && catRes.ok) {
+          const catData = await catRes.json().catch(() => null);
+          const remoteCats = Array.isArray(catData) ? catData : (catData && Array.isArray(catData.categories) ? catData.categories : null);
+          if (remoteCats && Array.isArray(remoteCats) && remoteCats.length > 0) {
+            const localCats = this.getCategories();
+            if (JSON.stringify(localCats) !== JSON.stringify(remoteCats)) {
+              localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(remoteCats));
+              changedCategories = true;
+            }
+          }
+        }
+
+        if (changedProducts) this.broadcastChange('products');
+        if (changedCategories) this.broadcastChange('categories');
+      } catch (e) {}
     },
 
     // ─── ORDERS ─────────────────────────────────────────────────────────
@@ -3217,6 +3271,12 @@ pause
 
   // Expose globally
   window.DigiStoreDB = DigiStoreDB;
+
+  // Background catalog sync with cloud/server (immediate on load, then every 8s)
+  DigiStoreDB.syncRemoteCatalog();
+  setInterval(() => {
+    DigiStoreDB.syncRemoteCatalog();
+  }, 8000);
 
   // Background server sync polling every 3.5 seconds
   setInterval(() => {

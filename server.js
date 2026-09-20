@@ -286,7 +286,12 @@ app.get('/api/auth/me', auth, (req, res) => {
 });
 
 // ── PRODUCT ROUTES ──────────────────────────────────────────────────
+let inMemoryLiveProducts = null;
+
 app.get('/api/products', (req, res) => {
+  if (inMemoryLiveProducts) {
+    return res.json({ success: true, products: inMemoryLiveProducts });
+  }
   const { category, sort } = req.query;
   let query = 'SELECT * FROM products WHERE is_active=1';
   const params = [];
@@ -294,7 +299,16 @@ app.get('/api/products', (req, res) => {
   if (sort === 'price-asc') query += ' ORDER BY price ASC';
   else if (sort === 'price-desc') query += ' ORDER BY price DESC';
   else query += ' ORDER BY sales_count DESC';
-  res.json(db.prepare(query).all(...params));
+  const prods = db.prepare(query).all(...params);
+  res.json({ success: true, products: prods });
+});
+
+app.post('/api/products', (req, res) => {
+  const body = req.body;
+  const products = Array.isArray(body) ? body : (body && Array.isArray(body.products) ? body.products : null);
+  if (!products) return res.status(400).json({ error: 'Gecersiz urun verisi' });
+  inMemoryLiveProducts = products;
+  res.json({ success: true, products, count: products.length });
 });
 
 app.get('/api/products/:id', (req, res) => {
@@ -497,16 +511,27 @@ app.put('/api/admin/orders/:id/status', auth, adminOnly, (req, res) => {
 });
 
 // ── KATEGORILER ─────────────────────────────────────────────────────
+let inMemoryLiveCategories = null;
+
 app.get('/api/categories', (req, res) => {
+  if (inMemoryLiveCategories) {
+    return res.json({ success: true, categories: inMemoryLiveCategories });
+  }
   const defaultCategories = [
     { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
-    { id: 'yazilim', name: 'Yazılım & Bot', slug: 'yazilim', icon: '' },
-    { id: 'template', name: 'Web & Tema', slug: 'template', icon: '' },
-    { id: 'kurs', name: 'Eğitim & Kurs', slug: 'kurs', icon: '' },
-    { id: 'lisans', name: 'Lisans Anahtarı', slug: 'lisans', icon: '' },
-    { id: 'tasarim', name: 'Tasarım & UI', slug: 'tasarim', icon: '' }
+    { id: 'ticket', name: 'Ticket & Destek', slug: 'ticket', icon: '' },
+    { id: 'moderasyon', name: 'Moderasyon & Guard', slug: 'moderasyon', icon: '' },
+    { id: 'topluluk', name: 'Topluluk & Kayıt', slug: 'topluluk', icon: '' }
   ];
-  res.json(defaultCategories);
+  res.json({ success: true, categories: defaultCategories });
+});
+
+app.post('/api/categories', (req, res) => {
+  const body = req.body;
+  const categories = Array.isArray(body) ? body : (body && Array.isArray(body.categories) ? body.categories : null);
+  if (!categories) return res.status(400).json({ error: 'Gecersiz kategori verisi' });
+  inMemoryLiveCategories = categories;
+  res.json({ success: true, categories, count: categories.length });
 });
 
 // ── PUBLIC APP CONFIG (GOOGLE CLIENT ID & SMTP STATUS) ──────────────
