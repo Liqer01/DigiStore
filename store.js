@@ -130,7 +130,7 @@
   ];
 
   const DEFAULT_COUPONS = [
-    { code: 'CLOSY10', type: 'percent', value: 10, minSpend: 0, description: '%10 Genel İndirim' },
+    { code: 'CLOSY100', type: 'percent', value: 100, minSpend: 0, description: '%100 Genel İndirim' },
     { code: 'CLOSY20', type: 'percent', value: 20, minSpend: 150, description: '150 TL Üzeri %20 İndirim' },
     { code: 'DISCORD50', type: 'percent', value: 50, minSpend: 250, description: 'Discord Özel %50 İndirim' },
     { code: 'HOSGELDIN', type: 'fixed', value: 25, minSpend: 80, description: '80 TL Üzeri 25 TL İndirim' }
