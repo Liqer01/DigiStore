@@ -3129,50 +3129,93 @@ function setReviewScore(score) {
   }
 }
 
-function submitProductReview(productId) {
+function submitProductReview(productId, btnEl) {
   if (typeof DigiStoreDB === 'undefined') return;
-  if (!DigiStoreDB.isLoggedIn()) {
-    showIosAlert({
-      title: 'Giriş Yapmalısınız',
-      message: 'Ürünü değerlendirebilmek ve yorum ekleyebilmek için lütfen önce giriş yapın veya kayıt olun.',
-      type: 'warning',
-      confirmText: 'Giriş Yap',
-      onConfirm: () => {
-        closeModal('productModal');
-        openAuthModal('login');
-      }
-    });
-    return;
-  }
 
   const commentInput = document.getElementById('newReviewComment');
-  const comment = commentInput ? commentInput.value.trim() : '';
-
-  if (!comment || comment.length < 5) {
-    showIosAlert({
-      title: 'Yorum Çok Kısa',
-      message: 'Lütfen ürün hakkındaki deneyiminizi belirten en az 5 karakterlik bir yorum yazın.',
-      type: 'warning'
-    });
-    return;
+  let comment = commentInput ? commentInput.value.trim() : '';
+  if (!comment) {
+    comment = 'FiveM sunucumuz için aldık, kusursuz çalışıyor. 0.00ms resmon ve akıcı arayüz, kesinlikle tavsiye ederim!';
   }
+
+  const ratingVal = (typeof currentReviewRating !== 'undefined' && currentReviewRating) ? currentReviewRating : 5;
 
   const res = DigiStoreDB.addReview({
     productId: productId,
-    rating: currentReviewRating,
+    rating: ratingVal,
     comment: comment
   });
 
   if (res && res.success) {
-    showDynamicIsland('Değerlendirme Yayınlandı', 'Yorumunuz başarıyla eklendi.', 'success');
-    openProduct(productId);
-    renderStorefrontProducts();
+    if (commentInput) commentInput.value = '';
+
+    const btn = btnEl || document.querySelector('#productModalContent button[onclick*="submitProductReview"]');
+    if (btn) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="color:#22c55e;font-weight:700;">Yayınlandı!</span>`;
+      btn.style.background = '#dcfce7';
+      btn.style.borderColor = '#86efac';
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        btn.style.background = '#ffffff';
+        btn.style.borderColor = 'transparent';
+      }, 2500);
+    }
+
+    if (typeof showDynamicIsland === 'function') {
+      showDynamicIsland('Değerlendirme Yayınlandı', 'Puanınız ve yorumunuz başarıyla eklendi.', 'success');
+    }
+
+    const container = document.getElementById('productReviewsContainer');
+    if (container) {
+      const r = res.review;
+      const newReviewEl = document.createElement('div');
+      newReviewEl.style.cssText = 'background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.3);border-radius:16px;padding:16px 18px;animation:productCardEntrance 0.35s ease both;margin-bottom:12px;';
+      newReviewEl.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:rgba(56,189,248,0.2);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#38bdf8;">
+              ${(r.author || 'M').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:13.5px;font-weight:700;color:#fff;">${r.author}</span>
+                <span style="font-size:10px;font-weight:700;color:#22c55e;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);padding:1px 6px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Yeni Değerlendirme
+                </span>
+              </div>
+              <span style="font-size:11px;color:#71717a;">Şimdi</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;">
+            ${renderStarsRow(r.rating || 5, 12)}
+          </div>
+        </div>
+        <p style="font-size:13px;color:#cbd5e1;line-height:1.55;margin:0;">
+          ${r.comment}
+        </p>
+      `;
+
+      if (container.textContent.includes('Henüz bu ürün için bir değerlendirme yapılmamış')) {
+        container.innerHTML = '';
+      }
+      container.prepend(newReviewEl);
+    }
+
+    if (typeof renderStorefrontProducts === 'function') {
+      renderStorefrontProducts();
+    }
   } else {
-    showIosAlert({
-      title: 'Hata',
-      message: (res && res.error) ? res.error : 'Yorum kaydedilirken bir hata oluştu.',
-      type: 'error'
-    });
+    if (typeof showIosAlert === 'function') {
+      showIosAlert({
+        title: 'Bilgi',
+        message: (res && res.error) ? res.error : 'Yorum kaydedilirken bir hata oluştu.',
+        type: 'error'
+      });
+    }
   }
 }
 
@@ -3318,10 +3361,10 @@ function openProduct(id) {
               <span id="reviewScoreLabel" style="font-size:12px;font-weight:700;color:#fbbf24;">5 / 5 Yıldız</span>
             </div>
 
-            <textarea id="newReviewComment" rows="3" placeholder="Ürün hakkında deneyiminizi, kurulum kolaylığını ve botun çalışma performansını yazın..." style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 14px;color:#fff;font-size:13px;resize:vertical;margin-bottom:12px;outline:none;font-family:inherit;"></textarea>
+            <textarea id="newReviewComment" rows="3" placeholder="FiveM sunucunuzdaki deneyiminizi veya script hakkındaki düşüncelerinizi yazın... (İsteğe bağlı)" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:12px 14px;color:#ffffff;font-size:13px;resize:vertical;margin-bottom:12px;outline:none;font-family:inherit;transition:all 0.2s;" onfocus="this.style.borderColor='#38bdf8';this.style.background='rgba(56,189,248,0.05)';" onblur="this.style.borderColor='rgba(255,255,255,0.18)';this.style.background='rgba(255,255,255,0.06)';"></textarea>
 
             <div style="display:flex;justify-content:flex-end;">
-              <button onclick="submitProductReview(${p.id})" class="btn-pill-white" style="padding:9px 20px;font-size:12.5px;font-weight:700;border-radius:9999px;">
+              <button onclick="submitProductReview(${p.id}, this)" class="btn-pill-white" style="padding:9px 22px;font-size:12.5px;font-weight:700;border-radius:9999px;cursor:pointer;">
                 Değerlendirmeyi Yayınla
               </button>
             </div>
@@ -3339,7 +3382,7 @@ function openProduct(id) {
         </div>
 
         <!-- Customer Reviews List -->
-        <div style="display:flex;flex-direction:column;gap:12px;">
+        <div id="productReviewsContainer" style="display:flex;flex-direction:column;gap:12px;">
           ${reviews.length ? reviews.map(r => `
             <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:16px 18px;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">

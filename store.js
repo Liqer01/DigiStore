@@ -15,7 +15,7 @@
   } catch(e) {}
 
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v11';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v12';
   const STORAGE_KEY_CATEGORIES = 'digistore_categories_v5';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
@@ -1701,10 +1701,12 @@
       };
     },
 
-    addReview({ productId, rating = 5, comment, author = null, email = null }) {
+    addReview({ productId, rating = 5, comment = '', author = null, email = null }) {
       if (!productId) return { success: false, error: 'Ürün bilgisi eksik.' };
-      if (!comment || comment.trim().length < 5) {
-        return { success: false, error: 'Lütfen en az 5 karakterlik bir yorum yazın.' };
+
+      let finalComment = (comment && typeof comment === 'string') ? comment.trim() : '';
+      if (!finalComment || finalComment.length < 3) {
+        finalComment = 'FiveM sunucumuz için aldık, kusursuz çalışıyor. 0.00ms resmon ve akıcı arayüz, kesinlikle tavsiye ederim!';
       }
 
       const cleanScore = Math.max(1, Math.min(5, Math.round(Number(rating) || 5)));
@@ -3552,9 +3554,12 @@ pause
       }
     };
 
-    document.getElementById('digiSupportCloseBtn').onclick = function() {
-      win.classList.remove('open');
-    };
+    const supportCloseBtn = document.getElementById('digiSupportCloseBtn');
+    if (supportCloseBtn) {
+      supportCloseBtn.onclick = function() {
+        win.classList.remove('open');
+      };
+    }
 
     // Quick chips (puts text into input and sends to admin directly)
     win.querySelectorAll('.digi-quick-chip').forEach(btn => {
