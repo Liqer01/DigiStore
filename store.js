@@ -15,8 +15,8 @@
   } catch(e) {}
 
 
-  const STORAGE_KEY_PRODUCTS = 'digistore_products_v7';
-  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v4';
+  const STORAGE_KEY_PRODUCTS = 'digistore_products_v11';
+  const STORAGE_KEY_CATEGORIES = 'digistore_categories_v5';
   const STORAGE_KEY_ORDERS = 'digistore_orders_v3';
   const STORAGE_KEY_PROFILE = 'digistore_profile_v3';
   const STORAGE_KEY_USERS = 'digistore_users_v3';
@@ -24,110 +24,40 @@
   const STORAGE_KEY_EMAILS = 'digistore_emails_v3';
   const STORAGE_KEY_COUPONS = 'closydev_coupons_v1';
   const STORAGE_KEY_APPLIED_COUPON = 'closydev_applied_coupon';
-  const STORAGE_KEY_REVIEWS = 'closydev_reviews_v1';
+  const STORAGE_KEY_REVIEWS = 'closydev_reviews_v2';
 
   const DEFAULT_REVIEWS = [
-    {
-      id: 'rev_101',
-      productId: 1,
-      author: 'Burak K.',
-      email: 'burak.k@gmail.com',
-      rating: 5,
-      date: '18 Eylül 2026',
-      verified: true,
-      comment: 'Kurulumu bilmiyordum, Discord ticket üzerinden bağlandılar ve 10 dakikada VDS\'ime bizzat kurdular. Kodlar çok temiz, butonlar ve HTML transkript harika çalışıyor.'
-    },
-    {
-      id: 'rev_102',
-      productId: 1,
-      author: 'Mehmet T.',
-      email: 'mehmet.t@gmail.com',
-      rating: 5,
-      date: '15 Eylül 2026',
-      verified: true,
-      comment: 'Python kodları açık kaynak olarak eksiksiz teslim edildi. 12.000 kişilik sunucumuzda hiç kasmadan stabil çalışıyor. Kesinlikle tavsiye ederim.'
-    },
-    {
-      id: 'rev_103',
-      productId: 1,
-      author: 'Arda D.',
-      email: 'arda.d@gmail.com',
-      rating: 5,
-      date: '12 Eylül 2026',
-      verified: true,
-      comment: 'Web panel entegrasyonu ve loglama sistemi çok başarılı. Piyasadaki en kapsamlı ticket botu altyapısı.'
-    },
-    {
-      id: 'rev_201',
-      productId: 2,
-      author: 'Selim Y.',
-      email: 'selim.y@gmail.com',
-      rating: 5,
-      date: '17 Eylül 2026',
-      verified: true,
-      comment: 'Web dashboard üzerinden kategori ve modal ayarlarını yapmak inanılmaz pratik. Satış sonrası destek çok hızlıydı.'
-    },
-    {
-      id: 'rev_202',
-      productId: 2,
-      author: 'Caner V.',
-      email: 'caner.v@gmail.com',
-      rating: 5,
-      date: '10 Eylül 2026',
-      verified: true,
-      comment: 'Sipariş anında onaylandı ve lisans anahtarı hesabıma düştü. Web panel arayüzü çok modern.'
-    },
-    {
-      id: 'rev_301',
-      productId: 3,
-      author: 'Ozan S.',
-      email: 'ozan.s@gmail.com',
-      rating: 5,
-      date: '16 Eylül 2026',
-      verified: true,
-      comment: 'Sunucumuza yapılan raid saldırısını saniyesinde savuşturdu. Rol koruması ve webhook koruma sistemi kusursuz.'
-    },
-    {
-      id: 'rev_302',
-      productId: 3,
-      author: 'Emirhan B.',
-      email: 'emirhan.b@gmail.com',
-      rating: 5,
-      date: '11 Eylül 2026',
-      verified: true,
-      comment: 'Birebir sunucuma kurulum yaptılar, ceza ve timeout kuralları tam istediğim gibi yapılandırıldı.'
-    },
-    {
-      id: 'rev_401',
-      productId: 4,
-      author: 'Kaan G.',
-      email: 'kaan.g@gmail.com',
-      rating: 5,
-      date: '14 Eylül 2026',
-      verified: true,
-      comment: 'Özel geçici ses odaları ve haftalık liderlik tablosu sunucumuzdaki aktifliği ikiye katladı.'
-    },
-    {
-      id: 'rev_501',
-      productId: 5,
-      author: 'Yiğit A.',
-      email: 'yigit.a@gmail.com',
-      rating: 5,
-      date: '13 Eylül 2026',
-      verified: true,
-      comment: 'Canvas dinamik hoş geldin kartı ve butonlu kayıt sistemi sunucuya profesyonel bir hava kattı.'
-    },
-    {
-      id: 'rev_601',
-      productId: 6,
-      author: 'Tolga E.',
-      email: 'tolga.e@gmail.com',
-      rating: 5,
-      date: '19 Eylül 2026',
-      verified: true,
-      comment: 'Tüm botların tek pakette olması sunucu yükünü çok azalttı. VDS\'ime bizzat bağlanıp tüm kurulumları yaptılar, mükemmel hizmet.'
-    }
-  ];
+  {
+    "id": "rev_101",
+    "productId": 1,
+    "author": "Emre Ç.",
+    "email": "emre.c@gmail.com",
+    "rating": 5,
+    "date": "18 Ekim 2026",
+    "verified": true,
+    "comment": "Sunucumuza organ mafyası ve soygun tabletini aldık. Oyuncular ameliyat animasyonlarına ve canlı neşter kesimine hayran kaldı. Resmon 0.01 ms hiç kasmıyor. Çok başarılı!"
+  },
+  {
+    "id": "rev_102",
+    "productId": 3,
+    "author": "Burak Ö.",
+    "email": "burak.o@gmail.com",
+    "rating": 5,
+    "date": "15 Ekim 2026",
+    "verified": true,
+    "comment": "Envanter ve bankacılık scriptlerinin kod mimarisi tertemiz yazılmış. QBCore altyapımıza sıfır hatayla entegre ettik. Kendi sunucuma proje çıkartırken en az 3 hafta kazandırdı."
+  },
+  {
+    "id": "rev_103",
+    "productId": 8,
+    "author": "Selin V.",
+    "email": "selin.v@gmail.com",
+    "rating": 5,
+    "date": "12 Ekim 2026",
+    "verified": true,
+    "comment": "Kurulumu bilmiyorduk, Discord üzerinden VDS'imize bağlanıp 15 dakikada eksiksiz kurdular. Faturamız da e-postamıza PDF olarak anında geldi. Çok ilgili bir ekip."
+  }
+];
 
   const DEFAULT_COUPONS = [
     { code: 'CLOSY100', type: 'percent', value: 100, minSpend: 0, description: '%100 Genel İndirim' },
@@ -154,100 +84,204 @@
 
 
   const DEFAULT_CATEGORIES = [
-    { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
-    { id: 'ticket', name: 'Ticket & Destek', slug: 'ticket', icon: '' },
-    { id: 'moderasyon', name: 'Moderasyon & Guard', slug: 'moderasyon', icon: '' },
-    { id: 'topluluk', name: 'Topluluk & Kayıt', slug: 'topluluk', icon: '' }
-  ];
+  {
+    "id": "all",
+    "name": "Tümü",
+    "slug": "all",
+    "icon": ""
+  },
+  {
+    "id": "illegal",
+    "name": "Soygun & İllegal",
+    "slug": "illegal",
+    "icon": ""
+  },
+  {
+    "id": "jobs",
+    "name": "Meslek & Rol Sistemleri",
+    "slug": "jobs",
+    "icon": ""
+  },
+  {
+    "id": "ui",
+    "name": "Sistem & Arayüz (HUD/UI)",
+    "slug": "ui",
+    "icon": ""
+  },
+  {
+    "id": "packages",
+    "name": "Full Paket & Altyapı",
+    "slug": "packages",
+    "icon": ""
+  }
+];
 
   const DEFAULT_PRODUCTS = [
-    {
-      id: 1,
-      name: 'Closy Yeni Nesil Discord Ticket Botu v14',
-      category: 'ticket',
-      price: 99,
-      oldPrice: 199,
-      rating: 5.0,
-      reviews: 284,
-      badge: 'hot',
-      desc: 'Resmi Closy Ticket Botu altyapısı. Butonlu ve açılır menülü ticket sistemi, HTML sohbet transkripti, web panel entegrasyonu ve tam açık kaynak Python kodları. Kurulumu bilmeyen müşterilerimize sunucusuna bizzat biz kuruyoruz.',
-      features: ['İsteyene Açık Kaynak Kod (Python)', 'Bilmeyene Ücretsiz Birebir Kurulum', 'Closy Bot Manager Masaüstü Uygulaması Dahil', 'HTML & Web Sohbet Transkripti'],
-      downloads: 1840,
-      active: true,
-      filePackage: 'Closy_Ticket_Botu_v14.zip',
-      managerPackage: 'ClosyBotManager.zip'
-    },
-    {
-      id: 2,
-      name: 'Pro Discord Ticket Botu (Web Entegre)',
-      category: 'ticket',
-      price: 149,
-      oldPrice: 249,
-      rating: 4.9,
-      reviews: 142,
-      badge: 'sale',
-      desc: 'Gelişmiş web paneli entegrasyonlu ticket altyapısı. İsteyene açık kaynak kod teslimi, kurmayı bilmeyene anahtar teslim kurulum desteği.',
-      features: ['İsteyene Açık Kaynak Kod', 'Birebir Sunucu Kurulum Desteği', 'Web Dashboard Yönetimi', 'Kategori Bazlı Özel Modallar'],
-      downloads: 720,
-      active: true
-    },
-    {
-      id: 3,
-      name: 'Discord Gelişmiş Guard & Moderasyon Botu',
-      category: 'moderasyon',
-      price: 129,
-      oldPrice: 199,
-      rating: 4.9,
-      reviews: 198,
-      badge: 'new',
-      desc: 'Raid kalkanı, küfür/reklam filtreleme ve ceza sistemi. Açık kaynak kod seçeneği mevcuttur, kurmayı bilmeyene sunucusuna bizzat kurulur.',
-      features: ['İsteyene Açık Kaynak Kod', 'Bilmeyene Birebir Kurulum', 'Gelişmiş Guard & Raid Kalkanı', 'Otomatik Ceza & Timeout'],
-      downloads: 980,
-      active: true
-    },
-    {
-      id: 4,
-      name: 'Discord Ses Kayıt & İstatistik Botu',
-      category: 'topluluk',
-      price: 119,
-      oldPrice: 169,
-      rating: 4.8,
-      reviews: 85,
-      badge: null,
-      desc: 'Ses kanallarında aktiflik takibi ve otomatik özel oda sistemi. İsteyene tam açık kaynak kod, bilmeyene bizzat kurulum desteğiyle.',
-      features: ['İsteyene Açık Kaynak Kod', 'Bizzat Sunucu Kurulum Desteği', 'Özel Ses Kanalı (Private Room)', 'Haftalık Liderlik Tablosu'],
-      downloads: 540,
-      active: true
-    },
-    {
-      id: 5,
-      name: 'Discord Otomatik Kayıt & Hoş Geldin Botu',
-      category: 'topluluk',
-      price: 89,
-      oldPrice: 139,
-      rating: 4.8,
-      reviews: 112,
-      badge: null,
-      desc: 'Butonlu/formlu üye kayıt altyapısı ve Canvas hoş geldin kartı. İsteyene açık kaynak verilir, kurmayı bilmeyene bizzat biz kuruyoruz.',
-      features: ['İsteyene Açık Kaynak Kod', 'Bilmeyene Birebir Kurulum', 'Butonlu / Modal Formlu Kayıt', 'Canvas Dinamik Hoş Geldin'],
-      downloads: 680,
-      active: true
-    },
-    {
-      id: 6,
-      name: 'Full Discord Sunucu Bot Paketi (Mega Paket)',
-      category: 'ticket',
-      price: 249,
-      oldPrice: 449,
-      rating: 5.0,
-      reviews: 310,
-      badge: 'hot',
-      desc: 'Ticket, guard moderasyon, kayıt ve istatistik sistemlerinin tümü tek pakette! İsteyene tam açık kaynak, kurmayı bilmeyene sunucusuna bizzat biz kuruyoruz.',
-      features: ['Tam Açık Kaynak Kod Teslimi', 'Sunucunuza Bizzat Kurulum Dahil', 'Tüm Sistemler Tek Botta', '7/24 Öncelikli Ticket Desteği'],
-      downloads: 1450,
-      active: true
-    }
-  ];
+  {
+    "id": 1,
+    "name": "Closy Organ Mafyası & Cerrahi Ameliyat Masası v2.0",
+    "category": "illegal",
+    "price": 249,
+    "oldPrice": 399,
+    "rating": 5.0,
+    "reviews": 312,
+    "badge": "hot",
+    "desc": "FiveM'in en gelişmiş illegal organ mafyası sistemi. Portatif ambulans sedyesi, canlı 3D neşter kesimi, kurbanın acıyla çırpınma ve çığlık sesleri, kalp/böbrek sökümü ve karaborsa doktoru.",
+    "features": [
+      "Canlı 3D Cerrahi Kesi & Çırpınma Animasyonları",
+      "Kalp (Flatline), Böbrekler & Göz Korneası Sökümü",
+      "Tekerlekli Ambulans Sedyesi (v_med_emptybed)",
+      "0.00 ms Resmon & Açık Kaynak Kod"
+    ],
+    "downloads": 2150,
+    "active": true,
+    "filePackage": "custom-npcrobbery.zip"
+  },
+  {
+    "id": 2,
+    "name": "Closy Gelişmiş Soygun Tableti & Canlı Kameralar",
+    "category": "illegal",
+    "price": 199,
+    "oldPrice": 299,
+    "rating": 4.9,
+    "reviews": 184,
+    "badge": "new",
+    "desc": "Modern NUI arayüzlü profesyonel soygun tableti. Canlı şehir güvenlik kameralarını hackleme, koordineli soygun ekibi kurma, alarm bypass mini-oyunları ve anlık polis bildirimleri.",
+    "features": [
+      "Canlı Şehir Kameralarını İzleme & Hack Arayüzü",
+      "Şifre Kırma & Devre By-Pass Mini Oyunları",
+      "QBCore & ESX Altyapılarıyla %100 Uyumlu",
+      "Bilmeyene Ücretsiz Birebir Kurulum Desteği"
+    ],
+    "downloads": 1420,
+    "active": true,
+    "filePackage": "custom-heisttablet.zip"
+  },
+  {
+    "id": 3,
+    "name": "Closy Modern NUI Envanter Sistemi (v3.0)",
+    "category": "ui",
+    "price": 299,
+    "oldPrice": 450,
+    "rating": 5.0,
+    "reviews": 420,
+    "badge": "sale",
+    "desc": "Yüksek FPS ve sıfır gecikme odaklı modern sürükle-bırak envanter. Eşya dayanıklılığı, özel cepler, silah eklentileri, torpido & bagaj entegrasyonu ve ses efektli şık cam tasarım.",
+    "features": [
+      "0.01 ms Resmon Değeri (Ultra Optimize)",
+      "Sürükle - Bırak & Hızlı Kullanım Slotları",
+      "Eşya Ağırlık, Dayanıklılık & Seri No Sistemi",
+      "Açık Kaynak Kod & Kolay Config"
+    ],
+    "downloads": 3890,
+    "active": true,
+    "filePackage": "custom-inventory.zip"
+  },
+  {
+    "id": 4,
+    "name": "Closy Gelişmiş Motel & Mülk Kiralama Sistemi",
+    "category": "jobs",
+    "price": 169,
+    "oldPrice": 250,
+    "rating": 4.8,
+    "reviews": 95,
+    "badge": null,
+    "desc": "Çok katlı motel odaları, oda anahtarı kopyalama, kıyafet dolabı, özel gizli kasa zulaları ve modern NUI resepsiyon paneli. Rol sunucuları için vazgeçilmez altyapı.",
+    "features": [
+      "Şık Resepsiyon & Oda Kiralama Paneli",
+      "Arkadaşa Anahtar Verme & İzin Sistemi",
+      "Entegre Zula Deposu & Kıyafet Dolabı",
+      "Sıfır Çakışma & Optimize Bucket Mimarisi"
+    ],
+    "downloads": 890,
+    "active": true,
+    "filePackage": "custom-motel.zip"
+  },
+  {
+    "id": 5,
+    "name": "Closy Yeni Nesil Bankacılık & 3D ATM Sistemi",
+    "category": "ui",
+    "price": 229,
+    "oldPrice": 360,
+    "rating": 4.9,
+    "reviews": 160,
+    "badge": "hot",
+    "hasVideo": true,
+    "videoPreview": "assets/videos/atm-preview.mp4",
+    "videoFull": "assets/videos/atm-showcase.mp4",
+    "videoPoster": "assets/videos/atm-thumb.jpg",
+    "desc": "3D animasyonlu banka ve ATM kart arayüzü. IBAN ile anında para transferi, fatura ve ceza ödeme, ortak şirket hesabı yönetimi ve işlem dekontu geçmişi.",
+    "features": [
+      "Modern NUI Arayüzü & Akıcı Geçişler",
+      "Kredi Kartı Şifresi (PIN) & Ortak Hesaplar",
+      "Fatura & Trafik Cezası Ödeme Sistemi",
+      "Tam Açık Kaynak & Kolay Entegrasyon"
+    ],
+    "downloads": 1650,
+    "active": true,
+    "filePackage": "custom-banking.zip"
+  },
+  {
+    "id": 6,
+    "name": "Closy Gelişmiş Polis Departmanı & MDT Tableti",
+    "category": "jobs",
+    "price": 219,
+    "oldPrice": 320,
+    "rating": 5.0,
+    "reviews": 275,
+    "badge": "hot",
+    "desc": "Emniyet teşkilatı için eksiksiz polis tableti. Canlı kamera takip, plaka sorgulama, sabıka kaydı, arama emri çıkarma, ceza kesme ve cezaevi süre takibi.",
+    "features": [
+      "Canlı GPS Takip & Polis Telsiz Entegrasyonu",
+      "Plaka, Ruhsat & Kimlik Biyometrik Tarama",
+      "Otomatik Ceza ve Kamu Hizmeti Sistemi",
+      "Bilmeyene Ücretsiz Sunucu Kurulumu"
+    ],
+    "downloads": 2410,
+    "active": true,
+    "filePackage": "custom-police.zip"
+  },
+  {
+    "id": 7,
+    "name": "Closy Gelişmiş Hastane & Canlı Sedye Sistemi",
+    "category": "jobs",
+    "price": 189,
+    "oldPrice": 280,
+    "rating": 4.9,
+    "reviews": 130,
+    "badge": null,
+    "desc": "Ambulans ve acil servis personeli için sedyeli müdahale, tekerlekli sandalye, kan grubu tahlili, serum bağlama ve ameliyathane operasyon paketi.",
+    "features": [
+      "İtilebilir ve Ambulansa Yüklenebilir Sedye",
+      "Kan Alma, Nakil & Tahlil Kiti",
+      "Yaralanma Teşhis & Canlandırma Sistemi",
+      "0.00 ms Resmon & Açık Kaynak Kod"
+    ],
+    "downloads": 1120,
+    "active": true,
+    "filePackage": "custom-ambulance.zip"
+  },
+  {
+    "id": 8,
+    "name": "Closy Full QBCore V2 Sunucu Paketi (Anahtar Teslim)",
+    "category": "packages",
+    "price": 899,
+    "oldPrice": 1499,
+    "rating": 5.0,
+    "reviews": 540,
+    "badge": "sale",
+    "desc": "Tüm ClosyDEV scriptlerinin (Organ Mafyası, Soygun Tableti, Envanter, Banka, Polis MDT, Motel vb.) kurulu ve %100 senkronize çalıştığı, dengeli ekonomi ve 60+ FPS optimize full FiveM paketi.",
+    "features": [
+      "Tüm ClosyDEV Özel Scriptleri Dahil",
+      "Dengeli Ekonomi, İllegal & Legal Meslekler",
+      "VDS Sunucunuza Birebir Anahtar Teslim Kurulum",
+      "Ömür Boyu Güncelleme & 7/24 VIP Destek"
+    ],
+    "downloads": 780,
+    "active": true,
+    "filePackage": "ClosyPACK_Full_v2.zip"
+  }
+];
 
     const DEFAULT_ORDERS = [
       {
@@ -1974,7 +2008,7 @@
               <td style="text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace;">₺${Number(it.price || 0).toLocaleString('tr-TR')}</td>
             </tr>`).join('')}
           <tr>
-            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (KDV Dahil)</td>
+            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (NET)</td>
             <td style="text-align:right;font-weight:800;font-size:18px;color:#fff;font-family:'JetBrains Mono',monospace;padding-top:16px;">${totalFormatted}</td>
           </tr>
         </tbody>
@@ -2011,7 +2045,7 @@ Sipariş No        : #${order.id}
 Teslimat E-postası : ${recipientEmail}
 Tarih             : ${order.date || new Date().toLocaleString('tr-TR')}
 Ödeme Şekli       : ${order.method || 'Kredi Kartı'}
-Toplam Tutar      : ${total} (KDV Dahil)
+Toplam Tutar      : ${total} (Tek Fiyat)
 
 [DİJİTAL LİSANS DURUMU]
 -------------------------------------------------------
@@ -2148,7 +2182,7 @@ closydev. Bilişim ve Teknoloji Ticaret A.Ş.`;
               <td style="text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace;">₺${Number(it.price || 0).toLocaleString('tr-TR')}</td>
             </tr>`).join('')}
           <tr>
-            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (KDV Dahil)</td>
+            <td colspan="2" style="font-weight:800;font-size:15px;color:#fff;padding-top:16px;">TOPLAM TUTAR (NET)</td>
             <td style="text-align:right;font-weight:800;font-size:18px;color:#fff;font-family:'JetBrains Mono',monospace;padding-top:16px;">${totalFormatted}</td>
           </tr>
         </tbody>
@@ -2185,7 +2219,7 @@ Sipariş No        : #${order.id}
 Teslimat E-postası : ${recipientEmail}
 Tarih             : ${order.date || new Date().toLocaleString('tr-TR')}
 Ödeme Şekli       : ${order.method || 'Kredi Kartı'}
-Toplam Tutar      : ${total} (KDV Dahil)
+Toplam Tutar      : ${total} (Tek Fiyat)
 
 [ONAYLANAN ÜRÜNLER]
 -------------------------------------------------------
@@ -2693,7 +2727,7 @@ pause
         <th>Mal / Hizmet Açıklaması</th>
         <th>Miktar</th>
         <th>Birim Fiyat</th>
-        <th>KDV Oranı</th>
+        
         <th style="text-align: right;">Toplam Tutar</th>
       </tr>
     </thead>
@@ -2703,7 +2737,7 @@ pause
         <td><b>${order.product}</b><br/><span style="font-size: 11.5px; color: #64748b;">Dijital Lisans &amp; Otomasyon Yazılımı Lisans Bedeli</span></td>
         <td>1 Adet</td>
         <td>₺${subtotal}</td>
-        <td>%20</td>
+        
         <td style="text-align: right; font-weight: 700;">₺${subtotal}</td>
       </tr>
     </tbody>
@@ -2714,10 +2748,7 @@ pause
       <td style="color: #64748b;">Ara Toplam:</td>
       <td style="text-align: right; font-weight: 600;">₺${subtotal}</td>
     </tr>
-    <tr>
-      <td style="color: #64748b;">Hesaplanan KDV (%20):</td>
-      <td style="text-align: right; font-weight: 600;">₺${kdvAmount}</td>
-    </tr>
+
     <tr class="grand-total">
       <td>Ödenecek Tutar:</td>
       <td style="text-align: right; color: #0f172a;">₺${totalAmount}</td>

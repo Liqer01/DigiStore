@@ -1389,7 +1389,7 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#a855f7;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);padding:8px 12px;border-radius:10px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-              <span><b>Birebir Kurulum:</b> Kurmayı bilmiyorsanız botu Discord sunucunuza bizzat biz kuruyoruz!</span>
+              <span><b>Birebir Kurulum:</b> Kurmayı bilmiyorsanız FiveM scriptlerinizi sunucunuza bizzat biz kuruyoruz!</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#34c759;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);padding:8px 12px;border-radius:10px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -1499,8 +1499,7 @@
           <span>Kupon İndirimi</span>
           <span id="sum-discount" style="font-weight:600;font-family:'JetBrains Mono',monospace;">-₺0</span>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#86868b;">
-          <span>Resmi KDV (%20)</span>
+        <div style="display:none;justify-content:space-between;font-size:13.5px;color:#86868b;">
           <span id="sum-kdv" style="color:#fff;font-weight:600;font-family:'JetBrains Mono',monospace;">₺0</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);margin-top:4px;">
@@ -1640,13 +1639,15 @@ function initSummary() {
     if (discountRow) discountRow.style.display = 'none';
   }
 
-  const subAfterDiscount = Math.max(0, sub - discount);
-  const kdv = subAfterDiscount * 0.20;
-  const grandTotal = subAfterDiscount + kdv;
+  const grandTotal = Math.max(0, sub - discount);
 
   document.getElementById('sum-sub').textContent = '₺' + sub.toLocaleString('tr-TR');
-  document.getElementById('sum-kdv').textContent = '₺' + kdv.toFixed(0);
-  document.getElementById('sum-total').textContent = '₺' + grandTotal.toFixed(0);
+  const sumKdvEl = document.getElementById('sum-kdv');
+  if (sumKdvEl) {
+    const parentRow = sumKdvEl.closest('div');
+    if (parentRow) parentRow.style.display = 'none';
+  }
+  document.getElementById('sum-total').textContent = '₺' + grandTotal.toLocaleString('tr-TR');
 }
 
 function applyCheckoutCoupon() {
@@ -2204,7 +2205,7 @@ function renderOrderSuccess(order) {
           <span>BOT KURULUMU, AÇIK KAYNAK KOD &amp; TEKNİK DESTEK</span>
         </div>
         <p style="font-size:13px;color:#cbd5e1;line-height:1.6;margin:0 0 10px;">
-          Botunuzun açık kaynak kodları, token girişi ve birebir sunucu kurulumu için Discord sunucumuzdan Ticket açabilirsiniz:
+          FiveM scriptlerinizin açık kaynak kodları, kurulum rehberi ve birebir sunucu kurulumu için Discord sunucumuzdan Ticket açabilirsiniz:
         </p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <a href="https://discord.gg/closydev" target="_blank" rel="noopener noreferrer" class="btn-action-primary" style="background:#5865F2;color:#fff;text-decoration:none;padding:9px 18px;font-size:13px;font-weight:700;border-radius:10px;">

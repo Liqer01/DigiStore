@@ -10,17 +10,17 @@
     }
   } catch(e) {}
 </script>
-<title>closydev. — Yeni Nesil Discord Bot & Sistemleri</title>
-<meta name="title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
-<meta name="description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<title>closydev. — Yeni Nesil FiveM Scriptleri &amp; Paketleri</title>
+<meta name="title" content="closydev. — Yeni Nesil FiveM Scriptleri &amp; Paketleri">
+<meta name="description" content="FiveM sunucunuz için optimize 0.00ms resmon değerli QBCore &amp; ESX scriptleri, organ mafyası, soygun sistemleri ve anahtar teslim sunucu paketleri.">
 <meta name="theme-color" content="#2cd3f0">
 
 <!-- Open Graph / Discord Embed -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://closydev.site/">
 <meta property="og:site_name" content="closydev.">
-<meta property="og:title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
-<meta property="og:description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<meta property="og:title" content="closydev. — Yeni Nesil FiveM Scriptleri &amp; Paketleri">
+<meta property="og:description" content="FiveM sunucunuz için optimize 0.00ms resmon değerli QBCore &amp; ESX scriptleri, organ mafyası, soygun sistemleri ve anahtar teslim sunucu paketleri.">
 <meta property="og:image" content="https://closydev.site/logo.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
@@ -29,8 +29,8 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:url" content="https://closydev.site/">
-<meta name="twitter:title" content="closydev. — Yeni Nesil Discord Bot & Sistemleri">
-<meta name="twitter:description" content="Discord Sunucunuzu Geliştirmek ve Güvenilir tutmak için en hızlı ve uygun fiyata Discord botu. Herkesin aradığı bot sistemleri burada, peki ya sen?">
+<meta name="twitter:title" content="closydev. — Yeni Nesil FiveM Scriptleri &amp; Paketleri">
+<meta name="twitter:description" content="FiveM sunucunuz için optimize 0.00ms resmon değerli QBCore &amp; ESX scriptleri, organ mafyası, soygun sistemleri ve anahtar teslim sunucu paketleri.">
 <meta name="twitter:image" content="https://closydev.site/logo.png">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=4.0">
@@ -1308,6 +1308,23 @@
   .light-theme #navUserDropdown a:hover {
     background: rgba(0, 0, 0, 0.05) !important;
   }
+
+/* LIVE VIDEO BADGE & HOVER EFFECTS */
+@keyframes livePulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 7px rgba(56, 189, 248, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+.pulse-live-dot {
+  animation: livePulse 1.8s infinite;
+}
+.product-card-hover-box:hover .product-card-video {
+  transform: scale(1.05);
+}
+.product-card-hover-box:hover .video-hover-hint {
+  opacity: 0 !important;
+}
+
 </style>
 </head>
 <body>
@@ -1672,19 +1689,19 @@
     <!-- Announcement Pill -->
     <div class="hero-anim-pill" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;padding:6px 18px;margin-bottom:34px;cursor:pointer;transition:all .2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" onclick="document.getElementById('urunler').scrollIntoView({behavior:'smooth'})">
       <span style="width:7px;height:7px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 10px #8b5cf6;"></span>
-      <span data-i18n="heroAnnouncement" style="font-size:13px;color:#d1d5db;font-weight:500;">ClosyDev 2026: Closy Yeni Nesil Discord Destek &amp; Ticket Botu V14 Yayında</span>
+      <span data-i18n="heroAnnouncement" style="font-size:13px;color:#d1d5db;font-weight:500;">⚡ ClosyDev 2026: Yeni Nesil FiveM QBCore &amp; ESX Scriptleri Yayında</span>
       <span style="font-size:13px;color:#86868b;margin-left:2px;">›</span>
     </div>
 
     <!-- Main Title -->
     <h1 id="heroMainTitle" class="hero-main-title">
-      Yeni nesil <span class="aura-gradient">Discord</span> sistemleri.
-    </h1>
+        Yeni nesil <span class="aura-gradient">FiveM</span> scriptleri.
+      </h1>
 
     <!-- Subtitle -->
     <p id="heroSubtitle" class="hero-anim-fade" data-i18n="heroDesc" style="font-size:19px;color:#86868b;line-height:1.6;margin-bottom:40px;max-width:640px;margin-left:auto;margin-right:auto;font-weight:400;">
-      Topluluklarınızı ve satış sunucularınızı profesyonel butonlu ticket sistemleri, otomatik HTML transkript logları ve 7/24 kesintisiz çalışan modern bot paketleriyle güçlendirin.
-    </p>
+        FiveM sunucunuzu ve rol deneyiminizi 0.00ms resmon değerli modern NUI scriptleri, organ mafyası, gelişmiş soygun sistemleri ve 7/24 kesintisiz teknik destek altyapısıyla donatın.
+      </p>
 
     <!-- CTAs -->
     <div id="heroCtas" class="hero-anim-fade" style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:48px;flex-wrap:wrap;">
@@ -1710,7 +1727,7 @@
       </div>
       <div class="hero-trust-item" style="display:flex;align-items:center;gap:7px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        <span data-i18n="trust3dSecure">Kredi Kartı &amp; 3D Secure</span>
+        <span data-i18n="trust3dSecure">0.00 ms Resmon &amp; Optimizasyon</span>
       </div>
       <div class="hero-trust-item" style="display:flex;align-items:center;gap:7px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1740,10 +1757,10 @@
           <span data-i18n="prodDeliveryBadge" style="color:#34c759;font-weight:600;">%100 Canlı Teslimat</span>
         </div>
         <h2 style="font-size:38px;font-weight:800;letter-spacing:-1.2px;color:#ffffff;line-height:1.15;margin-bottom:8px;">
-          Yeni Nesil <span style="background:linear-gradient(135deg, #ffffff 30%, #60a5fa 70%, #c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Discord Botları &amp; Sistemleri</span>
+          Yeni Nesil <span style="background:linear-gradient(135deg, #ffffff 30%, #60a5fa 70%, #c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FiveM Scriptleri &amp; Paketleri</span>
         </h2>
         <p data-i18n="prodDesc" style="font-size:14px;color:#86868b;max-width:620px;line-height:1.55;">
-          Gelişmiş butonlu ticket sistemleri, guard korumaları ve 7/24 kesintisiz Discord.js v14 bot paketleri. <b>İsteyene tam açık kaynak kod teslimi!</b> Kurulumu bilmeyen müşterilerimizin sunucularına <b>botu bizzat biz kuruyoruz!</b>
+          QBCore ve ESX altyapılarıyla %100 uyumlu, 0.00ms resmon değerine sahip, modern NUI arayüzlü FiveM scriptleri. <b>İsteyene tam açık kaynak kod teslimi!</b> Kurulumu bilmeyen müşterilerimizin sunucularına <b>scriptleri bizzat biz kuruyoruz!</b>
         </p>
       </div>
 
@@ -1782,64 +1799,64 @@
         ŞEFFAF VE BASİT
       </span>
       <h2 style="font-size:42px;font-weight:800;color:#ffffff;letter-spacing:-1.2px;margin-bottom:14px;">
-        Discord Ticket Botu Paketleri
+        FiveM Script &amp; Paket Fiyatları
       </h2>
       <p style="font-size:16px;color:#86868b;max-width:580px;margin:0 auto;">
-        Gizli maliyet yok, abonelik zorunluluğu yok. Tek sefer ödeyin, ömür boyu kullanın.
+        Gizli maliyet yok, abonelik zorunluluğu yok. Tek sefer ödeyin, ömür boyu güncellemelerle kullanın.
       </p>
     </div>
 
     <!-- Pricing Cards Grid -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;text-align:left;">
       
-      <!-- Tier 1: Closy Standart Ticket Botu -->
+      <!-- Tier 1: Tekli Script Paketi -->
       <div class="apple-card reveal-scroll reveal-stagger-1" style="padding:34px;">
-        <span style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;">Closy Standart Ticket Botu</span>
-        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺99<span style="font-size:14px;color:#86868b;font-weight:400;"> / tek seferlik</span></div>
-        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Resmi Closy Ticket Botu Python kaynak kodları ve altyapısı.</p>
+        <span style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;">Tekli Script Paketi</span>
+        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺149<span style="font-size:14px;color:#86868b;font-weight:400;"> / tek seferlik</span></div>
+        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Seçtiğiniz 1 adet ClosyDEV FiveM scripti ve tam açık kaynak kodları.</p>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#d1d5db;margin-bottom:28px;">
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Tam Python açık kaynak kodları (main.py dahil)</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Butonlu &amp; menülü bilet açma sistemi</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Tam açık kaynak kodlar (unencrypted)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>QBCore &amp; ESX tam uyumlu tak-çalıştır</span></div>
           <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Bilmeyene birebir ücretsiz sunucu kurulumu</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>7/24 Anında lisans &amp; ZIP kod teslimatı</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>7/24 Anında lisans &amp; ZIP dosya teslimatı</span></div>
         </div>
-        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(1)">
-          Hemen Satın Al (₺99)
+        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(5)">
+          Hemen Satın Al (₺149)
         </button>
       </div>
 
-      <!-- Tier 2: Pro Ticket Botu -->
+      <!-- Tier 2: İllegal & Soygun Paketi -->
       <div class="apple-card reveal-scroll reveal-stagger-2" style="padding:34px;border-color:rgba(59,130,246,0.4);box-shadow:0 0 35px -5px rgba(59,130,246,0.2);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:12px;font-weight:700;color:#3b82f6;text-transform:uppercase;">Pro Ticket Botu</span>
+          <span style="font-size:12px;font-weight:700;color:#3b82f6;text-transform:uppercase;">İllegal &amp; Soygun Paketi</span>
           <span style="background:rgba(59,130,246,0.15);color:#60a5fa;font-size:10px;font-weight:700;padding:3px 10px;border-radius:9999px;">EN ÇOK TERCİH EDİLEN</span>
         </div>
-        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺149<span style="font-size:14px;color:#86868b;font-weight:400;"> / tek seferlik</span></div>
-        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Gelişmiş satış ve müşteri destek sunucuları için.</p>
+        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺349<span style="font-size:14px;color:#86868b;font-weight:400;"> / bundle paket</span></div>
+        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Organ Mafyası, Soygun Tableti ve Kasa Soygunu bir arada.</p>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#d1d5db;margin-bottom:28px;">
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>HTML otomatik transkript &amp; log sistemi</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Bilet öncesi özel form (Modal) desteği</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Yetkili claim (üstlenme) &amp; puanlama</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Öncelikli Discord teknik destek</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Organ Mafyası &amp; Cerrahi Ameliyat Masası v2.0</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Gelişmiş Soygun Tableti &amp; Canlı Kameralar</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>VDS sunucunuza birebir anahtar teslim kurulum</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Öncelikli Discord VIP teknik destek</span></div>
         </div>
-        <button class="btn-pill-white" style="width:100%;" onclick="quickCheckout(2)">
-          Pro Paketi Satın Al (₺149)
+        <button class="btn-pill-white" style="width:100%;" onclick="quickCheckout(1)">
+          Bundle Satın Al (₺349)
         </button>
       </div>
 
-      <!-- Tier 3: 7/24 Barındırmalı & Kurulu Paket -->
+      <!-- Tier 3: Anahtar Teslim Full Sunucu Altyapısı -->
       <div class="apple-card reveal-scroll reveal-stagger-3" style="padding:34px;">
-        <span style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;">7/24 Barındırmalı Paket</span>
-        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺249<span style="font-size:14px;color:#86868b;font-weight:400;"> / kurulum dahil</span></div>
-        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Teknik kurulum veya sunucuyla uğraşmak istemeyenler için.</p>
+        <span style="font-size:12px;font-weight:700;color:#86868b;text-transform:uppercase;">Full Sunucu Altyapısı</span>
+        <div style="font-size:36px;font-weight:800;color:#fff;margin:12px 0 6px;">₺899<span style="font-size:14px;color:#86868b;font-weight:400;"> / anahtar teslim</span></div>
+        <p style="font-size:13px;color:#86868b;margin-bottom:24px;">Tüm scriptler dahil, VDS kurulumu bizden, 7/24 teknik destek.</p>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#d1d5db;margin-bottom:28px;">
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>7/24 Kesintisiz VDS barındırma dahil</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Botu sizin yerinize sunucunuza kuruyoruz</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Özel bot adı, avatarı &amp; aktivite durumu</span></div>
-          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>1 Yıl kesintisiz güncelleme &amp; bakım</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Tüm ClosyDEV scriptleri dahil full QBCore paket</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>VDS sunucunuza baştan sona eksiksiz kurulum</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>0.00 ms resmon &amp; 60+ FPS garantili ekonomi</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>1 Yıl kesintisiz güncelleme, yedekleme &amp; bakım</span></div>
         </div>
-        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(2)">
-          Kurulumlu Paketi Al (₺249)
+        <button class="btn-pill-dark" style="width:100%;" onclick="quickCheckout(8)">
+          Full Paketi Al (₺899)
         </button>
       </div>
 
@@ -1856,10 +1873,10 @@
       TOPLULUK VE DEĞERLENDİRMELER
     </span>
     <h2 style="font-size:40px;font-weight:800;color:#ffffff;letter-spacing:-1.2px;margin-bottom:14px;">
-      Kullanıcılarımızın Deneyimleri
+      Sunucu Sahiplerinin Deneyimleri
     </h2>
     <p style="font-size:16px;color:#86868b;margin:0 auto;">
-      Türkiye genelinde 2.400'den fazla geliştirici ve kullanıcı closydev.'i tercih ediyor.
+      Türkiye genelinde 2.400'den fazla FiveM sunucu sahibi ve geliştirici closydev.'i tercih ediyor.
     </p>
   </div>
 
@@ -1870,11 +1887,11 @@
         <div style="width:40px;height:40px;border-radius:50%;background:#ffffff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;">E</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:#fff;">Emre Çelik</div>
-          <div style="font-size:12px;color:#86868b;">Discord Topluluk Yöneticisi</div>
+          <div style="font-size:12px;color:#86868b;">Elysium Roleplay Sunucu Sahibi</div>
         </div>
       </div>
       <p style="font-size:14px;color:#d1d5db;line-height:1.6;">
-        "Discord botunu satın aldım, ödeme onaylandığı saniyede lisans anahtarım ekrana geldi. Kurulum rehberi de çok basitti, 10 dakikada sunucuma kurdum."
+        "Sunucumuz için Organ Mafyası ve Soygun Tabletini aldık. Oyuncular ameliyat animasyonlarına ve canlı neşter kesimine hayran kaldı. Resmon 0.01 ms hiç kasmıyor. Çok başarılı!"
       </p>
       <div style="margin-top:16px;display:flex;align-items:center;gap:10px;">
         <div style="display:flex;align-items:center;gap:3px;color:#fbbf24;">
@@ -1896,11 +1913,11 @@
         <div style="width:40px;height:40px;border-radius:50%;background:#ffffff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;">B</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:#fff;">Burak Özdemir</div>
-          <div style="font-size:12px;color:#86868b;">Full-Stack Geliştirici</div>
+          <div style="font-size:12px;color:#86868b;">FiveM Lead Developer</div>
         </div>
       </div>
       <p style="font-size:14px;color:#d1d5db;line-height:1.6;">
-        "Next.js E-Ticaret şablonu tam bir mühendislik harikası. TypeScript mimarisi tertemiz yazılmış. Kendi müşterilerime proje çıkartırken en az 3 hafta kazandırdı."
+        "Envanter ve bankacılık scriptlerinin kod mimarisi tertemiz yazılmış. QBCore altyapımıza sıfır hatayla entegre ettik. Kendi sunucuma proje çıkartırken en az 3 hafta kazandırdı."
       </p>
       <div style="margin-top:16px;display:flex;align-items:center;gap:10px;">
         <div style="display:flex;align-items:center;gap:3px;color:#fbbf24;">
@@ -1922,11 +1939,11 @@
         <div style="width:40px;height:40px;border-radius:50%;background:#ffffff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;">S</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:#fff;">Selin Vural</div>
-          <div style="font-size:12px;color:#86868b;">Dijital Ajans Kurucusu</div>
+          <div style="font-size:12px;color:#86868b;">Vegas RP Yönetim Ekibi</div>
         </div>
       </div>
       <p style="font-size:14px;color:#d1d5db;line-height:1.6;">
-        "Resmi e-Arşiv faturasının otomatik TC/Vergi No'ya düzenlenip e-postaya PDF gelmesi kurumsal muhasebe tarafında içimizi çok rahatlattı."
+        "Kurulumu bilmiyorduk, Discord üzerinden VDS'imize bağlanıp 15 dakikada eksiksiz kurdular. Faturamız da e-postamıza PDF olarak anında geldi. Çok ilgili bir ekip."
       </p>
       <div style="margin-top:16px;display:flex;align-items:center;gap:10px;">
         <div style="display:flex;align-items:center;gap:3px;color:#fbbf24;">
@@ -1955,12 +1972,8 @@
       <span style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#86868b;text-transform:uppercase;display:block;margin-bottom:10px;">
         MİMARİ &amp; GÜVENLİK
       </span>
-      <h2 style="font-size:40px;font-weight:800;color:#ffffff;letter-spacing:-1.2px;margin-bottom:14px;">
-        Her detayında zarafet ve hız.
-      </h2>
-      <p style="font-size:16px;color:#86868b;line-height:1.6;">
-        ClosyGuard Enterprise protokolleriyle donatılmış, tam şeffaf faturalandırma motoru.
-      </p>
+      <h2 style="font-size:40px;font-weight:800;color:#ffffff;letter-spacing:-1.2px;margin-bottom:14px;">0.00ms resmon, maksimum FPS ve zarafet.</h2>
+      <p style="font-size:16px;color:#86868b;line-height:1.6;">Gereksiz döngülerden arındırılmış, modern NUI arayüzlü ve QBCore/ESX uyumlu script mimarisi.</p>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
@@ -2015,51 +2028,51 @@
     
     <div class="apple-card faq-item reveal-scroll reveal-stagger-1" style="padding:22px 26px;cursor:pointer;" onclick="toggleFaq(this)">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="font-size:16px;font-weight:600;color:#fff;">Botların açık kaynak kodlarını alabilir miyim?</h4>
+        <h4 style="font-size:16px;font-weight:600;color:#fff;">Scriptlerin açık kaynak kodlarını alabilir miyim?</h4>
         <span class="faq-icon" style="font-size:20px;color:#86868b;transition:transform 0.25s ease, color 0.25s ease;">+</span>
       </div>
       <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#86868b;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">
-        Evet! İsteyen tüm müşterilerimize botlarımızın açık kaynak kodları (full source code) eksiksiz olarak teslim edilir. Satın alım sonrası Discord adresimize gelip Ticket açarak açık kaynak kod paketinizi anında talep edebilirsiniz.
+        Evet! İsteyen tüm müşterilerimize FiveM scriptlerimizin açık kaynak kodları (full source code / unencrypted) eksiksiz olarak teslim edilir. Dilediğiniz gibi düzenleyip geliştirebilirsiniz.
       </div>
     </div>
 
     <div class="apple-card faq-item reveal-scroll reveal-stagger-2" style="padding:22px 26px;cursor:pointer;" onclick="toggleFaq(this)">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="font-size:16px;font-weight:600;color:#fff;">Bot kurulumunu bilmiyorum, sunucuma kurulum yapıyor musunuz?</h4>
+        <h4 style="font-size:16px;font-weight:600;color:#fff;">Script kurulumunu bilmiyorum, sunucuma kurulum yapıyor musunuz?</h4>
         <span class="faq-icon" style="font-size:20px;color:#86868b;transition:transform 0.25s ease, color 0.25s ease;">+</span>
       </div>
       <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#86868b;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">
-        Kesinlikle! Eğer kurulum, VDS veya Discord Developer Portal ayarlarını bilmiyorsanız hiç dert etmeyin. Discord sunucumuzda Ticket açtığınızda botu sunucunuza baştan sona bizzat biz ücretsiz kurup çalışır halde teslim ediyoruz.
+        Kesinlikle! Eğer FiveM sunucu yönetimi, txAdmin, SQL veya VDS ayarlarını bilmiyorsanız hiç dert etmeyin. Discord sunucumuzda Ticket açtığınızda scriptleri sunucunuza baştan sona bizzat biz ücretsiz kurup çalışır halde teslim ediyoruz.
       </div>
     </div>
 
     <div class="apple-card faq-item reveal-scroll reveal-stagger-3" style="padding:22px 26px;cursor:pointer;" onclick="toggleFaq(this)">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="font-size:16px;font-weight:600;color:#fff;">Lisans anahtarım ne zaman aktif olur?</h4>
+        <h4 style="font-size:16px;font-weight:600;color:#fff;">Scriptler hangi frameworkleri destekliyor (QBCore / ESX)?</h4>
         <span class="faq-icon" style="font-size:20px;color:#86868b;transition:transform 0.25s ease, color 0.25s ease;">+</span>
       </div>
       <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#86868b;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">
-        Ödemenizi tamamladıktan sonra Discord sunucumuzda (discord.gg/closydev) Ticket açtığınızda yöneticimiz siparişinizi kontrol edip admin panelinden anında onaylar. Onaylandığı an lisansınız aktifleşir, e-postanıza ve müşteri panelinize iletilir.
+        Tüm ClosyDEV scriptleri QBCore ve ESX altyapılarıyla %100 tam uyumlu ve tak-çalıştır mimaridedir. OxMySQL, ox_target ve custom-target destekler.
       </div>
     </div>
 
     <div class="apple-card faq-item reveal-scroll reveal-stagger-4" style="padding:22px 26px;cursor:pointer;" onclick="toggleFaq(this)">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="font-size:16px;font-weight:600;color:#fff;">Satışlar yasal mı? Fatura kesiliyor mu?</h4>
+        <h4 style="font-size:16px;font-weight:600;color:#fff;">Sunucuda FPS düşüşü veya lag (resmon) yapar mı?</h4>
         <span class="faq-icon" style="font-size:20px;color:#86868b;transition:transform 0.25s ease, color 0.25s ease;">+</span>
       </div>
       <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#86868b;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">
-        Evet. closydev üzerindeki tüm satışlar %20 KDV dahil olarak faturalandırılır ve resmi e-Arşiv faturanız sistem tarafından otomatik olarak düzenlenir.
+        Hayır. Tüm scriptlerimiz 0.00ms resmon hedefiyle optimize edilmiştir. Gereksiz thread döngüleri içermez, oyuncularınızın FPS değerini asla düşürmez.
       </div>
     </div>
 
     <div class="apple-card faq-item reveal-scroll reveal-stagger-5" style="padding:22px 26px;cursor:pointer;" onclick="toggleFaq(this)">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="font-size:16px;font-weight:600;color:#fff;">İade politikanız nasıl işliyor?</h4>
+        <h4 style="font-size:16px;font-weight:600;color:#fff;">Satın alma sonrası scriptler nasıl teslim edilir?</h4>
         <span class="faq-icon" style="font-size:20px;color:#86868b;transition:transform 0.25s ease, color 0.25s ease;">+</span>
       </div>
       <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#86868b;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">
-        Aktive edilmemiş veya teknik sorun yaşadığınız ürünlerde 14 gün içerisinde kesintisiz iade talebinde bulunabilirsiniz.
+        Ödemeniz onaylandığı anda 'Hesabım' panelinden anında indirme linkinize ve lisans anahtarınıza erişebilirsiniz. Ayrıca Discord üzerinden de kurulum paketi eksiksiz iletilir.
       </div>
     </div>
 
@@ -2098,7 +2111,7 @@
         </h3>
 
         <p style="font-size: 14.5px; color: #94a3b8; line-height: 1.65; margin-bottom: 24px;">
-          Satın aldığınız botların açık kaynak kodlarını teslim almak, ücretsiz birebir sunucu kurulum desteği almak ve projelerinizi güçlendirmek için resmi Discord sunucumuza davetlisiniz.
+          Satın aldığınız FiveM scriptlerinin açık kaynak kodlarını teslim almak, ücretsiz birebir sunucu kurulum desteği almak ve projelerinizi güçlendirmek için resmi Discord sunucumuza davetlisiniz.
         </p>
 
         <!-- Stats Counter Badges -->
@@ -2315,9 +2328,8 @@
       <span>Kupon İndirimi</span>
       <span id="cartDiscountAmount" style="font-weight:700;font-family:var(--font-mono);">-₺0</span>
     </div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#86868b;">
-      <span>KDV (%20)</span>
-      <span id="cartKdv" style="color:#fff;font-weight:600;">₺0</span>
+    <div id="cartKdvRow" style="display:none;justify-content:space-between;margin-bottom:12px;font-size:13px;color:#86868b;">
+      <span id="cartKdv">₺0</span>
     </div>
     <div style="display:flex;justify-content:space-between;margin-bottom:20px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">
       <span style="font-weight:700;color:#fff;font-size:15px;">Toplam</span>
@@ -2330,6 +2342,12 @@
 </div>
 <div id="cartOverlay" onclick="toggleCart()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:99999;"></div>
 
+
+
+<!-- VIDEO LIGHTBOX MODAL -->
+<div id="videoLightboxModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:999999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeVideoModal()">
+  <div id="videoLightboxContainer" style="width:100%;max-width:920px;position:relative;"></div>
+</div>
 
 <!-- PRODUCT DETAIL MODAL -->
 <div id="productModal" class="modal">
@@ -2453,6 +2471,100 @@ function renderStorefrontProducts() {
   renderProducts(filtered);
 }
 
+function handleProductCardHover(cardEl, isHover, glowColor) {
+  if (isHover) {
+    cardEl.style.transform = 'translateY(-6px)';
+    cardEl.style.borderColor = 'rgba(255,255,255,0.25)';
+    cardEl.style.boxShadow = `0 30px 60px -15px rgba(0,0,0,0.85), 0 0 35px -5px ${glowColor || 'rgba(56,189,248,0.2)'}`;
+    
+    const vid = cardEl.querySelector('video.product-card-video');
+    if (vid) {
+      vid.style.transform = 'scale(1.04)';
+      const hint = cardEl.querySelector('.video-hover-hint');
+      if (hint) hint.style.opacity = '0';
+      const p = vid.play();
+      if (p !== undefined) p.catch(() => {});
+    }
+  } else {
+    cardEl.style.transform = 'translateY(0)';
+    cardEl.style.borderColor = 'rgba(255,255,255,0.08)';
+    cardEl.style.boxShadow = 'none';
+
+    const vid = cardEl.querySelector('video.product-card-video');
+    if (vid) {
+      vid.style.transform = 'scale(1)';
+      vid.pause();
+      const hint = cardEl.querySelector('.video-hover-hint');
+      if (hint) hint.style.opacity = '1';
+    }
+  }
+}
+
+function openVideoModal(id) {
+  const p = (typeof DigiStoreDB !== 'undefined') ? DigiStoreDB.getProductById(id) : null;
+  if (!p) return;
+
+  const modal = document.getElementById('videoLightboxModal');
+  const container = document.getElementById('videoLightboxContainer');
+  if (!modal || !container) return;
+
+  const videoSrc = p.videoFull || p.videoPreview;
+  const posterSrc = p.videoPoster || '';
+
+  container.innerHTML = `
+    <div style="position: relative; width: 100%; background: #0c0d12; border: 1px solid rgba(255,255,255,0.15); border-radius: 24px; overflow: hidden; box-shadow: 0 35px 80px rgba(0,0,0,0.95), 0 0 45px rgba(56,189,248,0.25); animation: productCardEntrance 0.35s cubic-bezier(0.16,1,0.3,1);">
+      
+      <!-- Modal Header -->
+      <div style="padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; animation: livePulse 1.8s infinite;"></span>
+          <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin: 0;">${p.name} — Canlı Tanıtım</h3>
+        </div>
+        <button onclick="closeVideoModal()" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.08)';">✕</button>
+      </div>
+
+      <!-- Video Element -->
+      <div style="position: relative; width: 100%; background: #000;">
+        <video id="modalActiveVideo" src="${videoSrc}" poster="${posterSrc}" controls autoplay playsinline style="width: 100%; max-height: 520px; display: block; object-fit: contain;"></video>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 12px;">
+        <div style="font-size: 12.5px; color: #94a3b8; display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Bizzat çekilmiş oyun içi test kaydı (0.00ms optimize, QBCore &amp; ESX uyumlu).</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; margin-left: auto;">
+          <span style="font-size: 22px; font-weight: 800; color: #fff; font-family: 'JetBrains Mono', monospace;">₺${p.price}</span>
+          <button onclick="closeVideoModal(); addToCartWithFeedback(${p.id})" class="btn-pill-white" style="padding: 9px 20px; font-size: 13px; font-weight: 700; border-radius: 9999px;">
+            Sepete Ekle
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+}
+
+function closeVideoModal() {
+  const modal = document.getElementById('videoLightboxModal');
+  const vid = document.getElementById('modalActiveVideo');
+  if (vid) {
+    vid.pause();
+  }
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Hook ESC key for video modal
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeVideoModal();
+  }
+});
+
 function renderProducts(products) {
   const grid = document.getElementById('productGrid');
   if (!grid) return;
@@ -2473,7 +2585,11 @@ function renderProducts(products) {
   }
 
   const catMetaMap = {
-    yazilim: { label: 'YAZILIM & BOT', color: '#38bdf8', bg: 'rgba(56,189,248,0.08)', border: 'rgba(56,189,248,0.22)', glow: 'rgba(56,189,248,0.12)' },
+    illegal: { label: 'İLLEGAL SİSTEM', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.28)', glow: 'rgba(239,68,68,0.18)' },
+    jobs: { label: 'MESLEK & EKONOMİ', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.28)', glow: 'rgba(16,185,129,0.18)' },
+    ui: { label: 'ARAYÜZ & NUI', color: '#38bdf8', bg: 'rgba(56,189,248,0.1)', border: 'rgba(56,189,248,0.28)', glow: 'rgba(56,189,248,0.18)' },
+    packages: { label: 'SUNUCU PAKETİ', color: '#a855f7', bg: 'rgba(168,85,247,0.1)', border: 'rgba(168,85,247,0.28)', glow: 'rgba(168,85,247,0.18)' },
+    yazilim: { label: 'FIVEM SCRİPT', color: '#38bdf8', bg: 'rgba(56,189,248,0.08)', border: 'rgba(56,189,248,0.22)', glow: 'rgba(56,189,248,0.12)' },
     template: { label: 'WEB & TEMA', color: '#34d399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.22)', glow: 'rgba(52,211,153,0.12)' },
     kurs: { label: 'EĞİTİM & KURS', color: '#c084fc', bg: 'rgba(192,132,252,0.08)', border: 'rgba(192,132,252,0.22)', glow: 'rgba(192,132,252,0.12)' },
     lisans: { label: 'LİSANS ANAHTARI', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.22)', glow: 'rgba(96,165,250,0.12)' },
@@ -2493,8 +2609,10 @@ function renderProducts(products) {
       ? DigiStoreDB.getProductRatingStats(p.id)
       : { average: Number(p.rating || 5).toFixed(1), count: p.reviews || 0 };
 
+    const hasVid = !!(p.hasVideo || p.videoPreview);
+
     return `
-      <div class="apple-card" onclick="openProduct(${p.id})" style="
+      <div class="apple-card product-card-hover-box" data-prod-id="${p.id}" onclick="openProduct(${p.id})" style="
         position: relative;
         cursor: pointer;
         overflow: hidden;
@@ -2508,10 +2626,103 @@ function renderProducts(products) {
         border-radius: 24px;
         animation: productCardEntrance 0.65s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx * 60, 480)}ms both;
         transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      " onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='rgba(255,255,255,0.22)';this.style.boxShadow='0 30px 60px -15px rgba(0,0,0,0.85), 0 0 35px -5px ${meta.glow}';" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.boxShadow='none';">
+      " onmouseenter="handleProductCardHover(this, true, '${meta.glow}')" onmouseleave="handleProductCardHover(this, false, '${meta.glow}')">
         
         <!-- Ambient Corner Glow -->
         <div style="position:absolute;top:0;right:0;width:140px;height:140px;background:radial-gradient(circle at 100% 0%, ${meta.glow} 0%, transparent 70%);pointer-events:none;border-top-right-radius:24px;"></div>
+
+        ${hasVid ? `
+          <!-- VIDEO PREVIEW CONTAINER -->
+          <div class="product-media-preview-box" style="
+            position: relative;
+            width: 100%;
+            height: 185px;
+            background: #09090c;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+          ">
+            <video
+              class="product-card-video"
+              src="${p.videoPreview}"
+              poster="${p.videoPoster || ''}"
+              loop
+              muted
+              playsinline
+              preload="metadata"
+              style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+              "
+            ></video>
+
+            <!-- Video Dark Gradient Overlay -->
+            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.7) 100%); pointer-events: none;"></div>
+
+<!-- Hover Hint Overlay (Center) -->
+            <div class="video-hover-hint" style="
+              position: absolute;
+              inset: 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              background: rgba(0, 0, 0, 0.35);
+              backdrop-filter: blur(1.5px);
+              -webkit-backdrop-filter: blur(1.5px);
+              transition: opacity 0.3s ease;
+              z-index: 2;
+              pointer-events: none;
+            ">
+              <div style="
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.22);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1.5px solid rgba(255, 255, 255, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+              ">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-left: 3px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </div>
+              <div style="margin-top: 8px; font-size: 11px; font-weight: 700; color: #fff; background: rgba(0,0,0,0.7); padding: 3px 10px; border-radius: 6px; letter-spacing: 0.03em; border: 1px solid rgba(255,255,255,0.18);">
+                ▶ Fareyi Üzerine Getir (Canlı İzle)
+              </div>
+            </div>
+
+            <!-- Fullscreen & Audio Quick Button (Bottom Right) -->
+            <button type="button" onclick="event.stopPropagation(); openVideoModal(${p.id})" style="
+              position: absolute;
+              bottom: 10px;
+              right: 10px;
+              z-index: 4;
+              padding: 6px 12px;
+              font-size: 11px;
+              font-weight: 700;
+              color: #ffffff;
+              background: rgba(15, 23, 42, 0.9);
+              backdrop-filter: blur(10px);
+              -webkit-backdrop-filter: blur(10px);
+              border: 1px solid rgba(255, 255, 255, 0.25);
+              border-radius: 8px;
+              cursor: pointer;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              transition: all 0.2s ease;
+            " onmouseover="this.style.background='#38bdf8';this.style.color='#0f172a';this.style.borderColor='#38bdf8';" onmouseout="this.style.background='rgba(15, 23, 42, 0.9)';this.style.color='#ffffff';this.style.borderColor='rgba(255, 255, 255, 0.25)';">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Tam Ekran &amp; Ses</span>
+            </button>
+          </div>
+        ` : ''}
 
         <div style="padding: 24px; position: relative; z-index: 1;">
           
@@ -2522,20 +2733,41 @@ function renderProducts(products) {
               <span>${meta.label}</span>
             </span>
 
-            ${p.badge && badgeMap[p.badge] ? `
-              <span style="
-                font-size: 9.5px;
-                font-weight: 800;
-                padding: 3px 8px;
-                border-radius: 6px;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                color: ${badgeMap[p.badge].color};
-                background: ${badgeMap[p.badge].bg};
-                border: 1px solid ${badgeMap[p.badge].border};
-              ">
-                ${badgeMap[p.badge].text}
-              </span>` : ''}
+            <div style="display:flex;align-items:center;gap:6px;">
+              ${hasVid ? `
+                <span style="
+                  font-size: 9px;
+                  font-weight: 800;
+                  padding: 3px 7px;
+                  border-radius: 6px;
+                  letter-spacing: 0.05em;
+                  text-transform: uppercase;
+                  color: #38bdf8;
+                  background: rgba(56,189,248,0.12);
+                  border: 1px solid rgba(56,189,248,0.35);
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 4px;
+                ">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  VİDEOLU
+                </span>` : ''}
+
+              ${p.badge && badgeMap[p.badge] ? `
+                <span style="
+                  font-size: 9.5px;
+                  font-weight: 800;
+                  padding: 3px 8px;
+                  border-radius: 6px;
+                  letter-spacing: 0.06em;
+                  text-transform: uppercase;
+                  color: ${badgeMap[p.badge].color};
+                  background: ${badgeMap[p.badge].bg};
+                  border: 1px solid ${badgeMap[p.badge].border};
+                ">
+                  ${badgeMap[p.badge].text}
+                </span>` : ''}
+            </div>
           </div>
 
           <!-- Product Name -->
@@ -2580,7 +2812,7 @@ function renderProducts(products) {
             ${p.oldPrice ? `<span style="font-size: 11px; text-decoration: line-through; color: #71717a; display: block; margin-bottom: 2px;">₺${p.oldPrice}</span>` : ''}
             <div style="display: flex; align-items: baseline; gap: 6px;">
               <span style="font-size: 23px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; font-family: 'JetBrains Mono', monospace;">₺${p.price}</span>
-              <span style="font-size: 11px; color: #71717a; font-weight: 500;">KDV dahil</span>
+              
             </div>
           </div>
 
@@ -2594,6 +2826,7 @@ function renderProducts(products) {
     `;
   }).join('');
 }
+
 
 function filterCategory(cat, scrollToSection = false) {
   currentFilter = cat;
@@ -2737,13 +2970,15 @@ function updateCartUI() {
     if (discountRow) discountRow.style.display = 'none';
   }
 
-  const subtotalAfterDiscount = Math.max(0, total - discount);
-  const kdv = subtotalAfterDiscount * 0.20;
-  const grandTotal = subtotalAfterDiscount + kdv;
+  const grandTotal = Math.max(0, total - discount);
 
   document.getElementById('cartSubtotal').textContent = '₺' + total.toLocaleString('tr-TR');
-  document.getElementById('cartKdv').textContent = '₺' + kdv.toFixed(0);
-  document.getElementById('cartTotal').textContent = '₺' + grandTotal.toFixed(0);
+  const cartKdvEl = document.getElementById('cartKdv');
+  if (cartKdvEl) {
+    const parentRow = cartKdvEl.closest('div');
+    if (parentRow) parentRow.style.display = 'none';
+  }
+  document.getElementById('cartTotal').textContent = '₺' + grandTotal.toLocaleString('tr-TR');
   document.getElementById('cartFooter').style.display = 'block';
 }
 
@@ -2972,8 +3207,25 @@ function openProduct(id) {
         </div>
       </div>
 
+
       <h2 style="font-size:24px;font-weight:800;color:#fff;margin:6px 0 10px;line-height:1.3;">${p.name}</h2>
+      
+      ${(p.hasVideo || p.videoFull || p.videoPreview) ? `
+        <!-- Script Video Player Box in Modal -->
+        <div style="margin-bottom:20px;border-radius:18px;overflow:hidden;border:1px solid rgba(56,189,248,0.35);background:#09090d;box-shadow:0 15px 35px rgba(0,0,0,0.7), 0 0 25px rgba(56,189,248,0.15);">
+          <div style="padding:10px 16px;background:rgba(56,189,248,0.08);border-bottom:1px solid rgba(56,189,248,0.2);display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:#38bdf8;box-shadow:0 0 10px #38bdf8;animation:livePulse 1.8s infinite;"></span>
+              <span style="font-size:12px;font-weight:800;color:#e0f2fe;letter-spacing:0.04em;">BİZZAT ÇEKİLMİŞ CANLI OYNANIŞ &amp; SCRİPT TANITIMI</span>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:#38bdf8;background:rgba(56,189,248,0.15);padding:2px 8px;border-radius:4px;">1080p / 60FPS</span>
+          </div>
+          <video src="${p.videoFull || p.videoPreview}" poster="${p.videoPoster || ''}" controls playsinline style="width:100%;max-height:360px;background:#000;display:block;"></video>
+        </div>
+      ` : ''}
+
       <p style="font-size:13.5px;color:#94a3b8;line-height:1.6;margin-bottom:18px;">${p.desc}</p>
+
       
       <!-- Key Features -->
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);padding:14px 16px;border-radius:16px;margin-bottom:20px;">
@@ -2987,7 +3239,7 @@ function openProduct(id) {
           ${p.oldPrice ? `<span style="font-size:11px;text-decoration:line-through;color:#71717a;display:block;">₺${p.oldPrice}</span>` : ''}
           <div style="display:flex;align-items:baseline;gap:6px;">
             <span style="font-size:28px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;">₺${p.price}</span>
-            <span style="font-size:11.5px;color:#86868b;">(KDV Dahil, Anında Teslim)</span>
+            <span style="font-size:11.5px;color:#86868b;">(Tek Fiyat, Anında Teslim)</span>
           </div>
         </div>
 
@@ -3724,10 +3976,10 @@ function initHeroTypewriter() {
 
   // 2. Tokenized typewriter sequence for the hero title
   const segments = [
-    { text: "Yeni nesil ", isGradient: false },
-    { text: "Discord", isGradient: true },
-    { text: " sistemleri.", isGradient: false }
-  ];
+      { text: "Yeni nesil ", isGradient: false },
+      { text: "FiveM", isGradient: true },
+      { text: " scriptleri.", isGradient: false }
+    ];
 
   titleEl.innerHTML = '';
   const caret = document.createElement('span');

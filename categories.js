@@ -4,10 +4,36 @@ const path = require('path');
 const os = require('os');
 
 const DEFAULT_CATEGORIES = [
-  { id: 'all', name: 'Tümü', slug: 'all', icon: '' },
-  { id: 'ticket', name: 'Ticket & Destek', slug: 'ticket', icon: '' },
-  { id: 'moderasyon', name: 'Moderasyon & Guard', slug: 'moderasyon', icon: '' },
-  { id: 'topluluk', name: 'Topluluk & Kayıt', slug: 'topluluk', icon: '' }
+  {
+    "id": "all",
+    "name": "Tümü",
+    "slug": "all",
+    "icon": ""
+  },
+  {
+    "id": "illegal",
+    "name": "Soygun & İllegal",
+    "slug": "illegal",
+    "icon": ""
+  },
+  {
+    "id": "jobs",
+    "name": "Meslek & Rol Sistemleri",
+    "slug": "jobs",
+    "icon": ""
+  },
+  {
+    "id": "ui",
+    "name": "Sistem & Arayüz (HUD/UI)",
+    "slug": "ui",
+    "icon": ""
+  },
+  {
+    "id": "packages",
+    "name": "Full Paket & Altyapı",
+    "slug": "packages",
+    "icon": ""
+  }
 ];
 
 function getFilePath() {

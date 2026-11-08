@@ -12,13 +12,13 @@
 </script>
 <title>Hesabım — closydev. Müşteri Portalı</title>
 <meta name="title" content="Hesabım — closydev. Müşteri Portalı">
-<meta name="description" content="closydev. Müşteri Paneli. Siparişleriniz, bot lisanslarınız ve hesap ayarlarınız.">
+<meta name="description" content="closydev. Müşteri Paneli. Siparişleriniz, FiveM script lisanslarınız ve hesap ayarlarınız.">
 <meta name="theme-color" content="#2cd3f0">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://closydev.site/hesabim.html">
 <meta property="og:site_name" content="closydev.">
 <meta property="og:title" content="Hesabım — closydev. Müşteri Portalı">
-<meta property="og:description" content="closydev. Müşteri Paneli. Siparişleriniz, bot lisanslarınız ve hesap ayarlarınız.">
+<meta property="og:description" content="closydev. Müşteri Paneli. Siparişleriniz, FiveM script lisanslarınız ve hesap ayarlarınız.">
 <meta property="og:image" content="https://closydev.site/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://closydev.site/logo.png">
@@ -1724,7 +1724,7 @@
         </div>
         <div>
           <h2 style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.4px;">İndirilebilir Dosyalar &amp; Kodlar</h2>
-          <p style="font-size:12.5px;color:#86868b;margin-top:2px;">Yazılım paketleri, bot kaynak kodları ve kurulum arşivleri.</p>
+          <p style="font-size:12.5px;color:#86868b;margin-top:2px;">Yazılım paketleri, FiveM script açık kaynak kodları ve kurulum arşivleri.</p>
         </div>
       </div>
       <div id="userDownloadsList" style="display:flex;flex-direction:column;gap:16px;"></div>
@@ -2270,7 +2270,7 @@ function renderUserOrders() {
           <div style="font-size:19px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;">
             ₺${Number(o.amount).toLocaleString('tr-TR')}
           </div>
-          <div style="font-size:11px;color:#86868b;margin-top:2px;">KDV dahil</div>
+          
         </div>
       </div>
 
@@ -2491,7 +2491,7 @@ function renderUserDownloads() {
         <div style="font-size:12.5px;color:#86868b;margin-top:2px;">${zipPath ? `Tam Kaynak Kod &amp; Kurulum Arşivi · ${fileName}` : 'Bu ürün için henüz indirme arşivi tanımlanmadı'}</div>
         <div style="font-size:11.5px;color:${isPending ? '#eab308' : (zipPath ? '#34c759' : '#ff3b30')};margin-top:4px;display:flex;align-items:center;gap:5px;">
           <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : (zipPath ? 'Gerçek bot kaynak kodları ve kurulum dosyaları indirilmeye hazır' : 'Bu ürün için indirme mevcut değildir')}</span>
+          <span>${isPending ? 'Yönetici onayı bekleniyor. Açık kaynak kod ve bizzat kurulum için Discord ticket açabilirsiniz.' : (zipPath ? 'Gerçek FiveM script açık kaynak kodları ve kurulum dosyaları indirilmeye hazır' : 'Bu ürün için indirme mevcut değildir')}</span>
         </div>
       </div>
 
@@ -2912,7 +2912,7 @@ function downloadInvoice(orderId) {
         <th>Mal / Hizmet Açıklaması</th>
         <th>Miktar</th>
         <th>Birim Fiyat</th>
-        <th>KDV Oranı</th>
+        
         <th style="text-align: right;">Toplam Tutar</th>
       </tr>
     </thead>
@@ -2922,7 +2922,7 @@ function downloadInvoice(orderId) {
         <td><b>${order.product}</b><br/><span style="font-size: 11.5px; color: #64748b;">Dijital Lisans &amp; Otomasyon Yazılımı Lisans Bedeli</span></td>
         <td>1 Adet</td>
         <td>₺${subtotal}</td>
-        <td>%20</td>
+        
         <td style="text-align: right; font-weight: 700;">₺${subtotal}</td>
       </tr>
     </tbody>
@@ -2933,10 +2933,7 @@ function downloadInvoice(orderId) {
       <td style="color: #64748b;">Ara Toplam:</td>
       <td style="text-align: right; font-weight: 600;">₺${subtotal}</td>
     </tr>
-    <tr>
-      <td style="color: #64748b;">Hesaplanan KDV (%20):</td>
-      <td style="text-align: right; font-weight: 600;">₺${kdvAmount}</td>
-    </tr>
+
     <tr class="grand-total">
       <td>Ödenecek Tutar:</td>
       <td style="text-align: right; color: #0f172a;">₺${totalAmount}</td>
